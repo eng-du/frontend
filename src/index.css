@@ -1,136 +1,5 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
-}
-
-body {
-  line-height: 1;
-}
-
-ol,
-ul {
-  list-style: none;
-}
-
-blockquote,
-q {
-  quotes: none;
-}
-
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: '';
-  content: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
+@import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 
 @font-face {
   font-family: 'Pinkfong Baby Shark';
@@ -156,52 +25,52 @@ table {
     url('fonts/PinkfongBabySharkFont_Light.ttf') format('font-truetype');
 }
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@theme {
+  /* 색상 초기화 */
+  --color-*: initial;
 
-:root {
-  /* 브랜드 색상 */
-  --color-brand-surface-default: #2663EB;
-  --color-brand-text-default: #FCFDFD;
-  --color-brand-text-bold: #2663EB;
+  /* 기본 색상 */
+  --color-surface-default: #F8F9FA;
+  --color-surface-weak: #FCFDFD;
+  --color-border-defeault: #E4E9F1;
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #64758B;
+  --color-text-weak: #FCFDFD;
 
   /* 위험, 경고 색상 */
-  --color-danger-border-default: #FFCACA;
-  --color-danger-surface-default: #FEF3F3;
-  --color-danger-text-default: #FF3B30;
+  --color-surface-danger: #FEF3F3;
+  --color-border-danger: #FFCACA;
+  --color-text-danger: #FF3B30;
 
   /* 긍정, 성공 색상 */
-  --color-positive-border-default: #B9F8CF;
-  --color-positive-surface-default: #F1FDF4;
-  --color-positive-text-default: #14AE5C;
+  --color-border-positive: #B9F8CF;
+  --color-surface-positive: #F1FDF4;
+  --color-text-positive: #14AE5C;
 
-  /* 중립 색상 */
-  --color-neutral-border-default: #E4E9F1;
-  --color-neutral-surface-bold: #F8F9FA;
-  --color-neutral-surface-default: #FCFDFD;
-  --color-neutral-surface-weak: #FFFFFF;
-  --color-neutral-text-default: #1F2937;
-  --color-neutral-text-weak: #64758B;
+  /* 폰트 */
+  --font-pinkfong: 'Pinkfong Baby Shark';
+  --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 
-  /* 기본 폰트 */
-  --font-family-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-  --font-default-medium20: 500 20px/32px var(--font-family-pretendard);
-  --font-default-medium16: 500 16px/24px var(--font-family-pretendard);
-  --font-default-medium12: 500 12px/16px var(--font-family-pretendard);
-  --font-default-bold20: 700 20px/32px var(--font-family-pretendard);
-  --font-default-bold16: 700 16px/24px var(--font-family-pretendard);
-  --font-default-bold12: 700 12px/16px var(--font-family-pretendard);
+  --text-12: 0.75rem;
+  --text-12--line-height: 1rem;
 
+  --text-16: 1rem;
+  --text-16--line-height: 1.5rem;
 
-  /* 제목 폰트 */
-  --font-family-pinkfong: "Pinkfong Baby Shark";
-  --font-title-light36: 300 36px/48px var(--font-family-pinkfong);
-  --font-title-regular24: 400 24px/32px var(--font-family-pinkfong);
-  --font-title-regular36: 400 36px/48px var(--font-family-pinkfong);
-  --font-title-bold50: 700 52px/54px var(--font-family-pinkfong);
+  --text-20: 1.25rem;
+  --text-20--line-height: 2rem;
+
+  --text-24: 1.5rem;
+  --text-24--line-height: 2rem;
+
+  --text-36: 2.25rem;
+  --text-36--line-height: 3rem;
+
+  /* 그림자 */
+  --shadow-*: initial;
+  --shadow-default: 0px 0px 10px rgba(20, 20, 43, 0.08);
 }
 
-* {
-  box-sizing: border-box;
-  color: var(--color-neutral-text-default);
-  font: var(--font-default-medium16);
+body {
+  @apply bg-surface-default font-pretendard text-16 text-text-primary;
 }
