@@ -29,10 +29,12 @@
   /* 색상 초기화 */
   --color-*: initial;
 
+  --color-surface-brand: #2663EB;
+
   /* 기본 색상 */
   --color-surface-default: #F8F9FA;
   --color-surface-weak: #FCFDFD;
-  --color-border-defeault: #E4E9F1;
+  --color-border-default: #E4E9F1;
   --color-text-primary: #1F2937;
   --color-text-secondary: #64758B;
   --color-text-weak: #FCFDFD;
