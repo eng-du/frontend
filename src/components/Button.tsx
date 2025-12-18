@@ -5,9 +5,10 @@ interface ButtonProps {
   children: ReactNode;
   type?: 'primary' | 'secondary';
   style?: 'fill' | 'ghost';
+  onClickHandler?: () => void;
 }
 
-function Button({ children, type = 'primary', style = 'fill' }: ButtonProps) {
+function Button({ children, type = 'primary', style = 'fill', onClickHandler }: ButtonProps) {
   return (
     <button
       className={clsx(
@@ -17,8 +18,9 @@ function Button({ children, type = 'primary', style = 'fill' }: ButtonProps) {
           : 'h-10.5 w-40 justify-between rounded-xl px-5',
         style === 'fill'
           ? 'bg-surface-brand text-text-weak'
-          : 'border border-border-default bg-surface-default text-text-secondary',
+          : 'border border-border-default bg-surface-weak text-text-secondary',
       )}
+      onClick={onClickHandler}
     >
       {children}
     </button>
