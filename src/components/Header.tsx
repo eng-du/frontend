@@ -5,10 +5,10 @@ function Header() {
         <img src="logo.svg" alt="로고" className="aspect-square w-10" />
         <div className="font-pinkfong text-20">잉듀</div>
       </div>
-      <li className="flex gap-5 text-12 text-text-secondary">
-        <ul>마이페이지</ul>
-        <ul>로그아웃</ul>
-      </li>
+      <ul className="flex gap-5 text-12 text-text-secondary">
+        <li>마이페이지</li>
+        <li>로그아웃</li>
+      </ul>
     </header>
   );
 }
