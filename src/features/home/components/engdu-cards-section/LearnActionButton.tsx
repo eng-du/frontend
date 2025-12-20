@@ -10,11 +10,7 @@ interface LearnActionButtonProps {
 function LearnActionButton({ progress }: LearnActionButtonProps) {
   return (
     <Button>
-      {progress === 100 ? (
-        <RetryIcon className="text-brand-text-default" />
-      ) : (
-        <PlayIcon className="text-brand-text-default" />
-      )}
+      {progress === 100 ? <RetryIcon /> : <PlayIcon />}
       <div>{progress === 100 ? '다시' : '이어서'} 학습하기</div>
     </Button>
   );
