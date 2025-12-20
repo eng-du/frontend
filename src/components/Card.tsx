@@ -3,15 +3,15 @@ import type { ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;
-  calssName?: string;
+  className?: string;
 }
 
-function Card({ children, calssName }: CardProps) {
+function Card({ children, className }: CardProps) {
   return (
     <div
       className={clsx(
         'flex flex-col items-start gap-5 rounded-2xl bg-surface-weak p-7 shadow-default',
-        calssName,
+        className,
       )}
     >
       {children}
