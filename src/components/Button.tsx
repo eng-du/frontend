@@ -14,7 +14,7 @@ function Button({ children, type = 'primary', style = 'fill', onClickHandler }: 
       className={clsx(
         'flex cursor-pointer items-center',
         type === 'primary'
-          ? 'h-14 w-full justify-center gap-2 rounded-2xl'
+          ? 'h-14 w-full justify-center gap-2 rounded-2xl px-5'
           : 'h-10.5 w-40 justify-between rounded-xl px-5',
         style === 'fill'
           ? 'bg-surface-brand text-text-weak'
