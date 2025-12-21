@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from '@/utils/cn';
 import type { ReactNode } from 'react';
 
 interface CardProps {
@@ -9,7 +9,7 @@ interface CardProps {
 function Card({ children, className }: CardProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         'flex flex-col items-start gap-5 rounded-2xl bg-surface-weak p-7 shadow-default',
         className,
       )}
