@@ -1,15 +1,9 @@
 import Header from './components/Header';
 import Home from './features/home/Home';
+import Login from './features/login/Login';
 
 function App() {
-  return (
-    <div>
-      <Header />
-      <main className="min-h-dvh pt-15">
-        <Home />
-      </main>
-    </div>
-  );
+  return <Login />;
 }
 
 export default App;
