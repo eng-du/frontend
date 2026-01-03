@@ -1,9 +1,15 @@
 import Header from './components/Header';
-import Home from './features/home/Home';
-import Login from './features/login/Login';
+import EngduLearning from './features/engdu-learning/EngduLeaning';
 
 function App() {
-  return <Login />;
+  return (
+    <div>
+      <Header />
+      <main className="h-dvh pt-15">
+        <EngduLearning />
+      </main>
+    </div>
+  );
 }
 
 export default App;
