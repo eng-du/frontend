@@ -30,6 +30,7 @@
   --color-*: initial;
 
   --color-surface-brand: #2663EB;
+  --color-text-brand: #2663EB;
 
   /* 기본 색상 */
   --color-surface-default: #F8F9FA;
@@ -49,6 +50,11 @@
   --color-border-positive: #B9F8CF;
   --color-surface-positive: #F1FDF4;
   --color-text-positive: #14AE5C;
+
+  /* 강조, 보상 색상 */
+  --color-border-accent: #FBBF24;
+  --color-surface-accent: #FEF3C7;
+  --color-text-accent: #FBBF24;
 
   /* 폰트 */
   --font-pinkfong: 'Pinkfong Baby Shark';
