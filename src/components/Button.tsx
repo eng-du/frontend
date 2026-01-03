@@ -6,16 +6,9 @@ interface ButtonProps {
   type?: 'primary' | 'secondary';
   style?: 'fill' | 'ghost';
   onClickHandler?: () => void;
-  disabled?: boolean;
 }
 
-function Button({
-  children,
-  type = 'primary',
-  style = 'fill',
-  onClickHandler,
-  disabled = false,
-}: ButtonProps) {
+function Button({ children, type = 'primary', style = 'fill', onClickHandler }: ButtonProps) {
   return (
     <button
       className={cn(
@@ -24,11 +17,10 @@ function Button({
           ? 'h-14 w-full justify-center gap-2 rounded-2xl px-5'
           : 'h-10.5 w-40 justify-between rounded-xl px-5',
         style === 'fill'
-          ? 'bg-surface-brand text-text-weak disabled:bg-surface-brand/32'
+          ? 'bg-surface-brand text-text-weak'
           : 'border border-border-default bg-surface-weak text-text-secondary',
       )}
       onClick={onClickHandler}
-      disabled={disabled}
     >
       {children}
     </button>
