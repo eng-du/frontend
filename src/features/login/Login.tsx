@@ -2,6 +2,8 @@ import Button from '@/components/Button';
 import Card from '@/components/Card';
 import GoogleIcon from '@/assets/icons/google.svg?react';
 import EngduFullBookIcon from '@/assets/icons/engdu-full-book.svg?react';
+import { Link } from 'react-router';
+import { ENV } from '@/config/env';
 
 function Login() {
   return (
@@ -15,10 +17,12 @@ function Login() {
             <br /> 영어 학습을 시작해보세요!
           </div>
         </div>
-        <Button type="primary" style="ghost">
-          <GoogleIcon />
-          <div className="flex-1">구글로 시작하기</div>
-        </Button>
+        <Link to={`${ENV.API_BASE_URL}/auth/url`} className="w-full">
+          <Button type="primary" style="ghost">
+            <GoogleIcon />
+            <div className="flex-1">구글로 시작하기</div>
+          </Button>
+        </Link>
       </Card>
     </div>
   );
