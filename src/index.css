@@ -4,25 +4,25 @@
 @font-face {
   font-family: 'Pinkfong Baby Shark';
   font-weight: 700;
-  src: url('fonts/PinkfongBabySharkFont_Bold.woff2') format('font-woff2'),
-    url('fonts/PinkfongBabySharkFont_Bold.woff') format('font-woff'),
-    url('fonts/PinkfongBabySharkFont_Bold.ttf') format('font-truetype');
+  src: url('assets/fonts/PinkfongBabySharkFont_Bold.woff2') format('woff2'),
+    url('assets/fonts/PinkfongBabySharkFont_Bold.woff') format('woff'),
+    url('assets/fonts/PinkfongBabySharkFont_Bold.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Pinkfong Baby Shark';
   font-weight: 400;
-  src: url('fonts/PinkfongBabySharkFont_Regular.woff2') format('font-woff2'),
-    url('fonts/PinkfongBabySharkFont_Regular.woff') format('font-woff'),
-    url('fonts/PinkfongBabySharkFont_Regular.ttf') format('font-truetype');
+  src: url('assets/fonts/PinkfongBabySharkFont_Regular.woff2') format('woff2'),
+    url('assets/fonts/PinkfongBabySharkFont_Regular.woff') format('woff'),
+    url('assets/fonts/PinkfongBabySharkFont_Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Pinkfong Baby Shark';
   font-weight: 300;
-  src: url('fonts/PinkfongBabySharkFont_Light.woff2') format('font-woff2'),
-    url('fonts/PinkfongBabySharkFont_Light.woff') format('font-woff'),
-    url('fonts/PinkfongBabySharkFont_Light.ttf') format('font-truetype');
+  src: url('assets/fonts/PinkfongBabySharkFont_Light.woff2') format('woff2'),
+    url('assets/fonts/PinkfongBabySharkFont_Light.woff') format('woff'),
+    url('assets/fonts/PinkfongBabySharkFont_Light.ttf') format('truetype');
 }
 
 @theme {
