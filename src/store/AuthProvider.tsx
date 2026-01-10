@@ -2,14 +2,24 @@ import { getMe, type MeResponse } from '@/api/user';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import authTokenStore from './authToken';
 import { AuthContext } from './AuthContext';
+import { useLocation } from 'react-router';
 
 type AuthProviderProps = { children: React.ReactNode };
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const { pathname } = useLocation();
+
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const isExcluded = pathname.startsWith('/login') || pathname.startsWith('/oauth/callback');
+
+    if (isExcluded) {
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       try {
         const me = await getMe();
@@ -20,6 +30,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setLoading(false);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refreshMe = useCallback(async () => {
