@@ -1,0 +1,62 @@
+name: Deploy Frontend to EC2
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  deploy:
+    if: github.repository == 'eng-du/frontend'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Pack dist
+        run: tar -czf dist.tgz dist
+
+      - name: Upload dist.tgz to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "dist.tgz"
+          target: "/home/${{ secrets.EC2_USER }}/deploy"
+
+      - name: Deploy (swap dist)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/deploy
+
+            rm -rf ~/frontend/dist_new
+            mkdir -p ~/frontend/dist_new
+            tar -xzf dist.tgz -C ~/frontend/dist_new
+
+            rm -rf ~/frontend/dist_prev
+            if [ -d ~/frontend/dist ]; then
+              mv ~/frontend/dist ~/frontend/dist_prev
+            fi
+
+            mv ~/frontend/dist_new/dist ~/frontend/dist
+
+            sudo nginx -t
+            sudo systemctl reload nginx
