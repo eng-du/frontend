@@ -13,5 +13,5 @@ export async function googleLogin(code: string): Promise<GoogleLoginResponse> {
 }
 
 export function logout() {
-  return api.post('/logout');
+  return api.post('/auth/logout');
 }
