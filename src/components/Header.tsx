@@ -18,9 +18,8 @@ function Header() {
       <ul className="flex gap-5 text-12 text-text-secondary">
         {user ? (
           <>
-            <li>{user.name}</li>
-            <li
-              className="cursor-pointer"
+            <button>{user.name}</button>
+            <button
               onClick={async () => {
                 try {
                   await logout();
@@ -31,12 +30,12 @@ function Header() {
               }}
             >
               로그아웃
-            </li>
+            </button>
           </>
         ) : (
-          <li>
+          <button>
             <Link to="/login">로그인</Link>
-          </li>
+          </button>
         )}
       </ul>
     </header>
