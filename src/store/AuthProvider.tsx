@@ -33,10 +33,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const clearAuth = () => {
+  const clearAuth = useCallback(() => {
     authTokenStore.clear();
     setUser(null);
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshMe,
       clearAuth,
     }),
-    [user, loading, refreshMe],
+    [user, loading, refreshMe, clearAuth],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
