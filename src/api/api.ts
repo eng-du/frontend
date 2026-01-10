@@ -26,12 +26,19 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const {
-      config,
-      response: { status, data },
-    } = error;
+     if (!error?.response) {
+      return Promise.reject(error);
+    }
 
-    if (status === 401 && data.code === 'AUTH-002' && !config._retry) {
+    const { config } = error;
+    const { status, data } = error.response;
+
+
+    if (
+      status === 401 &&
+      (data.code === 'AUTH-001' || data.code === 'AUTH-002' || data.code === 'AUTH-003') &&
+      !config._retry
+    ) {
       config._retry = true;
 
       try {
@@ -47,7 +54,7 @@ api.interceptors.response.use(
         return api(config);
       } catch (refreshError) {
         authTokenStore.clear();
-        window.location.href = '/login';
+        if (window.location.pathname !== '/') window.location.assign('/login');
         return Promise.reject(refreshError);
       }
     }
