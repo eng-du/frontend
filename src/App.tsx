@@ -1,10 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Layout from './Layout';
 import Home from './features/home/Home';
 import EngduLearning from './features/engdu-learning/EngduLeaning';
 import Login from './features/login/Login';
 import CallbackGoogle from './features/login/CallbackGoogle';
-import { AuthProvider } from './store/AuthProvider';
+import Layout from './Layout';
 
 function App() {
   const router = createBrowserRouter([
@@ -25,11 +24,7 @@ function App() {
     },
   ]);
 
-  return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
