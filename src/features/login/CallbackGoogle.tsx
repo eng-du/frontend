@@ -29,8 +29,8 @@ function CallbackGoogle() {
         const { accessToken } = await googleLogin(code);
         authTokenStore.set(accessToken);
 
-        navigate('/', { replace: true });
         await refreshMe();
+        navigate('/', { replace: true });
       } catch (e) {
         console.error(e);
         navigate('/login', { replace: true });
