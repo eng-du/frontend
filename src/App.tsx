@@ -4,23 +4,23 @@ import EngduLearning from './features/engdu-learning/EngduLeaning';
 import Login from './features/login/Login';
 import CallbackGoogle from './features/login/CallbackGoogle';
 import Layout from './Layout';
+import RootProviders from './RootProviders';
 
 function App() {
   const router = createBrowserRouter([
     {
-      element: <Layout />,
+      element: <RootProviders />,
       children: [
-        { path: '/', element: <Home /> },
-        { path: '/learning', element: <EngduLearning /> },
+        {
+          element: <Layout />,
+          children: [
+            { path: '/', element: <Home /> },
+            { path: '/learning', element: <EngduLearning /> },
+          ],
+        },
+        { path: '/login', element: <Login /> },
+        { path: '/oauth/callback/google', element: <CallbackGoogle /> },
       ],
-    },
-    {
-      path: '/login',
-      element: <Login />,
-    },
-    {
-      path: '/oauth/callback/google',
-      element: <CallbackGoogle />,
     },
   ]);
 
