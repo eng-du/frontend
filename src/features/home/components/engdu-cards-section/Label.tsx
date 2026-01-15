@@ -1,8 +1,8 @@
-import type { EngduSummary } from '@/types/engdu';
+import type { EngduType } from '@/types/engdu';
 import clsx from 'clsx';
 
 interface LabelProps {
-  type: EngduSummary['type'];
+  type: EngduType;
 }
 
 function Label({ type }: LabelProps) {
