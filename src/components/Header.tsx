@@ -18,8 +18,9 @@ function Header() {
       <ul className="flex gap-5 text-12 text-text-secondary">
         {user ? (
           <>
-            <button>{user.name}</button>
+            <button className="cursor-pointer">{user.name}</button>
             <button
+              className="cursor-pointer"
               onClick={async () => {
                 try {
                   await logout();

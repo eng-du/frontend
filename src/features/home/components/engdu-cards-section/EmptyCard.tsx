@@ -1,4 +1,3 @@
-import NewEngduButton from '../filter-section/NewEngduButton';
 import FileIcon from '@/assets/icons/file-text.svg?react';
 
 function EmptyCard() {
@@ -9,7 +8,6 @@ function EmptyCard() {
       </div>
       <div className="font-pinkfong text-24">아직 생성된 잉듀가 없어요!</div>
       <div className="text-text-secondary">원하는 주제로 첫 번째 잉듀를 만들어보세요.</div>
-      <NewEngduButton />
     </div>
   );
 }

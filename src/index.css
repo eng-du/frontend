@@ -32,6 +32,9 @@
   --color-surface-brand: #2663EB;
   --color-text-brand: #2663EB;
 
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
   /* 기본 색상 */
   --color-surface-default: #F8F9FA;
   --color-surface-weak: #FCFDFD;
