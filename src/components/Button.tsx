@@ -7,6 +7,7 @@ interface ButtonProps {
   style?: 'fill' | 'ghost';
   onClickHandler?: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
 function Button({
@@ -15,6 +16,7 @@ function Button({
   style = 'fill',
   onClickHandler,
   disabled = false,
+  className,
 }: ButtonProps) {
   return (
     <button
@@ -26,6 +28,7 @@ function Button({
         style === 'fill'
           ? 'bg-surface-brand text-text-weak disabled:bg-surface-brand/32'
           : 'border border-border-default bg-surface-weak text-text-secondary',
+        className,
       )}
       onClick={onClickHandler}
       disabled={disabled}
