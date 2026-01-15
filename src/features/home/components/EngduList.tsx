@@ -11,7 +11,11 @@ type SortOption = '최신순' | '오래된순';
 type TypeOption = '전체' | '지문' | '상황극';
 type StatusOption = '전체' | '완료' | '미완료';
 
-function EngduList() {
+interface EngduListProps {
+  onOpenHandler: () => void
+}
+
+function EngduList({ onOpenHandler }: EngduListProps) {
   const [sort, setSort] = useState<SortOption>('최신순');
   const [type, setType] = useState<TypeOption>('전체');
   const [status, setStatus] = useState<StatusOption>('전체');
@@ -51,7 +55,7 @@ function EngduList() {
             <Dropdown filterKey="type" value={type} setValue={setType} />
             <Dropdown filterKey="status" value={status} setValue={setStatus} />
           </div>
-          <NewEngduButton />
+          <NewEngduButton onOpenHandler={onOpenHandler}  />
         </div>
         {/* 목록 */}
         {mockEngdus.length > 0 ? <EngduCards engdus={filterEngdu(mockEngdus)} /> : <EmptyCard />}
