@@ -3,7 +3,7 @@ import EngduTopicInput from './EngduTopicInput';
 import EngduTypeSelector from './EngduTypeSelector';
 import EngduCreateFooter from './EngduCreateFooter';
 import EngduCreateHeader from './EngduCreateHeader';
-import EngduHelperCallout from '../../../../components/EngduHelperCallout';
+import EngduHelperCallout from '@/components/EngduHelperCallout';
 import { useState, useEffect } from 'react';
 import type { EngduType } from '@/types/engdu';
 
