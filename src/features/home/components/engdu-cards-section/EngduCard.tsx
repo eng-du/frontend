@@ -12,7 +12,7 @@ interface EngduCardProps {
 }
 
 function EngduCard({ engdu }: EngduCardProps) {
-  const progress = engdu.solvedCount / engdu.totalCount;
+  const progress = engdu.totalCount > 0 ? (engdu.solvedCount / engdu.totalCount) * 100 : 0;
 
   return (
     <Card>
