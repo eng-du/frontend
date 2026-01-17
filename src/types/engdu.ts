@@ -41,7 +41,7 @@ export const REVERSE_STATUS_MAP: Record<StatusOption, string> = {
 };
 
 export interface EngduSummary {
-  id: number;
+  engduId: number;
   title: string;
   type: EngduType;
   topic: string;
