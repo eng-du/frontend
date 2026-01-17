@@ -1,6 +1,21 @@
-function formatRelativeTime(date: Date): string {
+function parseUtc(date: string): Date {
+  const d = new Date(date);
+
+  return new Date(Date.UTC(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    d.getHours(),
+    d.getMinutes(),
+    d.getSeconds(),
+    d.getMilliseconds(),
+  ));
+}
+
+function formatRelativeTime(date: string): string {
+  const parsedDate = parseUtc(date);
   const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const diff = now.getTime() - parsedDate.getTime();
 
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
