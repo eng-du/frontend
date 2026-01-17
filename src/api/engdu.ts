@@ -23,6 +23,8 @@ export async function getEngdus({
   const isSolved = status === '완료' ? 'TRUE' : status === '미완료' ? 'FALSE' : 'ALL';
   // TODO: 현재는 지문 타입만 존재, 추후 type 연동
 
-  const res = await api.get(`/engdu?page=${page}&direction=${direction}&isSolved=${isSolved}`);
+  const res = await api.get('/engdu', {
+    params: { page, direction, isSolved },
+  });
   return res.data;
 }
