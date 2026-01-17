@@ -1,10 +1,9 @@
 import Button from '@/components/Button';
 import RetryIcon from '@/assets/icons/rotate-ccw.svg?react';
 import PlayIcon from '@/assets/icons/play.svg?react';
-import type { EngduSummary } from '@/types/engdu';
 
 interface LearnActionButtonProps {
-  progress: EngduSummary['progress'];
+  progress: number;
 }
 
 function LearnActionButton({ progress }: LearnActionButtonProps) {
