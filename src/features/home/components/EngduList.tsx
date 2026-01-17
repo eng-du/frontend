@@ -49,7 +49,7 @@ function EngduList({ onOpenHandler }: EngduListProps) {
           <>
             {/* 필터링 버튼, 생성 버튼 */}
             <div className="flex flex-col gap-2.5 justify-between md:flex-row">
-              <div className="flex gap-2.5 overflow-x-scroll overflow-scroll [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-2.5">
                 <Dropdown filterKey="sort" value={sort} setValue={setSort} />
                 {/* <Dropdown filterKey="type" value={type} setValue={setType} /> */}
                 <Dropdown filterKey="status" value={status} setValue={setStatus} />
