@@ -13,8 +13,8 @@ function ReadingCard({ part, article }: ReadingCardProps) {
     <Card className="h-[calc(100dvh-280px)] w-full snap-start">
       <Label part={part} />
       <div className="scrollbar-custom overflow-x-hidden overflow-y-scroll pr-4 text-20 leading-10 -tracking-tight break-keep">
-        {article.chunks.map((chunk) => (
-          <Chunk key={chunk.kor} chunk={chunk} />
+        {article.chunks.map((chunk, index) => (
+          <Chunk key={index} chunk={chunk} />
         ))}
       </div>
     </Card>
