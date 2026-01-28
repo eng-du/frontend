@@ -95,6 +95,23 @@
       transform: translateY(0);
     }
   }
+
+}
+
+@layer utilities {
+  .scrollbar-custom {
+    &::-webkit-scrollbar {
+      @apply w-2
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent
+    }
+
+    &::-webkit-scrollbar-thumb {
+      @apply bg-surface-brand/10 rounded-sm;
+    }
+  }
 }
 
 body {
