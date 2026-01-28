@@ -60,6 +60,10 @@ export interface DetailEngdu {
 }
 
 export interface EngduArticle {
-  content: string;
-  translation: string;
+  chunks: EngduChunk[]
+}
+
+export interface EngduChunk {
+  en: string;
+  kor: string
 }
