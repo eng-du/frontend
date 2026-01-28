@@ -8,21 +8,26 @@ import {
 } from './QuizOptionItem';
 import { QuizFinishButton, QuizNextButton, QuizRetryButton, QuizSubmitButton } from './QuizButton';
 import QuizFeedbackCard from './QuizFeedbackCard';
+import { postQuizSubmission } from '@/api/quiz';
+import { useNavigate } from 'react-router';
 
 interface QuizCardProps {
+  engduId: number;
+  questionId: number;
   question: EngduQuestion;
-  setQuestions: React.Dispatch<React.SetStateAction<EngduQuestion[]>>;
+  handleQuestion: (questionId: number, isCorrected: boolean, answer: number) => void;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-function QuizCard({ question, setQuestions, step, setStep }: QuizCardProps) {
+function QuizCard({ engduId, questionId, question, handleQuestion, step, setStep }: QuizCardProps) {
   const [selectedOption, setSelectedOption] = useState<EngduChoice | null>(
     question.isCorrected ? question.choices[question.answer! - 1] : null,
   );
   const [quizStatus, setQuizStatus] = useState<QuizStatus>(
     question.isCorrected ? 'correct' : 'idle',
   );
+  const navigate = useNavigate();
 
   return (
     <Card className="h-fit w-full">
@@ -69,21 +74,16 @@ function QuizCard({ question, setQuestions, step, setStep }: QuizCardProps) {
 
       {quizStatus === 'idle' && (
         <QuizSubmitButton
-          onClickHandler={() => {
-            // TODO: 퀴즈 제출 API 연동
-            // 현재는 mock data 기반으로 동작(반드시 퀴즈의 정답이 1)
-            if (selectedOption?.seq === 1) {
-              setQuestions((prev) =>
-                prev.map((question, idx) =>
-                  idx === step
-                    ? {
-                        ...question,
-                        isCorrected: true,
-                        answer: selectedOption?.seq,
-                      }
-                    : question,
-                ),
-              );
+          onClickHandler={async () => {
+            const { correct } = await postQuizSubmission({
+              engduId,
+              questionId,
+              userAnswer: selectedOption!.seq,
+            });
+
+            handleQuestion(questionId, correct, selectedOption!.seq);
+
+            if (correct) {
               setQuizStatus('correct');
             } else {
               setQuizStatus('incorrect');
@@ -110,7 +110,11 @@ function QuizCard({ question, setQuestions, step, setStep }: QuizCardProps) {
             }}
           />
         ) : (
-          <QuizFinishButton onClickHandler={() => {}} />
+          <QuizFinishButton
+            onClickHandler={() => {
+              navigate('/');
+            }}
+          />
         ))}
     </Card>
   );

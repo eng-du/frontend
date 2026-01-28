@@ -18,8 +18,9 @@ function EngduCard({ engdu }: EngduCardProps) {
     <Card>
       <div className="flex items-center gap-2 text-text-secondary">
         <Label type={'지문'} />
-        <div className='flex items-center'>
-          <HashTagIcon className='w-4 h-4' />{engdu.topic}
+        <div className="flex items-center">
+          <HashTagIcon className="h-4 w-4" />
+          {engdu.topic}
         </div>
       </div>
       {/* 제목 */}
@@ -43,7 +44,7 @@ function EngduCard({ engdu }: EngduCardProps) {
         ></div>
       </div>
       {/* 버튼 */}
-      <LearnActionButton progress={progress} />
+      <LearnActionButton engduId={engdu.engduId} progress={progress} />
     </Card>
   );
 }

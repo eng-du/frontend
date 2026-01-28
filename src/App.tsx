@@ -15,7 +15,7 @@ function App() {
           element: <Layout />,
           children: [
             { path: '/', element: <Home /> },
-            { path: '/learning', element: <EngduLearning /> },
+            { path: '/learning/:engduId', element: <EngduLearning /> },
           ],
         },
         { path: '/login', element: <Login /> },
