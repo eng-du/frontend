@@ -39,3 +39,17 @@ export async function getEngduDetail(engduId: number) {
   const res = await api.get<DetailEngdu>(`/engdu/${engduId}`);
   return res.data;
 }
+
+interface CreateEngduProps {
+  topic: string;
+  level: string;
+}
+
+interface CreateEngduResponse {
+  engduId: number;
+}
+
+export async function createEngdu(data: CreateEngduProps): Promise<CreateEngduResponse> {
+  const res = await api.post('/engdu', data, { timeout: 300_000 });
+  return res.data;
+}
