@@ -29,6 +29,7 @@ function Button({
           ? 'bg-surface-brand text-text-weak disabled:bg-surface-brand/32'
           : 'border border-border-default bg-surface-weak text-text-secondary',
         className,
+        disabled && 'cursor-not-allowed'
       )}
       onClick={onClickHandler}
       disabled={disabled}
