@@ -10,6 +10,16 @@ interface FeedbackTypeButtonProps {
   disabled?: boolean;
 }
 
+const activeButtonStyles = {
+  liked: 'border-border-positive bg-surface-positive text-text-positive',
+  disliked: 'border-border-danger bg-surface-danger text-text-danger',
+};
+
+const activeIconStyles = {
+  liked: 'bg-white border-2 border-border-positive text-text-positive',
+  disliked: 'bg-white border-2 border-border-danger text-text-danger',
+};
+
 export default function FeedbackTypeButton({
   label,
   icon,
@@ -18,15 +28,6 @@ export default function FeedbackTypeButton({
   variant,
   disabled,
 }: FeedbackTypeButtonProps) {
-  const activeButtonStyles = {
-    liked: 'border-border-positive bg-surface-positive text-text-positive',
-    disliked: 'border-border-danger bg-surface-danger text-text-danger',
-  };
-
-  const activeIconStyles = {
-    liked: 'bg-white border-2 border-border-positive text-text-positive',
-    disliked: 'bg-white border-2 border-border-danger text-text-danger',
-  };
 
   return (
     <button
