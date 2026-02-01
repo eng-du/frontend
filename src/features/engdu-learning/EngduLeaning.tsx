@@ -8,6 +8,7 @@ import type { EngduQuestion } from '@/types/quiz';
 import type { EngduPart, EngduMeta } from '@/types/engdu';
 import WaitModal from './components/WaitModal';
 import { trackEvent, startRecording, stopRecording } from '@/utils/analytics';
+import FeedbackModal from './components/FeedbackModal';
 
 function EngduLearning() {
   const { engduId, meta, part1, part2, initial } = useLoaderData() as {
@@ -24,6 +25,7 @@ function EngduLearning() {
   const [localQuestions, setLocalQuestions] = useState<EngduQuestion[]>([]);
   const [step, setStep] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const isInitialUnlocked = useRef<boolean | null>(null);
   const isStepInitialized = useRef(false);
   const mountTime = useRef(Date.now());
@@ -166,12 +168,14 @@ function EngduLearning() {
           handleQuestion={handleQuestion}
           part1Promise={part1}
           part2Promise={part2}
+          onFinish={() => setIsFeedbackModalOpen(true)}
         />
       </div>
       {showConfetti && <ConfettiEffect />}
       {isWaitModalOpen && (
         <WaitModal isPart1Resolved={isPart1Resolved} onClose={() => setIsWaitModalOpen(false)} />
       )}
+      <FeedbackModal isOpen={isFeedbackModalOpen} onClose={() => setIsFeedbackModalOpen(false)} />
     </div>
   );
 }

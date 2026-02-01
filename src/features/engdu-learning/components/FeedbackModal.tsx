@@ -1,4 +1,4 @@
-import Modal from '@/components/Modal';
+import Modal from '@/components/Modal/Modal';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import ThumbsUpIcon from '@/assets/icons/thumbs-up.svg?react';

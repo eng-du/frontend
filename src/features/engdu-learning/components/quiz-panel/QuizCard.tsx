@@ -9,7 +9,6 @@ import {
 import { QuizFinishButton, QuizNextButton, QuizRetryButton, QuizSubmitButton } from './QuizButton';
 import QuizFeedbackCard from './QuizFeedbackCard';
 import { postQuizSubmission } from '@/api/quiz';
-import { useNavigate } from 'react-router';
 
 interface QuizCardProps {
   engduId: number;
@@ -18,16 +17,24 @@ interface QuizCardProps {
   handleQuestion: (questionId: number, isCorrected: boolean, answer: number) => void;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  onFinish: () => void;
 }
 
-function QuizCard({ engduId, questionId, question, handleQuestion, step, setStep }: QuizCardProps) {
+function QuizCard({
+  engduId,
+  questionId,
+  question,
+  handleQuestion,
+  step,
+  setStep,
+  onFinish,
+}: QuizCardProps) {
   const [selectedOption, setSelectedOption] = useState<EngduChoice | null>(
     question.isCorrected ? question.choices[question.answer! - 1] : null,
   );
   const [quizStatus, setQuizStatus] = useState<QuizStatus>(
     question.isCorrected ? 'correct' : 'idle',
   );
-  const navigate = useNavigate();
 
   return (
     <Card className="h-fit w-full">
@@ -111,9 +118,7 @@ function QuizCard({ engduId, questionId, question, handleQuestion, step, setStep
           />
         ) : (
           <QuizFinishButton
-            onClickHandler={() => {
-              navigate('/');
-            }}
+            onClickHandler={onFinish}
           />
         ))}
     </Card>

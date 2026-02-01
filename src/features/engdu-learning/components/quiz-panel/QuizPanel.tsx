@@ -13,6 +13,7 @@ interface QuizPanelProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   part1Promise: Promise<EngduPart>;
   part2Promise: Promise<EngduPart>;
+  onFinish: () => void;
 }
 
 function QuizPanel({
@@ -23,6 +24,7 @@ function QuizPanel({
   setStep,
   part1Promise,
   part2Promise,
+  onFinish,
 }: QuizPanelProps) {
   const isPart1 = step < 2;
   const targetPromise = isPart1 ? part1Promise : part2Promise;
@@ -47,6 +49,7 @@ function QuizPanel({
                 handleQuestion={handleQuestion}
                 step={step}
                 setStep={setStep}
+                onFinish={onFinish}
               />
             );
           }}
