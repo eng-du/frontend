@@ -1,5 +1,5 @@
-import Button from '@/components/Button';
-import Card from '@/components/Card';
+import Button from '@/components/Button/Button';
+import Card from '@/components/Card/Card';
 import GoogleIcon from '@/assets/icons/google.svg?react';
 import EngduFullBookIcon from '@/assets/icons/engdu-full-book.svg?react';
 import { ENV } from '@/config/env';
@@ -17,7 +17,7 @@ function Login() {
           </div>
         </div>
         <a href={`${ENV.API_BASE_URL}/auth/url`} className="w-full">
-          <Button type="primary" style="ghost">
+          <Button variant="primary" appearance="ghost">
             <GoogleIcon />
             <div className="flex-1">구글로 시작하기</div>
           </Button>

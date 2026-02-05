@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/Button/Button';
 import PlusIcon from '@/assets/icons/plus.svg?react';
 
 interface NewEngduButtonProps {
@@ -7,7 +7,7 @@ interface NewEngduButtonProps {
 
 function NewEngduButton({ onOpenHandler }: NewEngduButtonProps) {
   return (
-    <Button type="secondary" onClickHandler={onOpenHandler}>
+    <Button variant="secondary" onClickHandler={onOpenHandler}>
       새 잉듀 만들기
       <PlusIcon />
     </Button>
