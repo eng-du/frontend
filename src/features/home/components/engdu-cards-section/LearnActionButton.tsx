@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/Button/Button';
 import RetryIcon from '@/assets/icons/rotate-ccw.svg?react';
 import PlayIcon from '@/assets/icons/play.svg?react';
 import { Link } from 'react-router';

@@ -1,5 +1,5 @@
 import DownIcon from '@/assets/icons/chevron-down.svg?react';
-import PaginationItem from './PaginationItem';
+import PaginationItem from '../PaginationItem/PaginationItem';
 import EllipsisIcon from '@/assets/icons/ellipsis.svg?react';
 
 interface PaginationProps {

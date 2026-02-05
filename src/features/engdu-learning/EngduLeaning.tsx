@@ -1,7 +1,7 @@
 import QuizPanel from './components/quiz-panel/QuizPanel';
 import { useEffect, useRef, useState } from 'react';
 import ReaderSection from './components/reader-section/ReaderSection';
-import ConfettiEffect from '@/components/ConfettiEffect';
+import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
 import ProgressHeader from './components/progress-header/ProgressHeader';
 import { useParams } from 'react-router';
 import { getEngduDetail } from '@/api/engdu';

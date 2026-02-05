@@ -1,9 +1,9 @@
-import Modal from '@/components/Modal';
+import Modal from '@/components/Modal/Modal';
 import EngduTopicInput from './EngduTopicInput';
 import EngduTypeSelector from './EngduTypeSelector';
 import EngduCreateFooter from './EngduCreateFooter';
 import EngduCreateHeader from './EngduCreateHeader';
-import EngduHelperCallout from '@/components/EngduHelperCallout';
+import EngduHelperCallout from '@/components/EngduHelperCallout/EngduHelperCallout';
 import { useState, useEffect } from 'react';
 import type { EngduType } from '@/types/engdu';
 

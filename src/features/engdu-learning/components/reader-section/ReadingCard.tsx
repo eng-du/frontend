@@ -1,4 +1,4 @@
-import Card from '@/components/Card';
+import Card from '@/components/Card/Card';
 import Label from './Label';
 import type { EngduArticle } from '@/types/engdu';
 import Chunk from './Chunk';

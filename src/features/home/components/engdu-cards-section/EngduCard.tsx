@@ -1,4 +1,4 @@
-import Card from '@/components/Card';
+import Card from '@/components/Card/Card';
 import type { EngduSummary } from '@/types/engdu';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import BookIcon from '@/assets/icons/book-open.svg?react';
