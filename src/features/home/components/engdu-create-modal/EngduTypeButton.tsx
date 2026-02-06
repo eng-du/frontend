@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 import RadioIcon from '@/assets/icons/circle.svg?react';
 import RadioSelectedIcon from '@/assets/icons/circle-dot.svg?react';
-import Button from '@/components/Button';
+import Button from '@/components/Button/Button';
 import type { EngduType } from '@/types/engdu';
 
 interface EngduTypeButtonProps {
@@ -13,8 +13,8 @@ interface EngduTypeButtonProps {
 function EngduTypeButton({ value, selected, onSelectHandler }: EngduTypeButtonProps) {
   return (
     <Button
-      type="primary"
-      style="ghost"
+      variant="primary"
+      appearance="ghost"
       onClickHandler={() => onSelectHandler(value)}
       className={cn(
         'relative overflow-hidden',

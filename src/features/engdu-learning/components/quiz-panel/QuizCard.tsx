@@ -1,4 +1,4 @@
-import Card from '@/components/Card';
+import Card from '@/components/Card/Card';
 import { useState } from 'react';
 import type { EngduChoice, EngduQuestion, QuizStatus } from '@/types/quiz';
 import {

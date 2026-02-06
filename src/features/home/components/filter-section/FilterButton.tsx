@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/Button/Button';
 import DownIcon from '@/assets/icons/chevron-down.svg?react';
 import clsx from 'clsx';
 
@@ -16,7 +16,7 @@ function FilterButton<T extends string>({
   selected,
 }: FilterButtonProps<T>) {
   return (
-    <Button type="secondary" style="ghost" onClickHandler={() => setIsOpen((prev) => !prev)}>
+    <Button variant="secondary" appearance="ghost" onClickHandler={() => setIsOpen((prev) => !prev)}>
       {(function () {
         switch (filterKey) {
           case 'sort':

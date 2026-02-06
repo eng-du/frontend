@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/Button/Button';
 import type { EngduType } from '@/types/engdu';
 import { createEngdu } from '@/api/engdu';
 import { useNavigate } from 'react-router';
@@ -18,19 +18,19 @@ function EngduCreateFooter({ selectedEngduType, topic, onCloseHandler }: EngduCr
       const { engduId } = await createEngdu({ topic, level: 'BEGINNER' });
       onCloseHandler();
       navigate(`/learning/${engduId}`);
-    } catch (error) {
+    } catch {
       // TODO: 사용자에게 에러 알림 처리
     }
   };
 
   return (
     <div className="flex gap-3">
-      <Button type="primary" style="ghost" onClickHandler={onCloseHandler}>
+      <Button variant="primary" appearance="ghost" onClickHandler={onCloseHandler}>
         취소
       </Button>
       <Button
-        type="primary"
-        style="fill"
+        variant="primary"
+        appearance="fill"
         disabled={!selectedEngduType || !topic}
         onClickHandler={handleCreateEngdu}
       >
