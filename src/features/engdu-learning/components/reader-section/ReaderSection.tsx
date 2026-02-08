@@ -1,14 +1,17 @@
-import type { DetailEngdu } from '@/types/engdu';
+import { Suspense, useEffect, useRef } from 'react';
 import ReadingCard from './ReadingCard';
-import { useEffect, useRef } from 'react';
+import { Await } from 'react-router';
+import type { EngduPart } from '@/types/engdu';
+import ReadingCardSkeleton from '../skeleton/ReadingCardSkeleton';
 
 interface ReaderSectionProps {
-  engdu: Omit<DetailEngdu, 'questions'>;
+  part1Promise: Promise<EngduPart>;
+  part2Promise: Promise<EngduPart>;
   isLocked: boolean;
   isAllSolved: boolean;
 }
 
-function ReaderSection({ engdu, isLocked, isAllSolved }: ReaderSectionProps) {
+function ReaderSection({ part1Promise, part2Promise, isLocked, isAllSolved }: ReaderSectionProps) {
   const part1Ref = useRef<HTMLDivElement | null>(null);
   const part2Ref = useRef<HTMLDivElement | null>(null);
 
@@ -24,13 +27,21 @@ function ReaderSection({ engdu, isLocked, isAllSolved }: ReaderSectionProps) {
   return (
     <div className="flex flex-col gap-10">
       <div ref={part1Ref}>
-        <ReadingCard part={1} article={engdu.articles[0]} />
+        <Suspense fallback={<ReadingCardSkeleton />}>
+          <Await resolve={part1Promise}>
+            {(p1: EngduPart) => <ReadingCard part={1} article={p1.article} />}
+          </Await>
+        </Suspense>
       </div>
-      {!isLocked && (
-        <div ref={part2Ref}>
-          <ReadingCard part={2} article={engdu.articles[1]} />
-        </div>
-      )}
+      <div ref={part2Ref}>
+        {!isLocked && (
+          <Suspense fallback={<ReadingCardSkeleton />}>
+            <Await resolve={part2Promise}>
+              {(p2: EngduPart) => <ReadingCard part={2} article={p2.article} />}
+            </Await>
+          </Suspense>
+        )}
+      </div>
     </div>
   );
 }
