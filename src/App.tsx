@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from './features/home/Home';
-import EngduLearning from './features/engdu-learning/EngduLeaning';
+import { engduLearningRoute } from './features/engdu-learning/route';
 import Login from './features/login/Login';
 import CallbackGoogle from './features/login/CallbackGoogle';
 import Layout from './Layout';
@@ -13,10 +13,7 @@ function App() {
       children: [
         {
           element: <Layout />,
-          children: [
-            { path: '/', element: <Home /> },
-            { path: '/learning/:engduId', element: <EngduLearning /> },
-          ],
+          children: [{ path: '/', element: <Home /> }, engduLearningRoute],
         },
         { path: '/login', element: <Login /> },
         { path: '/oauth/callback/google', element: <CallbackGoogle /> },
