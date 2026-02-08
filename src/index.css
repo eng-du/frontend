@@ -29,35 +29,74 @@
   /* 색상 초기화 */
   --color-*: initial;
 
-  --color-surface-brand: #2663EB;
-  --color-text-brand: #2663EB;
+  /* =========================
+   Primitive Colors
+   ========================= */
 
+  /* Brand */
+  --color-blue-600: #2663EB;
+
+  /* Neutral */
   --color-white: #FFFFFF;
   --color-black: #000000;
 
-  /* 기본 색상 */
-  --color-surface-default: #F8F9FA;
-  --color-surface-weak: #FCFDFD;
-  --color-surface-strong: #F4F5F7;
-  --color-border-default: #E4E9F1;
-  --color-text-primary: #1F2937;
-  --color-text-secondary: #64758B;
-  --color-text-weak: #FCFDFD;
+  --color-gray-50: #FCFDFD;
+  --color-gray-100: #F8F9FA;
+  --color-gray-200: #F4F5F7;
+  --color-gray-300: #E4E9F1;
+  --color-gray-700: #64758B;
+  --color-gray-900: #1F2937;
 
-  /* 위험, 경고 색상 */
-  --color-surface-danger: #FEF3F3;
-  --color-border-danger: #FFCACA;
-  --color-text-danger: #FF3B30;
+  /* Red */
+  --color-red-50: #FEF3F3;
+  --color-red-200: #FFCACA;
+  --color-red-500: #FF3B30;
 
-  /* 긍정, 성공 색상 */
-  --color-border-positive: #B9F8CF;
-  --color-surface-positive: #F1FDF4;
-  --color-text-positive: #14AE5C;
+  /* Green */
+  --color-green-50: #F1FDF4;
+  --color-green-200: #B9F8CF;
+  --color-green-600: #14AE5C;
 
-  /* 강조, 보상 색상 */
-  --color-border-accent: #FBBF24;
-  --color-surface-accent: #FEF3C7;
-  --color-text-accent: #FBBF24;
+  /* Yellow */
+  --color-yellow-50: #FEF3C7;
+  --color-yellow-400: #FBBF24;
+
+  /* =========================
+   Semantic Colors
+   ========================= */
+
+  /* Brand */
+  --color-surface-brand: var(--color-blue-600);
+  --color-text-brand: var(--color-blue-600);
+
+  /* Base */
+  --color-surface-default: var(--color-gray-100);
+  --color-surface-weak: var(--color-gray-50);
+  --color-surface-strong: var(--color-gray-200);
+
+  --color-border-default: var(--color-gray-300);
+
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-700);
+  --color-text-weak: var(--color-gray-50);
+
+  /* Danger */
+  --color-surface-danger: var(--color-red-50);
+  --color-border-danger: var(--color-red-200);
+  --color-text-danger: var(--color-red-500);
+
+  /* Positive */
+  --color-surface-positive: var(--color-green-50);
+  --color-border-positive: var(--color-green-200);
+  --color-text-positive: var(--color-green-600);
+
+  /* Accent */
+  --color-surface-accent: var(--color-yellow-50);
+  --color-border-accent: var(--color-yellow-400);
+  --color-text-accent: var(--color-yellow-400);
+
+  /* Skeleton */
+  --color-surface-skeleton: var(--color-gray-300);
 
   /* 폰트 */
   --font-pinkfong: 'Pinkfong Baby Shark';
