@@ -1,5 +1,7 @@
 import type {
   DetailEngdu,
+  EngduMeta,
+  EngduPart,
   EngduSummary,
   SortOption,
   StatusOption,
@@ -40,6 +42,30 @@ export async function getEngduDetail(engduId: number) {
   return res.data;
 }
 
+export interface EngduPartResponse {
+  engduId: number;
+  meta: EngduMeta;
+  part: EngduPart;
+}
+
+export async function postEngduPart1(engduId: number) {
+  const res = await api.post<EngduPartResponse>(
+    `/engdu/${engduId}/part`,
+    { step: 'INITIAL' },
+    { timeout: 300_000 },
+  );
+  return res.data;
+}
+
+export async function postEngduPart2(engduId: number) {
+  const res = await api.post<EngduPartResponse>(
+    `/engdu/${engduId}/part`,
+    { step: 'COMPLETE' },
+    { timeout: 300_000 },
+  );
+  return res.data;
+}
+
 interface CreateEngduProps {
   topic: string;
   level: string;
@@ -49,7 +75,7 @@ interface CreateEngduResponse {
   engduId: number;
 }
 
-export async function createEngdu(data: CreateEngduProps): Promise<CreateEngduResponse> {
-  const res = await api.post('/engdu', data, { timeout: 300_000 });
+export async function postEngdu(data: CreateEngduProps): Promise<CreateEngduResponse> {
+  const res = await api.post('/engdu', data);
   return res.data;
 }

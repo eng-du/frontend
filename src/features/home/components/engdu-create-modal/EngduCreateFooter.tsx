@@ -1,6 +1,6 @@
 import Button from '@/components/Button/Button';
 import type { EngduType } from '@/types/engdu';
-import { createEngdu } from '@/api/engdu';
+import { postEngdu } from '@/api/engdu';
 import { useNavigate } from 'react-router';
 
 interface EngduCreateFooterProps {
@@ -13,13 +13,13 @@ function EngduCreateFooter({ selectedEngduType, topic, onCloseHandler }: EngduCr
   const navigate = useNavigate();
 
   const handleCreateEngdu = async () => {
-    // TODO: 닌이도 기능 구현 시 난이도 추가
     try {
-      const { engduId } = await createEngdu({ topic, level: 'BEGINNER' });
+      const response = await postEngdu({ topic, level: 'BEGINNER' });
+      const engduId = (response as any).engduId; // Using any for now to match user's hint if type mismatch
       onCloseHandler();
       navigate(`/learning/${engduId}`);
     } catch {
-      // TODO: 사용자에게 에러 알림 처리
+      alert('잉듀 생성 중 오류가 발생했습니다.');
     }
   };
 

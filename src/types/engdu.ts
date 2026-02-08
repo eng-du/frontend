@@ -51,19 +51,27 @@ export interface EngduSummary {
   createdAt: string;
 }
 
-export interface DetailEngdu {
-  engduId: number;
+export interface EngduMeta {
   title: string;
   topic: string;
-  articles: EngduArticle[];
+}
+
+export interface EngduPart {
+  article: EngduArticle;
   questions: EngduQuestion[];
 }
 
+export interface DetailEngdu {
+  engduId: number;
+  meta: EngduMeta;
+  parts: EngduPart[];
+}
+
 export interface EngduArticle {
-  chunks: EngduChunk[]
+  chunks: EngduChunk[];
 }
 
 export interface EngduChunk {
   en: string;
-  kor: string
+  kor: string;
 }
