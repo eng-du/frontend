@@ -6,28 +6,33 @@ import ProgressHeader from './components/progress-header/ProgressHeader';
 import { useLoaderData } from 'react-router';
 import type { EngduQuestion } from '@/types/quiz';
 import type { EngduPart, EngduMeta } from '@/types/engdu';
+import WaitModal from './components/WaitModal';
 
 function EngduLearning() {
-  const { engduId, meta, part1, part2 } = useLoaderData() as {
+  const { engduId, meta, part1, part2, initial } = useLoaderData() as {
     engduId: number;
     meta: Promise<EngduMeta>;
     part1: Promise<EngduPart>;
     part2: Promise<EngduPart>;
+    initial: { isPart1Ready: boolean; isPart2Ready: boolean };
   };
 
+  const [isWaitModalOpen, setIsWaitModalOpen] = useState(!initial.isPart1Ready);
+  const [isPart1Resolved, setIsPart1Resolved] = useState(initial.isPart1Ready);
   const [localQuestions, setLocalQuestions] = useState<EngduQuestion[]>([]);
   const [step, setStep] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const isInitialUnlocked = useRef<boolean | null>(null);
   const isStepInitialized = useRef(false);
 
-  // part1이 완료되면 퀴즈 상태 동기화
+  // part1이 완료되면 퀴즈 상태 동기화 및 완료 상태 업데이트
   useEffect(() => {
     part1.then((p1) => {
       setLocalQuestions((prev) => (prev.length < 2 ? [...p1.questions] : prev));
       if (isInitialUnlocked.current === null) {
         isInitialUnlocked.current = p1.questions[1]?.isCorrected;
       }
+      setIsPart1Resolved(true);
     });
   }, [part1]);
 
@@ -100,6 +105,9 @@ function EngduLearning() {
         />
       </div>
       {showConfetti && <ConfettiEffect />}
+      {isWaitModalOpen && (
+        <WaitModal isPart1Resolved={isPart1Resolved} onClose={() => setIsWaitModalOpen(false)} />
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ function Chunk({ chunk }: ChunkProps) {
     <span
       className={cn(
         'mr-1 cursor-pointer rounded-lg px-1 py-1 transition-colors',
-        'hover:bg-surface-brand/10',
+        'hover:bg-surface-brand-default/10',
         isTranslate && 'bg-surface-strong text-text-secondary',
       )}
       onClick={() => setIsTranslate((prev) => !prev)}
