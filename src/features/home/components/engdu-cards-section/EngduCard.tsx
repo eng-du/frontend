@@ -37,9 +37,9 @@ function EngduCard({ engdu }: EngduCardProps) {
         </div>
       </div>
       {/* 진행률 프로그래스바 */}
-      <div className="h-2.5 w-full rounded-2xl bg-surface-brand/32">
+      <div className="h-2.5 w-full rounded-2xl bg-surface-brand-default/32">
         <div
-          className="h-full rounded-2xl bg-surface-brand"
+          className="h-full rounded-2xl bg-surface-brand-default"
           style={{ width: `${progress}%` }}
         ></div>
       </div>

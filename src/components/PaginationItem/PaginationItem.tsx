@@ -11,7 +11,7 @@ function PaginationItem({ page, active = false, onChangePage }: PaginationItemPr
     <button
       className={cn(
         'flex h-12 w-12 items-center justify-center rounded-xl',
-        active ? 'bg-surface-brand text-text-weak' : 'border border-border-default bg-surface-weak',
+        active ? 'bg-surface-brand-default text-text-weak' : 'border border-border-default bg-surface-weak',
       )}
       onClick={() => onChangePage(page)}
     >

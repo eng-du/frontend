@@ -28,7 +28,7 @@ export function QuizOptionIdleItem({
         baseStyle,
         'hover:scale-101',
         isSelected
-          ? 'border-text-brand bg-surface-brand/8 text-text-brand'
+          ? 'border-text-brand-primary bg-surface-brand-default/8 text-text-brand-primary'
           : 'hover:bg-surface-default',
       )}
       onClick={onClickHandler}
