@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@import "tailwindcss";
 
 @font-face {
   font-family: 'Pinkfong Baby Shark';
@@ -34,6 +34,8 @@
    ========================= */
 
   /* Brand */
+  --color-blue-50: #EFF6FF;
+  --color-blue-100: #DBEAFE;
   --color-blue-600: #2663EB;
 
   /* Neutral */
@@ -66,8 +68,13 @@
    ========================= */
 
   /* Brand */
-  --color-surface-brand: var(--color-blue-600);
-  --color-text-brand: var(--color-blue-600);
+  --color-surface-brand-default: var(--color-blue-600);
+  --color-surface-brand-weak: var(--color-blue-50);
+  --color-surface-brand-strong: var(--color-blue-100);
+
+  --color-border-brand-weak: var(--color-blue-100);
+
+  --color-text-brand-primary: var(--color-blue-600);
 
   /* Base */
   --color-surface-default: var(--color-gray-100);
@@ -114,6 +121,12 @@
   --text-24: 1.5rem;
   --text-24--line-height: 2rem;
 
+  --text-28: 1.75rem;
+  --text-28--line-height: 2.5rem;
+
+  --text-32: 2rem;
+  --text-32--line-height: 3rem;
+
   --text-36: 2.25rem;
   --text-36--line-height: 3rem;
 
@@ -122,6 +135,7 @@
   --shadow-default: 0px 0px 10px rgba(20, 20, 43, 0.08);
 
   --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-engdu-hammer: engdu-hammer 1s steps(2) infinite;
 
   @keyframes fade-in-up {
     0% {
@@ -132,6 +146,16 @@
     100% {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes engdu-hammer {
+    from {
+      background-position: 0px 0px;
+    }
+
+    to {
+      background-position: -300px 0px;
     }
   }
 
@@ -148,7 +172,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      @apply bg-surface-brand/10 rounded-sm;
+      @apply bg-surface-brand-default/10 rounded-sm;
     }
   }
 }
