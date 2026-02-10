@@ -36,5 +36,9 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     meta: metaPromise,
     part1: part1Promise,
     part2: part2Promise,
+    initial: {
+      isPart1Ready,
+      isPart2Ready,
+    },
   };
 };
