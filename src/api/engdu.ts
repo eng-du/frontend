@@ -6,8 +6,19 @@ import type {
   SortOption,
   StatusOption,
   TypeOption,
+  PhrasalVerb,
 } from '@/types/engdu';
 import api from './api';
+
+export async function getRandomPhrasalVerb(excludeIds: number[]): Promise<PhrasalVerb> {
+  const res = await api.get('/phrasal-verb', {
+    params: { excludeIds },
+    paramsSerializer: {
+      indexes: null,
+    },
+  });
+  return res.data;
+}
 
 interface GetEngdusProps {
   page?: number;
