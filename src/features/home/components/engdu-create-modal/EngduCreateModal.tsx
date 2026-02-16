@@ -6,6 +6,7 @@ import EngduCreateHeader from './EngduCreateHeader';
 import EngduHelperCallout from '@/components/EngduHelperCallout/EngduHelperCallout';
 import { useState, useEffect } from 'react';
 import type { EngduType } from '@/types/engdu';
+import { startRecording, stopRecording, trackEvent } from '@/utils/analytics';
 
 interface EngduCreateModalProps {
   isEngduCreateModalOpen: boolean;
@@ -21,9 +22,17 @@ function EngduCreateModal({
 
   useEffect(() => {
     if (isEngduCreateModalOpen) {
+      trackEvent('engdu_modal_open', { entry_point: 'home' });
+      startRecording();
       setSelectedEngduType('지문');
       setTopic('');
     }
+
+    return () => {
+      if (isEngduCreateModalOpen) {
+        stopRecording();
+      }
+    };
   }, [isEngduCreateModalOpen]);
 
   return (

@@ -2,6 +2,7 @@ import Button from '@/components/Button/Button';
 import type { EngduType } from '@/types/engdu';
 import { postEngdu } from '@/api/engdu';
 import { useNavigate } from 'react-router';
+import { trackEvent } from '@/utils/analytics';
 
 interface EngduCreateFooterProps {
   selectedEngduType: EngduType;
@@ -13,9 +14,13 @@ function EngduCreateFooter({ selectedEngduType, topic, onCloseHandler }: EngduCr
   const navigate = useNavigate();
 
   const handleCreateEngdu = async () => {
+    trackEvent('engdu_create_click', {
+      engdu_type: selectedEngduType,
+      topic_length: topic.length,
+    });
     try {
       const response = await postEngdu({ topic, level: 'BEGINNER' });
-      const engduId = (response as any).engduId; // Using any for now to match user's hint if type mismatch
+      const engduId = response.engduId;
       onCloseHandler();
       navigate(`/learning/${engduId}`);
     } catch {
