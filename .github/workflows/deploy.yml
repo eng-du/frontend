@@ -26,6 +26,7 @@ jobs:
         run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_AMPLITUDE_API_KEY: ${{ secrets.VITE_AMPLITUDE_API_KEY }}
 
       - name: Pack dist
         run: tar -czf dist.tgz dist
