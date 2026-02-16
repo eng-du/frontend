@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import authTokenStore from './authToken';
 import { AuthContext } from './AuthContext';
 import { useLocation } from 'react-router';
+import { setUserId } from '@/utils/analytics';
 
 type AuthProviderProps = { children: React.ReactNode };
 
@@ -24,13 +25,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const me = await getMe();
         setUser(me);
+        setUserId(me.userId);
       } catch {
         setUser(null);
       } finally {
         setLoading(false);
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refreshMe = useCallback(async () => {
@@ -38,6 +40,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const me = await getMe();
       setUser(me);
+      setUserId(me.userId);
       return me;
     } finally {
       setLoading(false);

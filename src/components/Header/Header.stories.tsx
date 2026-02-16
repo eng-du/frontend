@@ -24,10 +24,10 @@ export const LoggedIn: Story = {
     (Story) => (
       <AuthContext
         value={{
-          user: { name: '테스트 유저' },
+          user: { name: '테스트 유저', userId: 1 },
           loading: false,
           isAuthenticated: true,
-          refreshMe: async () => ({ name: '테스트 유저' }),
+          refreshMe: async () => ({ name: '테스트 유저', userId: 1 }),
           clearAuth: () => {},
         }}
       >
@@ -45,7 +45,7 @@ export const LoggedOut: Story = {
           user: null,
           loading: false,
           isAuthenticated: false,
-          refreshMe: async () => ({ name: '로그아웃됨' }),
+          refreshMe: async () => ({ name: '로그아웃됨', userId: 0 }),
           clearAuth: () => {},
         }}
       >
@@ -63,7 +63,7 @@ export const Loading: Story = {
           user: null,
           loading: true,
           isAuthenticated: false,
-          refreshMe: async () => ({ name: '로딩중...' }),
+          refreshMe: async () => ({ name: '로딩중...', userId: 0 }),
           clearAuth: () => {},
         }}
       >
