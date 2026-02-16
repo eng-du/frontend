@@ -1,6 +1,7 @@
 import api from './api';
 
 export type MeResponse = {
+  userId: number;
   name: string;
 };
 

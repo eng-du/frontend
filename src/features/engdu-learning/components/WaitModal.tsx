@@ -1,11 +1,12 @@
 import Modal from '@/components/Modal/Modal';
 import { cn } from '@/utils/cn';
-import engduFullCreate from '@/assets/icons/engdu-full-create.svg'
+import engduFullCreate from '@/assets/icons/engdu-full-create.svg';
 import Button from '@/components/Button/Button';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { getRandomPhrasalVerb } from '@/api/engdu';
 import type { PhrasalVerb } from '@/types/engdu';
 import EyeIcon from '@/assets/icons/eye.svg?react';
+import { trackEvent } from '@/utils/analytics';
 
 interface WaitModalProps {
   isPart1Resolved: boolean;
@@ -17,6 +18,12 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
   const [seenIds, setSeenIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
+  const verbShowTime = useRef(Date.now());
+  const readyNotifiedTime = useRef<number | null>(null);
+
+  useEffect(() => {
+    trackEvent('wait_modal_view', {});
+  }, []);
 
   const fetchNextVerb = useCallback(async (excludeIds: number[]) => {
     setIsLoading(true);
@@ -25,25 +32,45 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
     setSeenIds((prev) => [...prev, verb.id]);
     setIsLoading(false);
     setShowTranslation(false);
+    verbShowTime.current = Date.now();
+    trackEvent('phrasal_verb_view', {
+      verb_en: verb.en,
+      verb_index: excludeIds.length + 1,
+    });
   }, []);
 
   useEffect(() => {
     fetchNextVerb([]);
   }, [fetchNextVerb]);
 
+  useEffect(() => {
+    if (isPart1Resolved && !readyNotifiedTime.current) {
+      readyNotifiedTime.current = Date.now();
+    }
+  }, [isPart1Resolved]);
+
   const handleNextVerb = () => {
-    if (isLoading) return;
+    if (isLoading || !currentVerb) return;
+    trackEvent('phrasal_verb_click_next', {
+      verb_en: currentVerb.en,
+      stay_duration_sec: Math.floor((Date.now() - verbShowTime.current) / 1000),
+    });
     fetchNextVerb(seenIds);
   };
 
+  const handleClose = () => {
+    if (!isPart1Resolved) return;
+    const waitAfterReadySec = readyNotifiedTime.current
+      ? Math.floor((Date.now() - readyNotifiedTime.current) / 1000)
+      : 0;
+    trackEvent('learning_start_click', {
+      wait_after_ready_sec: waitAfterReadySec,
+    });
+    onClose();
+  };
+
   return (
-    <Modal
-      isOpen={true}
-      onCloseHandler={() => {
-        if (!isPart1Resolved) return;
-        onClose();
-      }}
-    >
+    <Modal isOpen={true} onCloseHandler={handleClose}>
       <div className="flex flex-col items-center gap-5 p-7">
         <div
           className={cn(
@@ -76,7 +103,14 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
                   </div>
                   {!showTranslation && (
                     <button
-                      onClick={() => setShowTranslation(true)}
+                      onClick={() => {
+                        setShowTranslation(true);
+                        if (currentVerb) {
+                          trackEvent('phrasal_verb_reveal_translation', {
+                            verb_en: currentVerb.en,
+                          });
+                        }
+                      }}
                       className="absolute flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-default bg-surface-weak px-3 py-1.5"
                     >
                       <EyeIcon className="h-4 w-4 text-text-brand-primary" />
@@ -95,7 +129,7 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
             </div>
           )}
         </div>
-        {isPart1Resolved && <Button onClickHandler={onClose}>학습 시작하기</Button>}
+        {isPart1Resolved && <Button onClickHandler={handleClose}>학습 시작하기</Button>}
       </div>
     </Modal>
   );
