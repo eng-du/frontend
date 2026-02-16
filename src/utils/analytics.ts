@@ -58,7 +58,9 @@ export const initAmplitude = () => {
       sessions: true,
     },
     minIdLength: 1,
-    logLevel: amplitude.Types.LogLevel.Debug,
+    logLevel: import.meta.env.PROD 
+      ? amplitude.Types.LogLevel.None
+      : amplitude.Types.LogLevel.Debug,
   });
 };
 
