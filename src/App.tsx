@@ -5,6 +5,7 @@ import Login from './features/login/Login';
 import CallbackGoogle from './features/login/CallbackGoogle';
 import Layout from './Layout';
 import RootProviders from './RootProviders';
+import MyPage from './features/mypage/MyPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -13,7 +14,11 @@ function App() {
       children: [
         {
           element: <Layout />,
-          children: [{ path: '/', element: <Home /> }, engduLearningRoute],
+          children: [
+            { path: '/', element: <Home /> },
+            engduLearningRoute,
+            { path: '/mypage', element: <MyPage /> },
+          ],
         },
         { path: '/login', element: <Login /> },
         { path: '/oauth/callback/google', element: <CallbackGoogle /> },

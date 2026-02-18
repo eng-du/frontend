@@ -18,7 +18,9 @@ function Header() {
       <ul className="flex gap-5 text-12 text-text-secondary">
         {user ? (
           <>
-            <button className="cursor-pointer">{user.name}</button>
+            <Link to="/mypage">
+              <button className="cursor-pointer">{user.name}</button>
+            </Link>
             <button
               className="cursor-pointer"
               onClick={async () => {
