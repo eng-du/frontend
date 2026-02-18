@@ -8,13 +8,27 @@ interface FormFieldProps {
   type: string;
   Icon: FunctionComponent<SVGProps<SVGSVGElement>>;
   disabled?: boolean;
-  onChangeHandler?: () => void;
+  onChangeHandler?: (newValue: string) => void;
+  maxLength?: number;
 }
 
-function FormField({ label, value, type, Icon, disabled = true, onChangeHandler }: FormFieldProps) {
+function FormField({
+  label,
+  value,
+  type,
+  Icon,
+  disabled = true,
+  onChangeHandler,
+  maxLength,
+}: FormFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
+
+  // 외부에서 value가 바뀌면 내부 상태도 동기화
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   useEffect(() => {
     if (isEditing) {
@@ -41,6 +55,7 @@ function FormField({ label, value, type, Icon, disabled = true, onChangeHandler 
             type={type}
             value={inputValue}
             disabled={!isEditing}
+            maxLength={maxLength}
             onChange={(e) => setInputValue(e.target.value)}
           />
         </div>
@@ -63,8 +78,9 @@ function FormField({ label, value, type, Icon, disabled = true, onChangeHandler 
                 variant="primary"
                 appearance="fill"
                 className="h-13 flex-1 rounded-lg sm:w-20 sm:flex-none"
+                disabled={!inputValue.trim() || inputValue === value}
                 onClickHandler={() => {
-                  onChangeHandler();
+                  onChangeHandler(inputValue);
                   setIsEditing(false);
                 }}
               >
