@@ -2,6 +2,8 @@ import { useAuth } from '@/hooks/useAuth';
 import EngduList from './components/EngduList';
 import EngduCreateModal from './components/engdu-create-modal/EngduCreateModal';
 import { useState } from 'react';
+import LandingFeatureList from './components/landing/LandingFeatureList';
+import Banner from './components/landing/Banner';
 
 function Home() {
   const { user } = useAuth();
@@ -16,7 +18,12 @@ function Home() {
         setIsEngduCreateModalOpen={setIsEngduCreateModalOpen}
       />
     </>
-  ) : null;
+  ) : (
+    <div className="flex w-full flex-col items-center">
+      <Banner />
+      <LandingFeatureList />
+    </div>
+  );
 }
 
 export default Home;
