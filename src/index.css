@@ -130,6 +130,9 @@
   --text-36: 2.25rem;
   --text-36--line-height: 3rem;
 
+  --text-50: 3.125rem;
+  --text-50--line-height: 4rem;
+
   /* 그림자 */
   --shadow-*: initial;
   --shadow-default: 0px 0px 10px rgba(20, 20, 43, 0.08);
