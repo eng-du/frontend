@@ -3,9 +3,9 @@ import { useEffect, useRef, useState, useEffectEvent } from 'react';
 import ReaderSection from './components/reader-section/ReaderSection';
 import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
 import ProgressHeader from './components/progress-header/ProgressHeader';
-import { useLoaderData } from 'react-router';
+import { useNavigate, useLoaderData } from 'react-router';
 import type { EngduQuestion } from '@/types/quiz';
-import type { EngduPart, EngduMeta } from '@/types/engdu';
+import type { EngduPart, EngduMeta, LikeStatus } from '@/types/engdu';
 import WaitModal from './components/WaitModal';
 import { trackEvent, startRecording, stopRecording } from '@/utils/analytics';
 import FeedbackModal from './components/FeedbackModal';
@@ -26,10 +26,18 @@ function EngduLearning() {
   const [step, setStep] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [currentLikeStatus, setCurrentLikeStatus] = useState<LikeStatus>('NONE');
+  const navigate = useNavigate();
   const isInitialUnlocked = useRef<boolean | null>(null);
   const isStepInitialized = useRef(false);
   const mountTime = useRef(Date.now());
   const isMounted = useRef(true);
+
+  useEffect(() => {
+    meta.then((data) => {
+      setCurrentLikeStatus(data.likeStatus);
+    });
+  }, [meta]);
 
   useEffect(() => {
     isMounted.current = true; // Strict Mode 등에서 cleanup 후 다시 mount될 때를 대비해 true로 다시 설정
@@ -168,14 +176,24 @@ function EngduLearning() {
           handleQuestion={handleQuestion}
           part1Promise={part1}
           part2Promise={part2}
-          onFinish={() => setIsFeedbackModalOpen(true)}
+          onFinish={() => {
+            if (currentLikeStatus === 'NONE') {
+              setIsFeedbackModalOpen(true);
+            } else {
+              navigate('/');
+            }
+          }}
         />
       </div>
       {showConfetti && <ConfettiEffect />}
       {isWaitModalOpen && (
         <WaitModal isPart1Resolved={isPart1Resolved} onClose={() => setIsWaitModalOpen(false)} />
       )}
-      <FeedbackModal isOpen={isFeedbackModalOpen} onClose={() => setIsFeedbackModalOpen(false)} />
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        engduId={engduId}
+      />
     </div>
   );
 }

@@ -4,15 +4,17 @@ import { useNavigate } from 'react-router';
 import ThumbsUpIcon from '@/assets/icons/thumbs-up.svg?react';
 import ChickIcon from '@/assets/icons/engdu-face-good.svg?react';
 import FeedbackTypeButton from './FeedbackTypeButton';
+import { postEngduLike } from '@/api/engdu';
 
 interface FeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
+  engduId: number;
 }
 
 type FeedbackState = 'initial' | 'liked' | 'disliked';
 
-export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
+export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModalProps) {
   const [state, setState] = useState<FeedbackState>('initial');
   const navigate = useNavigate();
 
@@ -22,8 +24,15 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     }
   }, [isOpen]);
 
-  const handleFeedback = (feedback: 'liked' | 'disliked') => {
+  const handleFeedback = async (feedback: 'liked' | 'disliked') => {
     setState(feedback);
+
+    try {
+      await postEngduLike(engduId, feedback === 'liked' ? 'LIKE' : 'DISLIKE');
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+    }
+
     setTimeout(() => {
       navigate('/');
     }, 1000);
