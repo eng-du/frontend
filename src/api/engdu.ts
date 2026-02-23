@@ -7,6 +7,7 @@ import type {
   StatusOption,
   TypeOption,
   PhrasalVerb,
+  LikeStatus,
 } from '@/types/engdu';
 import api from './api';
 
@@ -88,5 +89,10 @@ interface CreateEngduResponse {
 
 export async function postEngdu(data: CreateEngduProps): Promise<CreateEngduResponse> {
   const res = await api.post('/engdu', data);
+  return res.data;
+}
+
+export async function postEngduLike(engduId: number, likeStatus: LikeStatus) {
+  const res = await api.post(`/engdu/${engduId}/like`, { likeStatus });
   return res.data;
 }
