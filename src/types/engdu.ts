@@ -5,6 +5,7 @@ export type EngduType = '지문' | '상황극';
 export type SortOption = '최신순' | '오래된순';
 export type TypeOption = '전체' | '지문' | '상황극';
 export type StatusOption = '전체' | '완료' | '미완료';
+export type LikeStatus = 'NONE' | 'LIKE' | 'DISLIKE';
 
 export const SORT_MAP: Record<string, SortOption> = {
   latest: '최신순',
@@ -54,6 +55,7 @@ export interface EngduSummary {
 export interface EngduMeta {
   title: string;
   topic: string;
+  likeStatus: LikeStatus;
 }
 
 export interface EngduPart {
