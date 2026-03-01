@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Home from './features/home/Home';
-import { engduLearningRoute } from './features/engdu-learning/route';
-import Login from './features/login/Login';
-import CallbackGoogle from './features/login/CallbackGoogle';
 import Layout from './Layout';
 import RootProviders from './RootProviders';
-import MyPage from './features/mypage/MyPage';
 import { policyRoute } from './features/policy/route';
+import { homeRoute } from './features/home/route';
+import { engduLearningRoute } from './features/engdu-learning/route';
+import { myPageRoute } from './features/mypage/route';
+import { loginRoute, callbackGoogleRoute } from './features/login/route';
+import { notFoundRoute } from './features/not-found/route';
 
 function App() {
   const router = createBrowserRouter([
@@ -15,15 +15,11 @@ function App() {
       children: [
         {
           element: <Layout />,
-          children: [
-            { path: '/', element: <Home /> },
-            engduLearningRoute,
-            { path: '/mypage', element: <MyPage /> },
-            policyRoute,
-          ],
+          children: [homeRoute, engduLearningRoute, myPageRoute, policyRoute],
         },
-        { path: '/login', element: <Login /> },
-        { path: '/oauth/callback/google', element: <CallbackGoogle /> },
+        loginRoute,
+        callbackGoogleRoute,
+        notFoundRoute,
       ],
     },
   ]);
