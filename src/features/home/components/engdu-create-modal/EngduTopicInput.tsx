@@ -12,8 +12,9 @@ function EngduTopicInput({ value, onChange }: EngduTopicInputProps) {
         name="topic"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="예: 환경 보호, 우주 여행, 일상 대화 등"
+        placeholder="예: 환경 보호, 우주 여행, 일상 대화 등 (최대 30자)"
         className="amp-unmask h-15 rounded-2xl border border-border-default px-5 placeholder:text-text-secondary"
+        maxLength={30}
       />
     </div>
   );
