@@ -1,5 +1,6 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo } from 'react';
 import { getMe, type MeResponse } from '@/api/user';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import authTokenStore from './authToken';
 import { AuthContext } from './AuthContext';
 import { useLocation } from 'react-router';
@@ -9,61 +10,40 @@ type AuthProviderProps = { children: React.ReactNode };
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const { pathname } = useLocation();
+  const queryClient = useQueryClient();
 
-  const [user, setUser] = useState<MeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const isExcluded = pathname.startsWith('/login') || pathname.startsWith('/oauth/callback') || pathname.startsWith('/policy');
+
+  const { data: user = null, isPending } = useQuery<MeResponse | null>({
+    queryKey: ['user', 'me'],
+    queryFn: getMe,
+    enabled: !isExcluded,
+    retry: false,
+  });
 
   useEffect(() => {
-    const isExcluded =
-      pathname.startsWith('/login') ||
-      pathname.startsWith('/oauth/callback') ||
-      pathname.startsWith('/policy');
-
-    if (isExcluded) {
-      setLoading(false);
-      return;
+    if (user) {
+      setUserId(user.userId);
     }
+  }, [user]);
 
-    (async () => {
-      try {
-        const me = await getMe();
-        setUser(me);
-        setUserId(me.userId);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const refreshMe = useCallback(async () => {
-    setLoading(true);
-    try {
-      const me = await getMe();
-      setUser(me);
-      setUserId(me.userId);
-      return me;
-    } finally {
-      setLoading(false);
-    }
+  const refreshMe = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
   }, []);
 
   const clearAuth = useCallback(() => {
     authTokenStore.clear();
-    setUser(null);
+    queryClient.removeQueries({ queryKey: ['user', 'me'], exact: true });
   }, []);
 
   const value = useMemo(
     () => ({
       user,
-      loading,
-      isAuthenticated: !!user && !loading,
+      isPending,
       refreshMe,
       clearAuth,
     }),
-    [user, loading, refreshMe, clearAuth],
+    [user, isPending, refreshMe, clearAuth],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

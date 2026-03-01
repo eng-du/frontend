@@ -3,9 +3,8 @@ import { type MeResponse } from '@/api/user';
 
 type AuthState = {
   user: MeResponse | null;
-  loading: boolean;
-  isAuthenticated: boolean;
-  refreshMe: () => Promise<MeResponse>;
+  isPending: boolean;
+  refreshMe: () => void;
   clearAuth: () => void;
 };
 
