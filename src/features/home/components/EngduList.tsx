@@ -1,7 +1,6 @@
 import { getEngdus } from '@/api/engdu';
 import { useEngduParams } from '@/hooks/useEngduParams';
-import type { EngduSummary } from '@/types/engdu';
-import { useEffect, useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import EmptyCard from './engdu-cards-section/EmptyCard';
 import EngduCards from './engdu-cards-section/EngduCards';
 import EngduListPagination from './EngduListPagination';
@@ -14,26 +13,6 @@ interface EngduListProps {
 }
 
 function EngduList({ onOpenHandler }: EngduListProps) {
-  const { page, sort, type, status, setSort, setStatus, setPage } = useEngduParams();
-
-  const [hasEngdu, setHasEngdu] = useState(false);
-  const [engdus, setEngdus] = useState<EngduSummary[]>([]);
-  const [totalPages, setTotalPages] = useState(0);
-
-  useEffect(() => {
-    (async () => {
-      const { content, totalPages, hasEngdu } = await getEngdus({
-        page,
-        sort,
-        type,
-        status,
-      });
-      setEngdus(content);
-      setTotalPages(totalPages);
-      setHasEngdu(hasEngdu);
-    })();
-  }, [page, sort, type, status]);
-
   return (
     <div>
       {/* 나의 잉듀 목록 */}
@@ -45,39 +24,62 @@ function EngduList({ onOpenHandler }: EngduListProps) {
             생성된 잉듀를 읽고 퀴즈를 풀며 나만의 영어 학습을 이어가세요.
           </div>
         </div>
-        {hasEngdu ? (
-          <>
-            {/* 필터링 버튼, 생성 버튼 */}
-            <div className="flex flex-col gap-2.5 justify-between md:flex-row">
-              <div className="flex gap-2.5">
-                <Dropdown filterKey="sort" value={sort} setValue={setSort} />
-                {/* <Dropdown filterKey="type" value={type} setValue={setType} /> */}
-                <Dropdown filterKey="status" value={status} setValue={setStatus} />
-              </div>
-              <NewEngduButton onOpenHandler={onOpenHandler} />
-            </div>
-            {/* 잉듀 목록 */}
-            {engdus.length > 0 ? (
-              <>
-                <EngduCards engdus={engdus} />
-                <EngduListPagination totalPages={totalPages} page={page} onChangePage={setPage} />
-              </>
-            ) : (
-              <div className="flex flex-col items-center gap-4">
-                <EngduFullFindIcon  />
-                <div className="text-text-secondary text-center">
-                  조건을 만족하는 잉듀를 찾을 수 없어요.
-                  <br />
-                  조건을 변경해 다시 검색해보세요!
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <EmptyCard onOpenHandler={onOpenHandler} />
-        )}
+        {/* 데이터 및 필터 영역 */}
+        <EngduListContent onOpenHandler={onOpenHandler} />
       </div>
     </div>
+  );
+}
+
+function EngduListContent({ onOpenHandler }: EngduListProps) {
+  const { page, sort, type, status, setSort, setStatus, setPage } = useEngduParams();
+
+  const { data, isPending } = useQuery({
+    queryKey: ['engdu', 'engdus', { page, sort, type, status }],
+    queryFn: () => getEngdus({ page, sort, type, status }),
+    placeholderData: keepPreviousData,
+  });
+
+  if (isPending) {
+    return null;
+  }
+
+  const engdus = data?.content ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const hasEngdu = data?.hasEngdu ?? false;
+
+  if (!hasEngdu) {
+    return <EmptyCard onOpenHandler={onOpenHandler} />;
+  }
+
+  return (
+    <>
+      {/* 필터링 버튼, 생성 버튼 */}
+      <div className="flex flex-col justify-between gap-2.5 md:flex-row">
+        <div className="flex gap-2.5">
+          <Dropdown filterKey="sort" value={sort} setValue={setSort} />
+          <Dropdown filterKey="status" value={status} setValue={setStatus} />
+        </div>
+        <NewEngduButton onOpenHandler={onOpenHandler} />
+      </div>
+
+      {/* 잉듀 목록 */}
+      {engdus.length > 0 ? (
+        <>
+          <EngduCards engdus={engdus} />
+          <EngduListPagination totalPages={totalPages} page={page} onChangePage={setPage} />
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-4">
+          <EngduFullFindIcon />
+          <div className="text-center text-text-secondary">
+            조건을 만족하는 잉듀를 찾을 수 없어요.
+            <br />
+            조건을 변경해 다시 검색해보세요!
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
