@@ -20,7 +20,7 @@ export async function getMeDetail() {
   return res.data;
 }
 
-export async function patchMeName(name: string) {
+export async function patchName(name: string) {
   await api.patch('/user/name', { name });
 }
 
