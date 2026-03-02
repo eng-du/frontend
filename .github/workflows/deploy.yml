@@ -56,15 +56,17 @@ jobs:
 
       - name: Deploy (swap dist)
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
-          ENV_NAME: ${{ env.ENV_NAME }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DEPLOY_DIR,ENV_NAME
           script: |
-            set -e
+            set -euo pipefail
+            : "${DEPLOY_DIR:?DEPLOY_DIR is not set}"
+            : "${ENV_NAME:?ENV_NAME is not set}"
+
+            mkdir -p ~/deploy
             cd ~/deploy
 
             echo "Deploying $ENV_NAME to $DEPLOY_DIR"
