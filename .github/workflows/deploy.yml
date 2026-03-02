@@ -1,8 +1,8 @@
-name: Deploy Frontend to EC2
+name: Deploy Frontend to EC2 (dev/prod)
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
 
 jobs:
   deploy:
@@ -22,11 +22,25 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Set target by branch
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "DEPLOY_DIR=/home/${{ secrets.EC2_USER }}/frontend-prod" >> $GITHUB_ENV
+            echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL_PROD }}" >> $GITHUB_ENV
+            echo "VITE_AMPLITUDE_API_KEY=${{ secrets.VITE_AMPLITUDE_API_KEY_PROD }}" >> $GITHUB_ENV
+            echo "ENV_NAME=prod" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_DIR=/home/${{ secrets.EC2_USER }}/frontend-dev" >> $GITHUB_ENV
+            echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "VITE_AMPLITUDE_API_KEY=${{ secrets.VITE_AMPLITUDE_API_KEY_DEV }}" >> $GITHUB_ENV
+            echo "ENV_NAME=dev" >> $GITHUB_ENV
+          fi
+
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_AMPLITUDE_API_KEY: ${{ secrets.VITE_AMPLITUDE_API_KEY }}
+          VITE_API_BASE_URL: ${{ env.VITE_API_BASE_URL }}
+          VITE_AMPLITUDE_API_KEY: ${{ env.VITE_AMPLITUDE_API_KEY }}
 
       - name: Pack dist
         run: tar -czf dist.tgz dist
@@ -42,6 +56,9 @@ jobs:
 
       - name: Deploy (swap dist)
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
+          ENV_NAME: ${{ env.ENV_NAME }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -50,16 +67,18 @@ jobs:
             set -e
             cd ~/deploy
 
-            rm -rf ~/frontend/dist_new
-            mkdir -p ~/frontend/dist_new
-            tar -xzf dist.tgz -C ~/frontend/dist_new
+            echo "Deploying $ENV_NAME to $DEPLOY_DIR"
 
-            rm -rf ~/frontend/dist_prev
-            if [ -d ~/frontend/dist ]; then
-              mv ~/frontend/dist ~/frontend/dist_prev
+            rm -rf "$DEPLOY_DIR/dist_new"
+            mkdir -p "$DEPLOY_DIR/dist_new"
+            tar -xzf dist.tgz -C "$DEPLOY_DIR/dist_new"
+
+            rm -rf "$DEPLOY_DIR/dist_prev"
+            if [ -d "$DEPLOY_DIR/dist" ]; then
+              mv "$DEPLOY_DIR/dist" "$DEPLOY_DIR/dist_prev"
             fi
 
-            mv ~/frontend/dist_new/dist ~/frontend/dist
+            mv "$DEPLOY_DIR/dist_new/dist" "$DEPLOY_DIR/dist"
 
             sudo nginx -t
             sudo systemctl reload nginx
