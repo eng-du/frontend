@@ -14,7 +14,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const isExcluded = pathname.startsWith('/login') || pathname.startsWith('/oauth/callback');
+    const isExcluded =
+      pathname.startsWith('/login') ||
+      pathname.startsWith('/oauth/callback') ||
+      pathname.startsWith('/policy');
 
     if (isExcluded) {
       setLoading(false);

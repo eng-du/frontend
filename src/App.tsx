@@ -6,6 +6,7 @@ import CallbackGoogle from './features/login/CallbackGoogle';
 import Layout from './Layout';
 import RootProviders from './RootProviders';
 import MyPage from './features/mypage/MyPage';
+import { policyRoute } from './features/policy/route';
 
 function App() {
   const router = createBrowserRouter([
@@ -18,6 +19,7 @@ function App() {
             { path: '/', element: <Home /> },
             engduLearningRoute,
             { path: '/mypage', element: <MyPage /> },
+            policyRoute,
           ],
         },
         { path: '/login', element: <Login /> },
