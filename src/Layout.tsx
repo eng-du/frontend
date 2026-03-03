@@ -69,7 +69,7 @@ export default function Layout() {
   return (
     <div>
       <Header />
-      <main className="h-dvh pt-15">{showSplash ? <Splash /> : !isPending && <Outlet />}</main>
+      <main className="min-h-dvh pt-15">{showSplash ? <Splash /> : !isPending && <Outlet />}</main>
       {!isLearningPage && <Footer />}
     </div>
   );
