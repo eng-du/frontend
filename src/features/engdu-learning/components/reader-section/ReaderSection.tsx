@@ -1,17 +1,23 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import ReadingCard from './ReadingCard';
-import { Await } from 'react-router';
-import type { EngduPart } from '@/types/engdu';
 import ReadingCardSkeleton from '../skeleton/ReadingCardSkeleton';
+import type { EngduArticle } from '@/types/engdu';
 
 interface ReaderSectionProps {
-  part1Promise: Promise<EngduPart>;
-  part2Promise: Promise<EngduPart>;
+  initialArticle?: EngduArticle;
+  completeArticle?: EngduArticle;
   isLocked: boolean;
   isAllSolved: boolean;
+  isCompleteGenerating: boolean;
 }
 
-function ReaderSection({ part1Promise, part2Promise, isLocked, isAllSolved }: ReaderSectionProps) {
+function ReaderSection({
+  initialArticle,
+  completeArticle,
+  isLocked,
+  isAllSolved,
+  isCompleteGenerating,
+}: ReaderSectionProps) {
   const part1Ref = useRef<HTMLDivElement | null>(null);
   const part2Ref = useRef<HTMLDivElement | null>(null);
 
@@ -22,24 +28,21 @@ function ReaderSection({ part1Promise, part2Promise, isLocked, isAllSolved }: Re
         block: 'start',
       });
     }
-  }, [isLocked]);
+  }, [isLocked, isAllSolved]);
 
   return (
     <div className="flex flex-col gap-10">
       <div ref={part1Ref}>
-        <Suspense fallback={<ReadingCardSkeleton />}>
-          <Await resolve={part1Promise}>
-            {(p1: EngduPart) => <ReadingCard part={1} article={p1.article} />}
-          </Await>
-        </Suspense>
+        {!initialArticle ? (
+          <ReadingCardSkeleton />
+        ) : (
+          <ReadingCard part={1} article={initialArticle} />
+        )}
       </div>
       <div ref={part2Ref}>
-        {!isLocked && (
-          <Suspense fallback={<ReadingCardSkeleton />}>
-            <Await resolve={part2Promise}>
-              {(p2: EngduPart) => <ReadingCard part={2} article={p2.article} />}
-            </Await>
-          </Suspense>
+        {isCompleteGenerating && !completeArticle && <ReadingCardSkeleton />}
+        {!isLocked && completeArticle && (
+          <ReadingCard part={2} article={completeArticle} />
         )}
       </div>
     </div>

@@ -89,21 +89,21 @@ function EngduLearning() {
   }, [engduId, !!engduDetail?.parts.INITIAL]);
 
   // 파트 생성 완료 트래킹
-  const part1Tracked = useRef(false);
-  const part2Tracked = useRef(false);
+  const initialTracked = useRef(false);
+  const completeTracked = useRef(false);
 
   useEffect(() => {
-    if (engduDetail?.parts.INITIAL && !part1Tracked.current) {
-      part1Tracked.current = true;
-      trackEvent('part1_generate_success', {
+    if (engduDetail?.parts.INITIAL && !initialTracked.current) {
+      initialTracked.current = true;
+      trackEvent('initial_generate_success', {
         engdu_id: engduId,
         wait_duration_sec: Math.floor((Date.now() - mountTime.current) / 1000),
       });
     }
 
-    if (engduDetail?.parts.COMPLETE && !part2Tracked.current) {
-      part2Tracked.current = true;
-      trackEvent('part2_generate_success', {
+    if (engduDetail?.parts.COMPLETE && !completeTracked.current) {
+      completeTracked.current = true;
+      trackEvent('complete_generate_success', {
         engdu_id: engduId,
         arrival_at_quiz_index: step + 1,
         total_gen_duration_sec: Math.floor((Date.now() - mountTime.current) / 1000),
@@ -127,7 +127,7 @@ function EngduLearning() {
       engdu_id: engduId,
       quiz_index: quizIndex,
       is_correct: isCorrected,
-      is_part2_ready: !!engduDetail?.parts.COMPLETE,
+      is_complete_ready: !!engduDetail?.parts.COMPLETE,
     });
 
     // 캐시 업데이트
@@ -156,7 +156,9 @@ function EngduLearning() {
   return (
     <div className="relative flex h-[calc(100dvh-60px)] flex-col">
       <ProgressHeader
-        engduDetail={engduDetail}
+        title={engduDetail?.meta?.title}
+        isInitialReady={!!engduDetail?.parts.INITIAL}
+        isCompleteReady={!!engduDetail?.parts.COMPLETE}
         step={step}
         setStep={setStep}
         isQuestionsCorrected={allQuestions.map((q: EngduQuestion) => q.isCorrected)}
@@ -164,13 +166,14 @@ function EngduLearning() {
       <div className="pointer-events-none absolute top-35 right-0 left-0 z-10 h-5 bg-surface-default" />
       <div className="grid h-full flex-1 snap-y snap-mandatory scroll-py-10 grid-cols-[7fr_5fr] gap-10 overflow-scroll px-25 py-10">
         <ReaderSection
-          engduDetail={engduDetail}
+          initialArticle={engduDetail?.parts.INITIAL?.article}
+          completeArticle={engduDetail?.parts.COMPLETE?.article}
           isLocked={!initialQuestions.every((q: EngduQuestion) => q.isCorrected)}
           isAllSolved={
             initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
             completeQuestions.every((q: EngduQuestion) => q.isCorrected)
           }
-          isPart2Generating={isCompleteGenerating}
+          isCompleteGenerating={isCompleteGenerating}
         />
         <QuizPanel
           engduId={engduId}
@@ -191,7 +194,7 @@ function EngduLearning() {
       {showConfetti && <ConfettiEffect />}
       {isWaitModalOpen && (
         <WaitModal
-          isPart1Resolved={!isInitialGenerating}
+          isInitialResolved={!isInitialGenerating}
           onClose={() => setIsWaitModalOpen(false)}
         />
       )}
