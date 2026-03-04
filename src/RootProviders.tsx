@@ -22,7 +22,7 @@ export default function RootProviders() {
         <Outlet />
         <ScrollRestoration />
       </AuthProvider>
-      <Toaster richColors position="top-center" />
+      <Toaster richColors position="top-center" style={{ zIndex: 10000 }} />
       <Suspense fallback={null}>
         <ReactQueryDevtools />
       </Suspense>
