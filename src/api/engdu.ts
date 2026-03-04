@@ -1,26 +1,18 @@
 import type {
-  DetailEngdu,
-  EngduMeta,
-  EngduPart,
   EngduSummary,
   SortOption,
   StatusOption,
   TypeOption,
-  PhrasalVerb,
   LikeStatus,
+  EngduPartType,
+  EngduPartStatus,
+  EngduPartData,
+  EngduMeta,
+  EngduPart,
 } from '@/types/engdu';
 import api from './api';
 
-export async function getRandomPhrasalVerb(excludeIds: number[]): Promise<PhrasalVerb> {
-  const res = await api.get('/phrasal-verb', {
-    params: { excludeIds },
-    paramsSerializer: {
-      indexes: null,
-    },
-  });
-  return res.data;
-}
-
+/** 잉듀 목록 조회하기 */
 interface GetEngdusProps {
   page?: number;
   sort?: SortOption;
@@ -49,35 +41,8 @@ export async function getEngdus({
   return res.data;
 }
 
-export async function getEngduDetail(engduId: number) {
-  const res = await api.get<DetailEngdu>(`/engdu/${engduId}`);
-  return res.data;
-}
 
-export interface EngduPartResponse {
-  engduId: number;
-  meta: EngduMeta;
-  part: EngduPart;
-}
-
-export async function postEngduPart1(engduId: number) {
-  const res = await api.post<EngduPartResponse>(
-    `/engdu/${engduId}/part`,
-    { step: 'INITIAL' },
-    { timeout: 300_000 },
-  );
-  return res.data;
-}
-
-export async function postEngduPart2(engduId: number) {
-  const res = await api.post<EngduPartResponse>(
-    `/engdu/${engduId}/part`,
-    { step: 'COMPLETE' },
-    { timeout: 300_000 },
-  );
-  return res.data;
-}
-
+/** 비어있는 잉듀 생성하기 */
 interface CreateEngduProps {
   topic: string;
   level: string;
@@ -92,6 +57,41 @@ export async function postEngdu(data: CreateEngduProps): Promise<CreateEngduResp
   return res.data;
 }
 
+
+/** 잉듀 상세 조회하기 */
+export interface EngduDetailResponse {
+  engduId: number;
+  meta: EngduMeta | null;
+  parts: Record<EngduPartType, EngduPart | null>;
+}
+
+export async function getEngduDetail(engduId: number) {
+  const res = await api.get<EngduDetailResponse>(`/engdu/${engduId}`);
+  return res.data;
+}
+
+
+/** 잉듀 파트 생성하기 */
+export async function postEngduPart(engduId: number, partType: EngduPartType) {
+  const res = await api.post(`/engdu/${engduId}/part/${partType}`);
+  return res.data;
+}
+
+
+/** 잉듀 파트 조회하기(폴링) */
+export interface EngduPartResponse {
+  partType: EngduPartType;
+  status: EngduPartStatus;
+  data: EngduPartData | null;
+}
+
+export async function getEngduPart(engduId: number, partType: EngduPartType) {
+  const res = await api.get<EngduPartResponse>(`/engdu/${engduId}/part/${partType}`);
+  return res.data;
+}
+
+
+/** 잉듀에 좋아요/싫어요 누르기 */
 export async function postEngduLike(engduId: number, likeStatus: LikeStatus) {
   const res = await api.post(`/engdu/${engduId}/like`, { likeStatus });
   return res.data;
