@@ -27,12 +27,12 @@ function WaitModal({ isInitialResolved, onClose }: WaitModalProps) {
 
   const { mutate, data: currentVerb, isPending } = useMutation({
     mutationFn: (excludeIds: number[]) => getRandomPhrasalVerb(excludeIds),
-    onSuccess: (verb) => {
+    onSuccess: (verb, excludeIds) => {
       setShowTranslation(false);
       verbShowTime.current = Date.now();
       trackEvent('phrasal_verb_view', {
         verb_en: verb.en,
-        verb_index: seenIds.length + 1,
+        verb_index: excludeIds.length + 1,
       });
     },
     onError: () => {
