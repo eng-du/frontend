@@ -8,7 +8,8 @@ interface FormFieldProps {
   type: string;
   Icon: FunctionComponent<SVGProps<SVGSVGElement>>;
   disabled?: boolean;
-  onChangeHandler?: (newValue: string) => void;
+  onChangeHandler?: (newValue: string) => Promise<unknown>;
+  isSaving?: boolean;
   maxLength?: number;
 }
 
@@ -19,13 +20,13 @@ function FormField({
   Icon,
   disabled = true,
   onChangeHandler,
+  isSaving,
   maxLength,
 }: FormFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
 
-  // 외부에서 value가 바뀌면 내부 상태도 동기화
   useEffect(() => {
     setInputValue(value);
   }, [value]);
@@ -78,9 +79,9 @@ function FormField({
                 variant="primary"
                 appearance="fill"
                 className="h-13 flex-1 rounded-lg sm:w-20 sm:flex-none"
-                disabled={!inputValue.trim() || inputValue === value}
-                onClickHandler={() => {
-                  onChangeHandler(inputValue);
+                disabled={isSaving || !inputValue.trim() || inputValue === value}
+                onClickHandler={async () => {
+                  await onChangeHandler(inputValue);
                   setIsEditing(false);
                 }}
               >

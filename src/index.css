@@ -139,6 +139,8 @@
 
   --animate-fade-in-up: fade-in-up 0.5s ease-out;
   --animate-engdu-hammer: engdu-hammer 1s steps(2) infinite;
+  --animate-ripple: ripple 2.4s ease-out infinite;
+  --animate-chick-bounce: chick-bounce 1.6s ease-in-out infinite;
 
   @keyframes fade-in-up {
     0% {
@@ -159,6 +161,32 @@
 
     to {
       background-position: -300px 0px;
+    }
+  }
+
+  @keyframes ripple {
+    0% {
+      width: 40px;
+      height: 40px;
+      opacity: 0.5;
+    }
+
+    100% {
+      width: 400px;
+      height: 400px;
+      opacity: 0;
+    }
+  }
+
+  @keyframes chick-bounce {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-15px);
     }
   }
 

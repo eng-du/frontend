@@ -1,10 +1,12 @@
 import Modal from '@/components/Modal/Modal';
 import { useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import ThumbsUpIcon from '@/assets/icons/thumbs-up.svg?react';
 import ChickIcon from '@/assets/icons/engdu-face-good.svg?react';
 import FeedbackTypeButton from './FeedbackTypeButton';
 import { postEngduLike } from '@/api/engdu';
+import { toast } from 'sonner';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -24,18 +26,22 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
     }
   }, [isOpen]);
 
-  const handleFeedback = async (feedback: 'liked' | 'disliked') => {
-    setState(feedback);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (feedback: 'LIKE' | 'DISLIKE') => postEngduLike(engduId, feedback),
+    onSuccess: (_, feedback) => {
+      setState(feedback === 'LIKE' ? 'liked' : 'disliked');
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    },
+    onError: () => {
+      toast.error('평가를 남기는데 실패했습니다. 다시 시도해주세요.');
+    },
+  });
 
-    try {
-      await postEngduLike(engduId, feedback === 'liked' ? 'LIKE' : 'DISLIKE');
-    } catch (error) {
-      console.error('Failed to submit feedback:', error);
-    }
-
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+  const handleFeedback = (feedback: 'liked' | 'disliked') => {
+    if (isPending) return;
+    mutate(feedback === 'liked' ? 'LIKE' : 'DISLIKE');
   };
 
   return (
@@ -60,7 +66,7 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
             isActive={state === 'liked'}
             onClick={() => handleFeedback('liked')}
             variant="liked"
-            disabled={state !== 'initial'}
+            disabled={isPending || state !== 'initial'}
           />
           <FeedbackTypeButton
             label="별로에요"
@@ -68,7 +74,7 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
             isActive={state === 'disliked'}
             onClick={() => handleFeedback('disliked')}
             variant="disliked"
-            disabled={state !== 'initial'}
+            disabled={isPending || state !== 'initial'}
           />
         </div>
 
@@ -76,7 +82,8 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
           {state === 'initial' ? (
             <button
               onClick={() => navigate('/')}
-              className="cursor-pointer text-16 text-text-secondary underline decoration-text-secondary/50 decoration-1 underline-offset-4"
+              disabled={isPending}
+              className="cursor-pointer text-16 text-text-secondary underline decoration-text-secondary/50 decoration-1 underline-offset-4 disabled:opacity-50"
             >
               다음에 할게요
             </button>

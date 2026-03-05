@@ -1,46 +1,49 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import ReadingCard from './ReadingCard';
-import { Await } from 'react-router';
-import type { EngduPart } from '@/types/engdu';
 import ReadingCardSkeleton from '../skeleton/ReadingCardSkeleton';
+import type { EngduArticle } from '@/types/engdu';
 
 interface ReaderSectionProps {
-  part1Promise: Promise<EngduPart>;
-  part2Promise: Promise<EngduPart>;
+  initialArticle?: EngduArticle;
+  completeArticle?: EngduArticle;
   isLocked: boolean;
   isAllSolved: boolean;
 }
 
-function ReaderSection({ part1Promise, part2Promise, isLocked, isAllSolved }: ReaderSectionProps) {
-  const part1Ref = useRef<HTMLDivElement | null>(null);
-  const part2Ref = useRef<HTMLDivElement | null>(null);
+function ReaderSection({
+  initialArticle,
+  completeArticle,
+  isLocked,
+  isAllSolved,
+}: ReaderSectionProps) {
+  const initialRef = useRef<HTMLDivElement | null>(null);
+  const completeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!isAllSolved && !isLocked) {
-      part2Ref.current?.scrollIntoView({
+      completeRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
     }
-  }, [isLocked]);
+  }, [isLocked, isAllSolved]);
 
   return (
     <div className="flex flex-col gap-10">
-      <div ref={part1Ref}>
-        <Suspense fallback={<ReadingCardSkeleton />}>
-          <Await resolve={part1Promise}>
-            {(p1: EngduPart) => <ReadingCard part={1} article={p1.article} />}
-          </Await>
-        </Suspense>
-      </div>
-      <div ref={part2Ref}>
-        {!isLocked && (
-          <Suspense fallback={<ReadingCardSkeleton />}>
-            <Await resolve={part2Promise}>
-              {(p2: EngduPart) => <ReadingCard part={2} article={p2.article} />}
-            </Await>
-          </Suspense>
+      <div ref={initialRef}>
+        {!initialArticle ? (
+          <ReadingCardSkeleton />
+        ) : (
+          <ReadingCard part={1} article={initialArticle} />
         )}
+      </div>
+      <div ref={completeRef}>
+        {!isLocked &&
+          (!completeArticle ? (
+            <ReadingCardSkeleton />
+          ) : (
+            <ReadingCard part={2} article={completeArticle} />
+          ))}
       </div>
     </div>
   );

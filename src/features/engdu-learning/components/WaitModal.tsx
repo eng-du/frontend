@@ -2,21 +2,21 @@ import Modal from '@/components/Modal/Modal';
 import { cn } from '@/utils/cn';
 import engduFullCreate from '@/assets/icons/engdu-full-create.svg';
 import Button from '@/components/Button/Button';
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { getRandomPhrasalVerb } from '@/api/engdu';
-import type { PhrasalVerb } from '@/types/engdu';
+import { useEffect, useState, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
+
 import EyeIcon from '@/assets/icons/eye.svg?react';
 import { trackEvent } from '@/utils/analytics';
+import { getRandomPhrasalVerb } from '@/api/phrasal-verb';
+import { toast } from 'sonner';
 
 interface WaitModalProps {
-  isPart1Resolved: boolean;
+  isInitialResolved: boolean;
   onClose: () => void;
 }
 
-function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
-  const [currentVerb, setCurrentVerb] = useState<PhrasalVerb | null>(null);
+function WaitModal({ isInitialResolved, onClose }: WaitModalProps) {
   const [seenIds, setSeenIds] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
   const verbShowTime = useRef(Date.now());
   const readyNotifiedTime = useRef<number | null>(null);
@@ -25,41 +25,44 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
     trackEvent('wait_modal_view', {});
   }, []);
 
-  const fetchNextVerb = useCallback(async (excludeIds: number[]) => {
-    setIsLoading(true);
-    const verb = await getRandomPhrasalVerb(excludeIds);
-    setCurrentVerb(verb);
-    setSeenIds((prev) => [...prev, verb.id]);
-    setIsLoading(false);
-    setShowTranslation(false);
-    verbShowTime.current = Date.now();
-    trackEvent('phrasal_verb_view', {
-      verb_en: verb.en,
-      verb_index: excludeIds.length + 1,
-    });
-  }, []);
+  const { mutate, data: currentVerb, isPending } = useMutation({
+    mutationFn: (excludeIds: number[]) => getRandomPhrasalVerb(excludeIds),
+    onSuccess: (verb, excludeIds) => {
+      setShowTranslation(false);
+      verbShowTime.current = Date.now();
+      trackEvent('phrasal_verb_view', {
+        verb_en: verb.en,
+        verb_index: excludeIds.length + 1,
+      });
+    },
+    onError: () => {
+      toast.error('구동사 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
+    },
+  });
 
   useEffect(() => {
-    fetchNextVerb([]);
-  }, [fetchNextVerb]);
+    mutate([]);
+  }, [mutate]);
 
   useEffect(() => {
-    if (isPart1Resolved && !readyNotifiedTime.current) {
+    if (isInitialResolved && !readyNotifiedTime.current) {
       readyNotifiedTime.current = Date.now();
     }
-  }, [isPart1Resolved]);
+  }, [isInitialResolved]);
 
   const handleNextVerb = () => {
-    if (isLoading || !currentVerb) return;
+    if (isPending || !currentVerb) return;
     trackEvent('phrasal_verb_click_next', {
       verb_en: currentVerb.en,
       stay_duration_sec: Math.floor((Date.now() - verbShowTime.current) / 1000),
     });
-    fetchNextVerb(seenIds);
+    const nextIds = [...seenIds, currentVerb.id];
+    setSeenIds(nextIds);
+    mutate(nextIds);
   };
 
   const handleClose = () => {
-    if (!isPart1Resolved) return;
+    if (!isInitialResolved) return;
     const waitAfterReadySec = readyNotifiedTime.current
       ? Math.floor((Date.now() - readyNotifiedTime.current) / 1000)
       : 0;
@@ -75,12 +78,12 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
         <div
           className={cn(
             'h-37.5 w-37.5 bg-size-[450px_150px] bg-no-repeat',
-            isPart1Resolved ? 'animate-none bg-position-[-300px_0px]' : 'animate-engdu-hammer',
+            isInitialResolved ? 'animate-none bg-position-[-300px_0px]' : 'animate-engdu-hammer',
           )}
           style={{ backgroundImage: `url(${engduFullCreate})` }}
         />
         <div className="text-center font-pinkfong text-32 font-bold whitespace-pre-line">
-          {isPart1Resolved
+          {isInitialResolved
             ? '잉듀가 만들어졌어요!\n학습을 시작해보세요'
             : '뚝딱 뚝딱 잉듀가\n만들어지고 있어요~'}
         </div>
@@ -122,14 +125,14 @@ function WaitModal({ isPart1Resolved, onClose }: WaitModalProps) {
               <button
                 className="cursor-pointer text-12 text-text-secondary underline underline-offset-2 disabled:opacity-50"
                 onClick={handleNextVerb}
-                disabled={isLoading}
+                disabled={isPending}
               >
                 다음 구동사 보기
               </button>
             </div>
           )}
         </div>
-        {isPart1Resolved && <Button onClickHandler={handleClose}>학습 시작하기</Button>}
+        {isInitialResolved && <Button onClickHandler={handleClose}>학습 시작하기</Button>}
       </div>
     </Modal>
   );

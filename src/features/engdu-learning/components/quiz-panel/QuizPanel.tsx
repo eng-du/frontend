@@ -1,9 +1,7 @@
-import { Suspense } from 'react';
-import { Await } from 'react-router';
-import type { EngduPart } from '@/types/engdu';
 import type { EngduQuestion } from '@/types/quiz';
 import QuizCard from './QuizCard';
 import QuizCardSkeleton from '../skeleton/QuizCardSkeleton';
+import type { EngduDetailResponse } from '@/api/engdu';
 
 interface QuizPanelProps {
   engduId: number;
@@ -11,9 +9,9 @@ interface QuizPanelProps {
   handleQuestion: (questionId: number, isCorrected: boolean, answer: number) => void;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  part1Promise: Promise<EngduPart>;
-  part2Promise: Promise<EngduPart>;
+  isGenerating: boolean;
   onFinish: () => void;
+  engduDetail?: EngduDetailResponse;
 }
 
 function QuizPanel({
@@ -22,39 +20,43 @@ function QuizPanel({
   handleQuestion,
   step,
   setStep,
-  part1Promise,
-  part2Promise,
+  isGenerating,
   onFinish,
+  engduDetail,
 }: QuizPanelProps) {
-  const isPart1 = step < 2;
-  const targetPromise = isPart1 ? part1Promise : part2Promise;
+  const isInitial = step < 2;
+  const currentPart = isInitial ? engduDetail?.parts.INITIAL : engduDetail?.parts.COMPLETE;
+
+  if (isGenerating && !currentPart) {
+    return (
+      <div className="sticky top-0 h-fit">
+        <QuizCardSkeleton />
+      </div>
+    );
+  }
+
+  const question = questions[step];
+
+  if (!question) {
+    return (
+      <div className="sticky top-0 h-fit">
+        <QuizCardSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="sticky top-0 h-fit">
-      <Suspense fallback={<QuizCardSkeleton />}>
-        <Await resolve={targetPromise}>
-          {(resolvedPart: EngduPart) => {
-            // Use local questions if available (for reactive updates),
-            // otherwise use data from resolved promise.
-            const question = questions[step] || resolvedPart.questions[step % 2];
-
-            if (!question) return <QuizCardSkeleton />;
-
-            return (
-              <QuizCard
-                key={question.questionId}
-                engduId={engduId}
-                questionId={question.questionId}
-                question={question}
-                handleQuestion={handleQuestion}
-                step={step}
-                setStep={setStep}
-                onFinish={onFinish}
-              />
-            );
-          }}
-        </Await>
-      </Suspense>
+      <QuizCard
+        key={question.questionId}
+        engduId={engduId}
+        questionId={question.questionId}
+        question={question}
+        handleQuestion={handleQuestion}
+        step={step}
+        setStep={setStep}
+        onFinish={onFinish}
+      />
     </div>
   );
 }

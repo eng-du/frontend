@@ -58,15 +58,18 @@ export interface EngduMeta {
   likeStatus: LikeStatus;
 }
 
+export type EngduPartType = 'INITIAL' | 'COMPLETE';
+export type EngduPartStatus = 'DONE' | 'CREATING' | 'PENDING' | 'FAILED';
+
 export interface EngduPart {
   article: EngduArticle;
   questions: EngduQuestion[];
 }
 
-export interface DetailEngdu {
+export interface EngduPartData {
   engduId: number;
   meta: EngduMeta;
-  parts: EngduPart[];
+  part: EngduPart;
 }
 
 export interface EngduArticle {
@@ -76,12 +79,4 @@ export interface EngduArticle {
 export interface EngduChunk {
   en: string;
   kor: string;
-}
-
-export interface PhrasalVerb {
-  id: number;
-  en: string;
-  kor: string;
-  exampleSentenceEn: string;
-  exampleSentenceKor: string;
 }

@@ -23,7 +23,7 @@ export type EventMap = {
   phrasal_verb_view: { verb_en: string; verb_index: number };
   phrasal_verb_reveal_translation: { verb_en: string };
   phrasal_verb_click_next: { verb_en: string; stay_duration_sec: number };
-  part1_generate_success: {
+  initial_generate_success: {
     wait_duration_sec: number;
     viewed_verb_count?: number;
     engdu_id?: number;
@@ -32,11 +32,11 @@ export type EventMap = {
   quiz_submit_answer: {
     quiz_index: number;
     is_correct: boolean;
-    is_part2_ready: boolean;
+    is_complete_ready: boolean;
     solving_duration_sec?: number;
     engdu_id?: number;
   };
-  part2_generate_success: {
+  complete_generate_success: {
     arrival_at_quiz_index: number;
     total_gen_duration_sec: number;
     engdu_id?: number;

@@ -1,46 +1,55 @@
 import QuizPanel from './components/quiz-panel/QuizPanel';
-import { useEffect, useRef, useState, useEffectEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReaderSection from './components/reader-section/ReaderSection';
 import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
 import ProgressHeader from './components/progress-header/ProgressHeader';
-import { useNavigate, useLoaderData } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type { EngduQuestion } from '@/types/quiz';
-import type { EngduPart, EngduMeta, LikeStatus } from '@/types/engdu';
 import WaitModal from './components/WaitModal';
 import { trackEvent, startRecording, stopRecording } from '@/utils/analytics';
 import FeedbackModal from './components/FeedbackModal';
+import { useEngduLearning } from '@/hooks/useEngduLearning';
+import { toast } from 'sonner';
 
 function EngduLearning() {
-  const { engduId, meta, part1, part2, initial } = useLoaderData() as {
-    engduId: number;
-    meta: Promise<EngduMeta>;
-    part1: Promise<EngduPart>;
-    part2: Promise<EngduPart>;
-    initial: { isPart1Ready: boolean; isPart2Ready: boolean };
-  };
+  const params = useParams();
+  const engduId = Number(params.engduId);
+  const navigate = useNavigate();
 
-  const [isWaitModalOpen, setIsWaitModalOpen] = useState(!initial.isPart1Ready);
-  const [isPart1Resolved, setIsPart1Resolved] = useState(initial.isPart1Ready);
-  const [isPart2Resolved, setIsPart2Resolved] = useState(initial.isPart2Ready);
-  const [localQuestions, setLocalQuestions] = useState<EngduQuestion[]>([]);
+  const {
+    engduDetail,
+    isPendingDetail,
+    isInitialGenerating,
+    isCompleteGenerating,
+    initialQuestions,
+    completeQuestions,
+    allQuestions,
+    updateQuestion,
+    isInitialTimeout,
+    isCompleteTimeout,
+    retryInitialPolling,
+    retryCompletePolling,
+    isErrorDetail,
+  } = useEngduLearning(engduId);
+
   const [step, setStep] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [currentLikeStatus, setCurrentLikeStatus] = useState<LikeStatus>('NONE');
-  const navigate = useNavigate();
-  const isInitialUnlocked = useRef<boolean | null>(null);
+  const [isWaitModalOpen, setIsWaitModalOpen] = useState(false);
+
   const isStepInitialized = useRef(false);
   const mountTime = useRef(Date.now());
   const isMounted = useRef(true);
 
   useEffect(() => {
-    meta.then((data) => {
-      setCurrentLikeStatus(data.likeStatus);
-    });
-  }, [meta]);
+    if (!isPendingDetail && !isErrorDetail && isInitialGenerating) {
+      setIsWaitModalOpen(true);
+    }
+  }, [isPendingDetail, isErrorDetail, isInitialGenerating]);
+
 
   useEffect(() => {
-    isMounted.current = true; // Strict Mode 등에서 cleanup 후 다시 mount될 때를 대비해 true로 다시 설정
+    isMounted.current = true;
     startRecording();
     return () => {
       isMounted.current = false;
@@ -48,101 +57,114 @@ function EngduLearning() {
     };
   }, []);
 
+  // 타임아웃 알림 토스트
   useEffect(() => {
-    trackEvent('learning_page_enter', {
-      engdu_id: engduId,
-      is_new_creation: !initial.isPart1Ready,
-    });
-  }, [engduId, initial.isPart1Ready]);
+    if (isInitialTimeout || isCompleteTimeout) {
+      toast(
+        <div className="flex flex-1 w-full flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            AI 콘텐츠 생성이 지연되고 있습니다<br />
+            잠시만 더 기다려 보시거나, 나중에 다시 접속해 주세요.
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                if (isInitialTimeout) retryInitialPolling();
+                if (isCompleteTimeout) retryCompletePolling();
+                toast.dismiss('ai-timeout-toast');
+              }}
+              className="w-full cursor-pointer rounded-lg bg-surface-brand-default py-3 text-white"
+            >
+              더 기다리기
+            </button>
+            <button
+              onClick={() => {
+                navigate('/');
+                toast.dismiss('ai-timeout-toast');
+              }}
+              className="w-full cursor-pointer rounded-lg bg-surface-default py-3 text-text-secondary"
+            >
+              홈으로 가기
+            </button>
+          </div>
+        </div>,
+        {
+          id: 'ai-timeout-toast',
+          duration: Infinity,
+          classNames: {
+            content: '!flex-1 !w-full !min-w-0',
+            title: '!w-full',
+          }
+        }
+      );
+    } else {
+      toast.dismiss('ai-timeout-toast');
+    }
+  }, [isInitialTimeout, isCompleteTimeout, navigate, retryInitialPolling, retryCompletePolling]);
 
-  // part1 성공 알림
-  const onPart1GenerateSuccess = useEffectEvent(() => {
-    if (isMounted.current && !isPart1Resolved) {
-      trackEvent('part1_generate_success', {
+  useEffect(() => {
+    if (engduDetail) {
+      trackEvent('learning_page_enter', {
+        engdu_id: engduId,
+        is_new_creation: !engduDetail.parts.INITIAL,
+      });
+    }
+  }, [engduId, !!engduDetail?.parts.INITIAL]);
+
+  // 파트 생성 완료 트래킹
+  const initialTracked = useRef(false);
+  const completeTracked = useRef(false);
+
+  useEffect(() => {
+    if (engduDetail?.parts.INITIAL && !initialTracked.current) {
+      initialTracked.current = true;
+      trackEvent('initial_generate_success', {
         engdu_id: engduId,
         wait_duration_sec: Math.floor((Date.now() - mountTime.current) / 1000),
       });
-      setIsPart1Resolved(true);
     }
-  });
 
-  // part1이 완료되면 퀴즈 상태 동기화 및 완료 상태 업데이트
-  useEffect(() => {
-    part1.then((p1) => {
-      onPart1GenerateSuccess();
-      setLocalQuestions((prev) => (prev.length < 2 ? [...p1.questions] : prev));
-      if (isInitialUnlocked.current === null) {
-        isInitialUnlocked.current = p1.questions[1]?.isCorrected;
-      }
-    });
-  }, [part1]);
-
-  // part2 성공 알림
-  const onPart2GenerateSuccess = useEffectEvent((durationSec: number) => {
-    if (isMounted.current && !isPart2Resolved) {
-      trackEvent('part2_generate_success', {
+    if (engduDetail?.parts.COMPLETE && !completeTracked.current) {
+      completeTracked.current = true;
+      trackEvent('complete_generate_success', {
         engdu_id: engduId,
         arrival_at_quiz_index: step + 1,
-        total_gen_duration_sec: durationSec,
+        total_gen_duration_sec: Math.floor((Date.now() - mountTime.current) / 1000),
       });
-      setIsPart2Resolved(true);
     }
-  });
+  }, [!!engduDetail?.parts.INITIAL, !!engduDetail?.parts.COMPLETE, engduId, step]);
 
-  // part2가 완료되면 퀴즈 상태 동기화
+  // 첫 미해결 문제로 스텝 초기화
   useEffect(() => {
-    part2.then(() => {
-      onPart2GenerateSuccess(Math.floor((Date.now() - mountTime.current) / 1000));
-    });
+    if (isStepInitialized.current || allQuestions.length === 0) return;
 
-    Promise.all([part1, part2]).then(([p1, p2]) => {
-      setLocalQuestions((prev) => {
-        // 이미 4개의 문제를 가지고 있다면 아무것도 하지 않음
-        if (prev.length >= 4) return prev;
-
-        // Part 1만 가지고 있다면 (길이 2), Part 2 데이터 추가
-        if (prev.length === 2) {
-          return [...prev, ...p2.questions];
-        }
-
-        // 만약 아무것도 없었다면, 두 파트 데이터 모두 설정
-        if (prev.length < 2) {
-          return [...p1.questions, ...p2.questions];
-        }
-
-        return prev;
-      });
-    });
-  }, [part1, part2]);
-
-  useEffect(() => {
-    if (isStepInitialized.current || localQuestions.length === 0) return;
-
-    const firstUnsolvedIdx = localQuestions.findIndex((q) => !q.isCorrected);
+    const firstUnsolvedIdx = allQuestions.findIndex((q) => !q.isCorrected);
     setStep(firstUnsolvedIdx === -1 ? 0 : firstUnsolvedIdx);
     isStepInitialized.current = true;
-  }, [localQuestions]);
+  }, [allQuestions]);
 
   const handleQuestion = (questionId: number, isCorrected: boolean, answer: number) => {
-    const quizIndex = localQuestions.findIndex((q) => q.questionId === questionId) + 1;
+    const quizIndex = allQuestions.findIndex((q) => q.questionId === questionId) + 1;
 
     trackEvent('quiz_submit_answer', {
       engdu_id: engduId,
       quiz_index: quizIndex,
       is_correct: isCorrected,
-      is_part2_ready: isPart2Resolved,
+      is_complete_ready: !!engduDetail?.parts.COMPLETE,
     });
 
-    setLocalQuestions((prev) =>
-      prev.map((q) => (q.questionId === questionId ? { ...q, isCorrected, answer } : q)),
-    );
+    // 캐시 업데이트
+    updateQuestion(questionId, isCorrected, answer);
 
-    if (questionId === localQuestions[1]?.questionId && isCorrected && !isInitialUnlocked.current) {
+    // 첫 번째 파트의 마지막 문제를 맞췄을 때 축하 효과
+    const isFirstPartLastQuestion = questionId === initialQuestions[initialQuestions.length - 1]?.questionId;
+    if (isFirstPartLastQuestion && isCorrected) {
       setShowConfetti(true);
     }
 
-    // 모든 문제가 정답이면 완료 이벤트
-    if (quizIndex === 4 && isCorrected) {
+    // 모든 파트의 모든 문제를 맞췄을 때 완료 이벤트
+    const isLastQuestion = questionId === completeQuestions[completeQuestions.length - 1]?.questionId;
+    if (isLastQuestion && isCorrected) {
       trackEvent('engdu_learning_complete', {
         engdu_id: engduId,
         total_learning_duration_min: Math.floor((Date.now() - mountTime.current) / 60000),
@@ -150,34 +172,40 @@ function EngduLearning() {
     }
   };
 
+  if (isPendingDetail) {
+    return null;
+  }
+
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="relative flex h-[calc(100dvh-60px)] flex-col">
       <ProgressHeader
-        metaPromise={meta}
+        title={engduDetail?.meta?.title}
+        isInitialReady={!!engduDetail?.parts.INITIAL}
+        isCompleteReady={!!engduDetail?.parts.COMPLETE}
         step={step}
         setStep={setStep}
-        isQuestionsCorrected={localQuestions.map((q) => q.isCorrected)}
-        part1Promise={part1}
-        part2Promise={part2}
+        isQuestionsCorrected={allQuestions.map((q: EngduQuestion) => q.isCorrected)}
       />
       <div className="pointer-events-none absolute top-35 right-0 left-0 z-10 h-5 bg-surface-default" />
       <div className="grid h-full flex-1 snap-y snap-mandatory scroll-py-10 grid-cols-[7fr_5fr] gap-10 overflow-scroll px-25 py-10">
         <ReaderSection
-          part1Promise={part1}
-          part2Promise={part2}
-          isLocked={localQuestions.length < 2 || !localQuestions[1]?.isCorrected}
-          isAllSolved={localQuestions.length === 4 && localQuestions.every((q) => q.isCorrected)}
+          initialArticle={engduDetail?.parts.INITIAL?.article}
+          completeArticle={engduDetail?.parts.COMPLETE?.article}
+          isLocked={!initialQuestions.every((q: EngduQuestion) => q.isCorrected)}
+          isAllSolved={
+            initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
+            completeQuestions.every((q: EngduQuestion) => q.isCorrected)
+          }
         />
         <QuizPanel
           engduId={engduId}
-          questions={localQuestions}
+          questions={allQuestions}
           step={step}
           setStep={setStep}
           handleQuestion={handleQuestion}
-          part1Promise={part1}
-          part2Promise={part2}
+          isGenerating={isInitialGenerating || (step >= 2 && isCompleteGenerating)}
           onFinish={() => {
-            if (currentLikeStatus === 'NONE') {
+            if (engduDetail!.meta!.likeStatus === 'NONE') {
               setIsFeedbackModalOpen(true);
             } else {
               navigate('/');
@@ -187,7 +215,10 @@ function EngduLearning() {
       </div>
       {showConfetti && <ConfettiEffect />}
       {isWaitModalOpen && (
-        <WaitModal isPart1Resolved={isPart1Resolved} onClose={() => setIsWaitModalOpen(false)} />
+        <WaitModal
+          isInitialResolved={!isInitialGenerating}
+          onClose={() => setIsWaitModalOpen(false)}
+        />
       )}
       <FeedbackModal
         isOpen={isFeedbackModalOpen}

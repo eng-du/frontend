@@ -14,29 +14,30 @@ export default function Modal({ isOpen, onCloseHandler, children }: ModalProps) 
     if (!el) return;
 
     if (isOpen) {
-      if (!el.open) el.showModal();
+      if (!el.open) el.show();
     } else {
       if (el.open) el.close();
     }
   }, [isOpen]);
 
-  const backdropClickHandler = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === e.currentTarget) {
-      onCloseHandler();
-    }
-  };
-
   return (
-    <dialog
-      ref={ref}
-      onClick={backdropClickHandler}
-      onCancel={(e) => {
-        e.preventDefault();
-        onCloseHandler();
-      }}
-      className="backdrop:bg-black/50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-surface-weak shadow-default outline-none backdrop:backdrop-blur-sm focus:outline-none overflow-visible"
-    >
-      {children}
-    </dialog>
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+          onClick={onCloseHandler}
+        />
+      )}
+      <dialog
+        ref={ref}
+        onCancel={(e) => {
+          e.preventDefault();
+          onCloseHandler();
+        }}
+        className="fixed top-1/2 left-1/2 z-[9999] m-0 -translate-x-1/2 -translate-y-1/2 overflow-visible rounded-2xl border-none bg-surface-weak p-0 shadow-default outline-none focus:outline-none"
+      >
+        {children}
+      </dialog>
+    </>
   );
 }

@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import Header from './Header';
 import { BrowserRouter } from 'react-router';
 import { AuthContext } from '@/store/AuthContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const meta: Meta<typeof Header> = {
   title: 'Components/Common/Header',
@@ -9,9 +12,11 @@ const meta: Meta<typeof Header> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Story />
+        </BrowserRouter>
+      </QueryClientProvider>
     ),
   ],
 };
@@ -25,10 +30,9 @@ export const LoggedIn: Story = {
       <AuthContext
         value={{
           user: { name: '테스트 유저', userId: 1 },
-          loading: false,
-          isAuthenticated: true,
-          refreshMe: async () => ({ name: '테스트 유저', userId: 1 }),
-          clearAuth: () => {},
+          isPending: false,
+          refreshMe: () => { },
+          clearAuth: () => { },
         }}
       >
         <Story />
@@ -43,10 +47,9 @@ export const LoggedOut: Story = {
       <AuthContext
         value={{
           user: null,
-          loading: false,
-          isAuthenticated: false,
-          refreshMe: async () => ({ name: '로그아웃됨', userId: 0 }),
-          clearAuth: () => {},
+          isPending: false,
+          refreshMe: () => { },
+          clearAuth: () => { },
         }}
       >
         <Story />
@@ -61,10 +64,9 @@ export const Loading: Story = {
       <AuthContext
         value={{
           user: null,
-          loading: true,
-          isAuthenticated: false,
-          refreshMe: async () => ({ name: '로딩중...', userId: 0 }),
-          clearAuth: () => {},
+          isPending: true,
+          refreshMe: () => { },
+          clearAuth: () => { },
         }}
       >
         <Story />
