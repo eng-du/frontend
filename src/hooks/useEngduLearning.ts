@@ -1,7 +1,10 @@
+import axios from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEngduDetail, getEngduPart, postEngduPart, type EngduDetailResponse } from '@/api/engdu';
 import type { EngduPartType, EngduPart, EngduMeta } from '@/types/engdu';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 export function useEngduLearning(engduId: number) {
   const queryClient = useQueryClient();
@@ -9,11 +12,44 @@ export function useEngduLearning(engduId: number) {
   const [isCompleteTimeout, setIsCompleteTimeout] = useState(false);
 
   // 1. 상세 정보 조회
-  const { data: engduDetail, isPending: isPendingDetail } = useQuery({
+  const { 
+    data: engduDetail, 
+    isPending: isPendingDetail, 
+    isError: isErrorDetail,
+    error: detailError
+  } = useQuery({
     queryKey: ['engdu', engduId],
     queryFn: () => getEngduDetail(engduId),
     staleTime: 1000 * 60 * 5,
+    retry: (failureCount, error) => {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const code = error.response?.data?.code;
+        // 404(Not Found) 거나 403(Forbidden) 인 경우 재시도 생략
+        if ((status === 404 && code === 'ENGDU-003') || (status === 403 && code === 'ENGDU-004')) {
+          return false;
+        }
+      }
+      return failureCount < 3; // 기본 3회 재시도
+    }
   });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isErrorDetail && axios.isAxiosError(detailError)) {
+      const status = detailError.response?.status;
+      const code = detailError.response?.data?.code;
+
+      if ((status === 404 && code === 'ENGDU-003') || (status === 403 && code === 'ENGDU-004')) {
+        toast.error('존재하지 않는 잉듀에 접근할 수 없습니다');
+      } else {
+        toast.error('잉듀를 불러오는 중 오류가 발생했습니다');
+      }
+
+      navigate('/');
+    }
+  }, [isErrorDetail, detailError, navigate]);
 
   const hasInitial = !!engduDetail?.parts?.INITIAL;
   const hasComplete = !!engduDetail?.parts?.COMPLETE;
@@ -177,6 +213,7 @@ export function useEngduLearning(engduId: number) {
   return {
     engduDetail,
     isPendingDetail,
+    isErrorDetail,
     isInitialGenerating: !hasInitial && engduPartInitial?.status !== 'DONE',
     isCompleteGenerating: !hasComplete && engduPartComplete?.status !== 'DONE',
     initialQuestions,

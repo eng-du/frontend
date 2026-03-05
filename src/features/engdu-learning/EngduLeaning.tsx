@@ -29,6 +29,7 @@ function EngduLearning() {
     isCompleteTimeout,
     retryInitialPolling,
     retryCompletePolling,
+    isErrorDetail,
   } = useEngduLearning(engduId);
 
   const [step, setStep] = useState<number>(0);
@@ -41,10 +42,10 @@ function EngduLearning() {
   const isMounted = useRef(true);
 
   useEffect(() => {
-    if (!isPendingDetail && isInitialGenerating) {
+    if (!isPendingDetail && !isErrorDetail && isInitialGenerating) {
       setIsWaitModalOpen(true);
     }
-  }, [isPendingDetail, isInitialGenerating]);
+  }, [isPendingDetail, isErrorDetail, isInitialGenerating]);
 
 
   useEffect(() => {
