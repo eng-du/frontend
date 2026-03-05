@@ -58,7 +58,7 @@ export function useEngduLearning(engduId: number) {
         }
         // 2분(120초) 경과 시 폴링 중단 및 타임아웃 상태 설정
         const elapsed = Date.now() - pollingStartRef.current.INITIAL;
-        if (elapsed > 10000) {
+        if (elapsed > 120000) {
           setIsInitialTimeout(true);
           return false;
         }
