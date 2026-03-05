@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEngduDetail, getEngduPart, postEngduPart, type EngduDetailResponse } from '@/api/engdu';
 import type { EngduPartType, EngduPart, EngduMeta } from '@/types/engdu';
@@ -58,7 +58,7 @@ export function useEngduLearning(engduId: number) {
         }
         // 2분(120초) 경과 시 폴링 중단 및 타임아웃 상태 설정
         const elapsed = Date.now() - pollingStartRef.current.INITIAL;
-        if (elapsed > 120000) {
+        if (elapsed > 10000) {
           setIsInitialTimeout(true);
           return false;
         }
@@ -67,11 +67,11 @@ export function useEngduLearning(engduId: number) {
     },
   });
 
-  const retryInitialPolling = () => {
+  const retryInitialPolling = useCallback(() => {
     setIsInitialTimeout(false);
     pollingStartRef.current.INITIAL = Date.now();
     queryClient.invalidateQueries({ queryKey: ['engdu', engduId, 'part', 'INITIAL'] });
-  };
+  }, [engduId, queryClient]);
 
   // COMPLETE 생성 요청 (INITIAL이 준비된 후)
   useEffect(() => {
@@ -106,11 +106,11 @@ export function useEngduLearning(engduId: number) {
     },
   });
 
-  const retryCompletePolling = () => {
+  const retryCompletePolling = useCallback(() => {
     setIsCompleteTimeout(false);
     pollingStartRef.current.COMPLETE = Date.now();
     queryClient.invalidateQueries({ queryKey: ['engdu', engduId, 'part', 'COMPLETE'] });
-  };
+  }, [engduId, queryClient]);
 
   // 폴링 완료 시 잉듀 상세 정보 업데이트
   useEffect(() => {
@@ -147,29 +147,32 @@ export function useEngduLearning(engduId: number) {
   const allQuestions = [...initialQuestions, ...completeQuestions];
 
   // 질문별 정답 여부 업데이트
-  const updateQuestion = (questionId: number, isCorrected: boolean, answer: number) => {
-    queryClient.setQueryData<EngduDetailResponse>(['engdu', engduId], (prev) => {
-      if (!prev) return prev;
+  const updateQuestion = useCallback(
+    (questionId: number, isCorrected: boolean, answer: number) => {
+      queryClient.setQueryData<EngduDetailResponse>(['engdu', engduId], (prev) => {
+        if (!prev) return prev;
 
-      const updatePart = (part: EngduPart | null) => {
-        if (!part) return null;
-        return {
-          ...part,
-          questions: part.questions.map((q) =>
-            q.questionId === questionId ? { ...q, isCorrected, answer } : q,
-          ),
+        const updatePart = (part: EngduPart | null) => {
+          if (!part) return null;
+          return {
+            ...part,
+            questions: part.questions.map((q) =>
+              q.questionId === questionId ? { ...q, isCorrected, answer } : q,
+            ),
+          };
         };
-      };
 
-      return {
-        ...prev,
-        parts: {
-          INITIAL: updatePart(prev.parts.INITIAL),
-          COMPLETE: updatePart(prev.parts.COMPLETE),
-        },
-      };
-    });
-  };
+        return {
+          ...prev,
+          parts: {
+            INITIAL: updatePart(prev.parts.INITIAL),
+            COMPLETE: updatePart(prev.parts.COMPLETE),
+          },
+        };
+      });
+    },
+    [engduId, queryClient],
+  );
 
   return {
     engduDetail,

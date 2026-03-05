@@ -41,10 +41,10 @@ function EngduLearning() {
   const isMounted = useRef(true);
 
   useEffect(() => {
-    if (isInitialGenerating) {
+    if (!isPendingDetail && isInitialGenerating) {
       setIsWaitModalOpen(true);
     }
-  }, [isInitialGenerating]);
+  }, [isPendingDetail, isInitialGenerating]);
 
 
   useEffect(() => {
@@ -59,23 +59,45 @@ function EngduLearning() {
   // 타임아웃 알림 토스트
   useEffect(() => {
     if (isInitialTimeout || isCompleteTimeout) {
-      toast('AI 콘텐츠 생성이 지연되고 있습니다.', {
-        description: '잠시만 더 기다려 보시거나, 나중에 다시 접속해 주세요.',
-        duration: Infinity,
-        action: {
-          label: '더 기다리기',
-          onClick: () => {
-            if (isInitialTimeout) retryInitialPolling();
-            if (isCompleteTimeout) retryCompletePolling();
+      toast(
+        <div className="flex flex-1 w-full flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            AI 콘텐츠 생성이 지연되고 있습니다<br />
+            잠시만 더 기다려 보시거나, 나중에 다시 접속해 주세요.
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                if (isInitialTimeout) retryInitialPolling();
+                if (isCompleteTimeout) retryCompletePolling();
+                toast.dismiss('ai-timeout-toast');
+              }}
+              className="w-full cursor-pointer rounded-lg bg-surface-brand-default py-3 text-white"
+            >
+              더 기다리기
+            </button>
+            <button
+              onClick={() => {
+                navigate('/');
+                toast.dismiss('ai-timeout-toast');
+              }}
+              className="w-full cursor-pointer rounded-lg bg-surface-default py-3 text-text-secondary"
+            >
+              홈으로 가기
+            </button>
+          </div>
+        </div>,
+        {
+          id: 'ai-timeout-toast',
+          duration: Infinity,
+          classNames: {
+            content: '!flex-1 !w-full !min-w-0',
+            title: '!w-full',
           }
-        },
-        cancel: {
-          label: '홈으로 가기',
-          onClick: () => navigate('/')
         }
-      });
+      );
     } else {
-      toast.dismiss();
+      toast.dismiss('ai-timeout-toast');
     }
   }, [isInitialTimeout, isCompleteTimeout, navigate, retryInitialPolling, retryCompletePolling]);
 
@@ -173,7 +195,6 @@ function EngduLearning() {
             initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
             completeQuestions.every((q: EngduQuestion) => q.isCorrected)
           }
-          isCompleteGenerating={isCompleteGenerating}
         />
         <QuizPanel
           engduId={engduId}
