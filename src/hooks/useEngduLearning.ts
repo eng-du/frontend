@@ -42,9 +42,9 @@ export function useEngduLearning(engduId: number) {
       const code = detailError.response?.data?.code;
 
       if ((status === 404 && code === 'ENGDU-003') || (status === 403 && code === 'ENGDU-004')) {
-        toast.error('존재하지 않는 잉듀에 접근할 수 없습니다');
+        toast.error('존재하지 않는 잉듀에 접근할 수 없습니다.');
       } else {
-        toast.error('잉듀를 불러오는 중 오류가 발생했습니다');
+        toast.error('잉듀를 불러오는 중 오류가 발생했습니다.');
       }
 
       navigate('/');
