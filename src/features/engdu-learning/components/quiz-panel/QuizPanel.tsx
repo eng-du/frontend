@@ -24,8 +24,8 @@ function QuizPanel({
   onFinish,
   engduDetail,
 }: QuizPanelProps) {
-  const isPart1 = step < 2;
-  const currentPart = isPart1 ? engduDetail?.parts.INITIAL : engduDetail?.parts.COMPLETE;
+  const isInitial = step < 2;
+  const currentPart = isInitial ? engduDetail?.parts.INITIAL : engduDetail?.parts.COMPLETE;
 
   if (isGenerating && !currentPart) {
     return (
