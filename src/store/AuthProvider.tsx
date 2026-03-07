@@ -33,7 +33,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearAuth = useCallback(() => {
     authTokenStore.clear();
-    queryClient.removeQueries({ queryKey: ['user', 'me'], exact: true });
+    queryClient.setQueryData(['user', 'me'], null)
   }, []);
 
   const value = useMemo(
