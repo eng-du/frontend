@@ -54,7 +54,10 @@ api.interceptors.response.use(
         return api(config);
       } catch (refreshError) {
         authTokenStore.clear();
-        if (window.location.pathname !== '/') window.location.assign('/login');
+        const isPolicyPage = window.location.pathname.startsWith('/policy');
+        if (window.location.pathname !== '/' && !isPolicyPage) {
+          window.location.assign('/login');
+        }
         return Promise.reject(refreshError);
       }
     }
