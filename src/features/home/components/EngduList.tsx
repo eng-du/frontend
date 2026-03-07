@@ -15,6 +15,8 @@ interface EngduListProps {
 }
 
 function EngduList({ onOpenHandler }: EngduListProps) {
+  const isDesktop = useIsDesktop();
+
   return (
     <div>
       {/* 나의 잉듀 목록 */}
@@ -27,6 +29,12 @@ function EngduList({ onOpenHandler }: EngduListProps) {
           </div>
         </div>
         {/* 데이터 및 필터 영역 */}
+        {!isDesktop && (
+          <div className="flex items-center gap-4 rounded-xl border border-border-accent bg-surface-accent/20 px-6 py-4 text-text-accent">
+            <EngduFullNoticeIcon className="h-6 w-6" />
+            <span>잉듀 생성 및 학습은 1280px 이상의 데스크탑에서 진행해주세요.</span>
+          </div>
+        )}
         <EngduListContent onOpenHandler={onOpenHandler} />
       </div>
     </div>
@@ -57,13 +65,6 @@ function EngduListContent({ onOpenHandler }: EngduListProps) {
 
   return (
     <>
-      {!isDesktop && (
-        <div className="flex items-center gap-4 rounded-xl border border-border-accent bg-surface-accent/20 px-6 py-4 text-text-accent">
-          <EngduFullNoticeIcon className="h-6 w-6" />
-          <span>잉듀 생성 및 학습은 1280px 이상의 데스크탑에서 진행해주세요.</span>
-        </div>
-      )}
-
       {/* 필터링 버튼, 생성 버튼 */}
       <div className="flex flex-col justify-between gap-2.5 md:flex-row">
         <div className="flex gap-2.5">
