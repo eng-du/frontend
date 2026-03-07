@@ -13,7 +13,7 @@ import { playwright } from '@vitest/browser-playwright';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss(), svgr()],
   resolve: {
     alias: {
@@ -43,10 +43,14 @@ export default defineConfig({
       }
     }]
   },
-  server:{
-    https: {
-      key: fs.readFileSync('./localhost+2-key.pem'),
-      cert: fs.readFileSync('./localhost+2.pem'),
-    }
-  }
-});
+  server:
+    command === 'serve'
+      ? {
+          https: {
+            key: fs.readFileSync('./localhost+2-key.pem'),
+            cert: fs.readFileSync('./localhost+2.pem'),
+          },
+        }
+      : undefined,
+  
+}));
