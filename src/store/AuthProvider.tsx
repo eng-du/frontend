@@ -12,7 +12,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
 
-  const isExcluded = pathname.startsWith('/login') || pathname.startsWith('/oauth/callback') || pathname.startsWith('/policy');
+  const isExcluded = pathname.startsWith('/login') || pathname.startsWith('/oauth/callback');
 
   const { data: user = null, isPending } = useQuery<MeResponse | null>({
     queryKey: ['user', 'me'],
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearAuth = useCallback(() => {
     authTokenStore.clear();
-    queryClient.removeQueries({ queryKey: ['user', 'me'], exact: true });
+    queryClient.setQueryData(['user', 'me'], null)
   }, []);
 
   const value = useMemo(
