@@ -87,14 +87,17 @@ export function useEngduLearning(engduId: number) {
       const status = state.data?.status;
       if (status === 'DONE') return false;
 
-      // 첫 응답이 성공적으로 온 시점 기록
+      // 데이터가 성공적으로 온 적이 있다면 시간 계산 시작
       if (state.dataUpdatedAt > 0) {
         if (!pollingStartRef.current.INITIAL) {
           pollingStartRef.current.INITIAL = state.dataUpdatedAt;
         }
-        // 2분(120초) 경과 시 폴링 중단 및 타임아웃 상태 설정
-        const elapsed = Date.now() - pollingStartRef.current.INITIAL;
-        if (elapsed > 120000) {
+
+        const now = Date.now();
+        const elapsed = now - pollingStartRef.current.INITIAL;
+        const isDataFresh = now - state.dataUpdatedAt < 5000;
+
+        if (elapsed > 120000 && isDataFresh) {
           setIsInitialTimeout(true);
           return false;
         }
@@ -126,14 +129,17 @@ export function useEngduLearning(engduId: number) {
       const status = state.data?.status;
       if (status === 'DONE') return false;
 
-      // 첫 응답이 성공적으로 온 시점 기록
+      // 데이터가 성공적으로 온 적이 있다면 시간 계산 시작
       if (state.dataUpdatedAt > 0) {
         if (!pollingStartRef.current.COMPLETE) {
           pollingStartRef.current.COMPLETE = state.dataUpdatedAt;
         }
-        // 2분(120초) 경과 시 폴링 중단 및 타임아웃 상태 설정
-        const elapsed = Date.now() - pollingStartRef.current.COMPLETE;
-        if (elapsed > 120000) {
+
+        const now = Date.now();
+        const elapsed = now - pollingStartRef.current.COMPLETE;
+        const isDataFresh = now - state.dataUpdatedAt < 5000;
+
+        if (elapsed > 120000 && isDataFresh) {
           setIsCompleteTimeout(true);
           return false;
         }
