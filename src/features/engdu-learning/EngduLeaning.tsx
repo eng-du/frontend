@@ -10,11 +10,13 @@ import { trackEvent, startRecording, stopRecording } from '@/utils/analytics';
 import FeedbackModal from './components/FeedbackModal';
 import { useEngduLearning } from '@/hooks/useEngduLearning';
 import { toast } from 'sonner';
+import { useIsDesktop } from '@/hooks/useMediaQuery';
 
 function EngduLearning() {
   const params = useParams();
   const engduId = Number(params.engduId);
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
 
   const {
     engduDetail,
@@ -171,6 +173,19 @@ function EngduLearning() {
       });
     }
   };
+
+  if (!isDesktop) {
+    return (
+      <div className="flex h-[calc(100dvh-60px)] flex-col items-center justify-center gap-2 px-10">
+        <h2 className="text-24 font-bold text-text-primary">
+          학습은 데스크탑에서 진행해주세요
+        </h2>
+        <p className="mt-2 text-text-secondary">
+          잉듀의 학습 환경은 현재 1280px 이상의 큰 화면에서 가장 잘 보입니다.
+        </p>
+      </div>
+    );
+  }
 
   if (isPendingDetail) {
     return null;
