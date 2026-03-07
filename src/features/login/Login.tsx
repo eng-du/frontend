@@ -6,6 +6,8 @@ import EngduFullBookIcon from '@/assets/icons/engdu-full-book.svg?react';
 import { ENV } from '@/config/env';
 
 function Login() {
+  const loginUrl = import.meta.env.DEV ? `${ENV.API_BASE_URL}/auth/local/url` : `${ENV.API_BASE_URL}/auth/url`;
+
   return (
     <div className="flex min-h-dvh items-center justify-center">
       <Card className="w-107.5 items-center py-16">
@@ -17,7 +19,7 @@ function Login() {
             <br /> 영어 학습을 시작해보세요!
           </div>
         </div>
-        <a href={`${ENV.API_BASE_URL}/auth/url`} className="w-full">
+        <a href={loginUrl} className="w-full">
           <Button variant="primary" appearance="ghost">
             <GoogleIcon />
             <div className="flex-1">구글로 시작하기</div>

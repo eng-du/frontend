@@ -5,7 +5,7 @@ export interface GoogleLoginResponse {
 }
 
 export async function googleLogin(code: string): Promise<GoogleLoginResponse> {
-  const res = await api.get<GoogleLoginResponse>('/auth/signup/oauth', {
+  const res = await api.get<GoogleLoginResponse>(import.meta.env.DEV ? '/auth/local/signup/oauth' : '/auth/signup/oauth', {
     params: { code },
   });
 
