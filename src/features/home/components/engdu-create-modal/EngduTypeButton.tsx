@@ -29,7 +29,7 @@ function EngduTypeButton({ value, selected, onSelectHandler }: EngduTypeButtonPr
           준비 중!
         </span>
       )}
-      <div className="text-22 font-semibold">{value}</div>
+      <div className="text-16 font-semibold md:text-22">{value}</div>
     </Button>
   );
 }

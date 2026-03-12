@@ -9,7 +9,7 @@ interface EngduHelperCalloutProps {
 function EngduHelperCallout({ children, onClickHandler }: EngduHelperCalloutProps) {
   return (
     <div
-      className="absolute right-0 bottom-0 flex translate-x-[calc(100%+20px)] flex-col items-center gap-4"
+      className="absolute right-0 bottom-0 hidden translate-x-[calc(100%+20px)] flex-col items-center gap-4 lg:flex"
       onClick={onClickHandler}
     >
       <div className="relative rounded-2xl bg-surface-weak p-4 text-center">
