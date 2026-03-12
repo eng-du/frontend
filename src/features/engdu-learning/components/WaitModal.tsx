@@ -25,7 +25,11 @@ function WaitModal({ isInitialResolved, onClose }: WaitModalProps) {
     trackEvent('wait_modal_view', {});
   }, []);
 
-  const { mutate, data: currentVerb, isPending } = useMutation({
+  const {
+    mutate,
+    data: currentVerb,
+    isPending,
+  } = useMutation({
     mutationFn: (excludeIds: number[]) => getRandomPhrasalVerb(excludeIds),
     onSuccess: (verb, excludeIds) => {
       setShowTranslation(false);
@@ -74,28 +78,30 @@ function WaitModal({ isInitialResolved, onClose }: WaitModalProps) {
 
   return (
     <Modal isOpen={true} onCloseHandler={handleClose}>
-      <div className="flex flex-col items-center gap-5 p-7">
+      <div className="flex w-[calc(100vw-32px)] max-w-120 flex-col items-center gap-4 p-5 text-center sm:gap-5 sm:p-7">
         <div
           className={cn(
-            'h-37.5 w-37.5 bg-size-[450px_150px] bg-no-repeat',
-            isInitialResolved ? 'animate-none bg-position-[-300px_0px]' : 'animate-engdu-hammer',
+            'h-32 w-32 bg-size-[300%_100%] bg-no-repeat sm:h-37.5 sm:w-37.5',
+            isInitialResolved ? 'animate-none bg-position-[100%_0%]' : 'animate-engdu-hammer',
           )}
           style={{ backgroundImage: `url(${engduFullCreate})` }}
         />
-        <div className="text-center font-pinkfong text-32 font-bold whitespace-pre-line">
+        <div className="text-center font-pinkfong text-24 font-bold whitespace-pre-line sm:text-32">
           {isInitialResolved
             ? '잉듀가 만들어졌어요!\n학습을 시작해보세요'
             : '뚝딱 뚝딱 잉듀가\n만들어지고 있어요~'}
         </div>
-        <div className="flex min-h-60 w-90 flex-col items-center justify-center gap-3 rounded-md border border-border-brand-weak bg-surface-brand-weak p-4">
+        <div className="flex min-h-60 w-full flex-col items-center justify-center gap-3 rounded-md border border-border-brand-weak bg-surface-brand-weak p-4">
           <div className="rounded-full bg-surface-brand-strong px-2 py-1 text-12 font-bold text-text-brand-primary">
             기다리는 동안 학습하기
           </div>
           {currentVerb && (
             <div className={'flex w-full flex-col items-center gap-2'}>
-              <div className="text-28 font-extrabold">{currentVerb.en}</div>
-              <div className="font-bold text-text-brand-primary">{currentVerb.kor}</div>
-              <div className="flex w-full flex-col items-center gap-2 rounded-md bg-surface-weak px-5 py-2 text-center text-12 break-keep text-text-secondary">
+              <div className="text-24 font-extrabold sm:text-28">{currentVerb.en}</div>
+              <div className="text-14 font-bold text-text-brand-primary sm:text-16">
+                {currentVerb.kor}
+              </div>
+              <div className="flex w-full flex-col items-center gap-2 rounded-md bg-surface-weak px-4 py-2 text-center text-12 break-keep text-text-secondary sm:px-5">
                 <div className="flex min-h-7.5 w-full items-center justify-center">
                   "{currentVerb.exampleSentenceEn}"
                 </div>
