@@ -46,9 +46,13 @@ function EngduLearningDesktop({
         <ReaderSection
           initialArticle={engduDetail?.parts.INITIAL?.article}
           completeArticle={engduDetail?.parts.COMPLETE?.article}
-          isLocked={!initialQuestions.every((q: EngduQuestion) => q.isCorrected)}
+          isLocked={
+            !engduDetail?.parts.INITIAL ||
+            !initialQuestions.every((q: EngduQuestion) => q.isCorrected)
+          }
           isAllSolved={
             initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
+            !!engduDetail?.parts.COMPLETE &&
             completeQuestions.every((q: EngduQuestion) => q.isCorrected)
           }
         />

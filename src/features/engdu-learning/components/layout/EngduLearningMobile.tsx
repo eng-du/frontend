@@ -25,9 +25,11 @@ function EngduLearningMobile({
 }: EngduLearningLayoutProps) {
   const [activeTab, setActiveTab] = useState<Tab>('지문');
   const [activePart, setActivePart] = useState<1 | 2>(1);
-  const isLocked = !initialQuestions.every((q: EngduQuestion) => q.isCorrected);
+  const isLocked =
+    !engduDetail?.parts.INITIAL || !initialQuestions.every((q: EngduQuestion) => q.isCorrected);
   const isAllSolved =
     initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
+    !!engduDetail?.parts.COMPLETE &&
     completeQuestions.every((q: EngduQuestion) => q.isCorrected);
 
   useEffect(() => {
