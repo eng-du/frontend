@@ -16,11 +16,11 @@ function EngduCard({ engdu }: EngduCardProps) {
 
   return (
     <Card>
-      <div className="flex items-center gap-2 text-text-secondary">
+      <div className="flex w-full items-center gap-2 text-text-secondary">
         <Label type={'지문'} />
-        <div className="flex items-center">
+        <div className="flex overflow-hidden items-center">
           <HashTagIcon className="h-4 w-4" />
-          {engdu.topic}
+          <span className="w-full truncate">{engdu.topic}</span>
         </div>
       </div>
       {/* 제목 */}
