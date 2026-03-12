@@ -1,8 +1,4 @@
-import QuizPanel from './components/quiz-panel/QuizPanel';
 import { useEffect, useRef, useState } from 'react';
-import ReaderSection from './components/reader-section/ReaderSection';
-import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
-import ProgressHeader from './components/progress-header/ProgressHeader';
 import { useNavigate, useParams } from 'react-router';
 import type { EngduQuestion } from '@/types/quiz';
 import WaitModal from './components/WaitModal';
@@ -11,6 +7,9 @@ import FeedbackModal from './components/FeedbackModal';
 import { useEngduLearning } from '@/hooks/useEngduLearning';
 import { toast } from 'sonner';
 import { useIsDesktop } from '@/hooks/useMediaQuery';
+import EngduLearningDesktop from './components/layout/EngduLearningDesktop';
+import EngduLearningMobile from './components/layout/EngduLearningMobile';
+import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
 
 function EngduLearning() {
   const params = useParams();
@@ -49,7 +48,6 @@ function EngduLearning() {
     }
   }, [isPendingDetail, isErrorDetail, isInitialGenerating]);
 
-
   useEffect(() => {
     isMounted.current = true;
     startRecording();
@@ -63,9 +61,10 @@ function EngduLearning() {
   useEffect(() => {
     if (isInitialTimeout || isCompleteTimeout) {
       toast(
-        <div className="flex flex-1 w-full flex-col gap-5">
+        <div className="flex w-full flex-1 flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            AI 콘텐츠 생성이 지연되고 있습니다<br />
+            AI 콘텐츠 생성이 지연되고 있습니다
+            <br />
             잠시만 더 기다려 보시거나, 나중에 다시 접속해 주세요.
           </div>
           <div className="flex gap-2">
@@ -96,22 +95,13 @@ function EngduLearning() {
           classNames: {
             content: '!flex-1 !w-full !min-w-0',
             title: '!w-full',
-          }
-        }
+          },
+        },
       );
     } else {
       toast.dismiss('ai-timeout-toast');
     }
   }, [isInitialTimeout, isCompleteTimeout, navigate, retryInitialPolling, retryCompletePolling]);
-
-  useEffect(() => {
-    if (engduDetail) {
-      trackEvent('learning_page_enter', {
-        engdu_id: engduId,
-        is_new_creation: !engduDetail.parts.INITIAL,
-      });
-    }
-  }, [engduId, !!engduDetail?.parts.INITIAL]);
 
   // 파트 생성 완료 트래킹
   const initialTracked = useRef(false);
@@ -140,7 +130,7 @@ function EngduLearning() {
   useEffect(() => {
     if (isStepInitialized.current || allQuestions.length === 0) return;
 
-    const firstUnsolvedIdx = allQuestions.findIndex((q) => !q.isCorrected);
+    const firstUnsolvedIdx = allQuestions.findIndex((q: EngduQuestion) => !q.isCorrected);
     setStep(firstUnsolvedIdx === -1 ? 0 : firstUnsolvedIdx);
     isStepInitialized.current = true;
   }, [allQuestions]);
@@ -159,13 +149,15 @@ function EngduLearning() {
     updateQuestion(questionId, isCorrected, answer);
 
     // 첫 번째 파트의 마지막 문제를 맞췄을 때 축하 효과
-    const isFirstPartLastQuestion = questionId === initialQuestions[initialQuestions.length - 1]?.questionId;
+    const isFirstPartLastQuestion =
+      questionId === initialQuestions[initialQuestions.length - 1]?.questionId;
     if (isFirstPartLastQuestion && isCorrected) {
       setShowConfetti(true);
     }
 
     // 모든 파트의 모든 문제를 맞췄을 때 완료 이벤트
-    const isLastQuestion = questionId === completeQuestions[completeQuestions.length - 1]?.questionId;
+    const isLastQuestion =
+      questionId === completeQuestions[completeQuestions.length - 1]?.questionId;
     if (isLastQuestion && isCorrected) {
       trackEvent('engdu_learning_complete', {
         engdu_id: engduId,
@@ -174,60 +166,37 @@ function EngduLearning() {
     }
   };
 
-  if (!isDesktop) {
-    return (
-      <div className="flex h-[calc(100dvh-60px)] flex-col items-center justify-center gap-2 px-10">
-        <h2 className="text-24 font-bold text-text-primary">
-          학습은 데스크탑에서 진행해주세요
-        </h2>
-        <p className="mt-2 text-text-secondary">
-          잉듀의 학습 환경은 현재 1280px 이상의 큰 화면에서 가장 잘 보입니다.
-        </p>
-      </div>
-    );
-  }
-
   if (isPendingDetail) {
     return null;
   }
 
+  const layoutProps = {
+    engduId,
+    engduDetail,
+    allQuestions,
+    initialQuestions,
+    completeQuestions,
+    step,
+    setStep,
+    handleQuestion,
+    isInitialGenerating,
+    isCompleteGenerating,
+    onFinish: () => {
+      if (engduDetail!.meta!.likeStatus === 'NONE') {
+        setIsFeedbackModalOpen(true);
+      } else {
+        navigate('/');
+      }
+    },
+  };
+
   return (
-    <div className="relative flex h-[calc(100dvh-60px)] flex-col">
-      <ProgressHeader
-        title={engduDetail?.meta?.title}
-        isInitialReady={!!engduDetail?.parts.INITIAL}
-        isCompleteReady={!!engduDetail?.parts.COMPLETE}
-        step={step}
-        setStep={setStep}
-        isQuestionsCorrected={allQuestions.map((q: EngduQuestion) => q.isCorrected)}
-      />
-      <div className="pointer-events-none absolute top-35 right-0 left-0 z-10 h-5 bg-surface-default" />
-      <div className="grid h-full flex-1 snap-y snap-mandatory scroll-py-10 grid-cols-[7fr_5fr] gap-10 overflow-scroll px-25 py-10">
-        <ReaderSection
-          initialArticle={engduDetail?.parts.INITIAL?.article}
-          completeArticle={engduDetail?.parts.COMPLETE?.article}
-          isLocked={!initialQuestions.every((q: EngduQuestion) => q.isCorrected)}
-          isAllSolved={
-            initialQuestions.every((q: EngduQuestion) => q.isCorrected) &&
-            completeQuestions.every((q: EngduQuestion) => q.isCorrected)
-          }
-        />
-        <QuizPanel
-          engduId={engduId}
-          questions={allQuestions}
-          step={step}
-          setStep={setStep}
-          handleQuestion={handleQuestion}
-          isGenerating={isInitialGenerating || (step >= 2 && isCompleteGenerating)}
-          onFinish={() => {
-            if (engduDetail!.meta!.likeStatus === 'NONE') {
-              setIsFeedbackModalOpen(true);
-            } else {
-              navigate('/');
-            }
-          }}
-        />
-      </div>
+    <>
+      {isDesktop ? (
+        <EngduLearningDesktop {...layoutProps} />
+      ) : (
+        <EngduLearningMobile {...layoutProps} />
+      )}
       {showConfetti && <ConfettiEffect />}
       {isWaitModalOpen && (
         <WaitModal
@@ -240,7 +209,7 @@ function EngduLearning() {
         onClose={() => setIsFeedbackModalOpen(false)}
         engduId={engduId}
       />
-    </div>
+    </>
   );
 }
 

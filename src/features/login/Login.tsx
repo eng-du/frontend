@@ -9,8 +9,8 @@ function Login() {
   const loginUrl = import.meta.env.DEV ? `${ENV.API_BASE_URL}/auth/local/url` : `${ENV.API_BASE_URL}/auth/url`;
 
   return (
-    <div className="flex min-h-dvh items-center justify-center">
-      <Card className="w-107.5 items-center py-16">
+    <div className="flex min-h-dvh items-center justify-center px-5">
+      <Card className="w-full max-w-107.5 items-center py-10 md:py-16">
         <EngduFullBookIcon />
         <div className="flex flex-col items-center gap-3">
           <div className="font-pinkfong text-36">잉듀</div>

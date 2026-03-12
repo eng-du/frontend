@@ -46,7 +46,7 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
 
   return (
     <Modal isOpen={isOpen} onCloseHandler={onClose}>
-      <div className="flex w-130 flex-col items-center gap-5 p-7 text-center">
+      <div className="flex w-[calc(100vw-32px)] max-w-130 flex-col items-center gap-4 p-5 text-center sm:p-7">
         <div className="relative mb-5 flex flex-col items-center">
           <ChickIcon className="h-42 w-auto" />
         </div>

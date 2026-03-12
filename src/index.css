@@ -80,6 +80,7 @@
   --color-surface-default: var(--color-gray-100);
   --color-surface-weak: var(--color-gray-50);
   --color-surface-strong: var(--color-gray-200);
+  --color-surface-inverse: var(--color-gray-900);
 
   --color-border-default: var(--color-gray-300);
 
@@ -156,11 +157,11 @@
 
   @keyframes engdu-hammer {
     from {
-      background-position: 0px 0px;
+      background-position: 0% 0%;
     }
 
     to {
-      background-position: -300px 0px;
+      background-position: 100% 0%;
     }
   }
 
@@ -193,6 +194,29 @@
 }
 
 @layer utilities {
+  @keyframes title-scroll {
+
+    0%,
+    20% {
+      transform: translateX(0);
+    }
+
+    50%,
+    70% {
+      transform: translateX(min(0px, calc(-100% + 100cqw)));
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-title-scroll {
+    display: inline-block;
+    white-space: nowrap;
+    animation: title-scroll 20s ease-in-out infinite;
+  }
+
   .scrollbar-custom {
     &::-webkit-scrollbar {
       @apply w-2

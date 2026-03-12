@@ -1,5 +1,5 @@
 import QuizStepper from './QuizStepper';
-import ProgressTitleSkeleton from '../skeleton/ProgressTitleSkeleton';
+import TitleSkeleton from '../skeleton/TitleSkeleton';
 
 interface ProgressHeaderProps {
   title?: string;
@@ -20,7 +20,7 @@ function ProgressHeader({
   return (
     <div className="grid h-35 w-full grid-cols-[7fr_5fr] gap-10 bg-surface-default px-25 pt-10">
       <div className="line-clamp-2 self-center font-pinkfong text-36">
-        {!title ? <ProgressTitleSkeleton /> : title}
+        {!title ? <TitleSkeleton /> : title}
       </div>
       <QuizStepper
         step={step}

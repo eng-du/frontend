@@ -1,6 +1,8 @@
 import type { EngduQuestion } from '@/types/quiz';
 import QuizCard from './QuizCard';
+import QuizContent from './QuizContent';
 import QuizCardSkeleton from '../skeleton/QuizCardSkeleton';
+import QuizContentSkeleton from '../skeleton/QuizContentSkeleton';
 import type { EngduDetailResponse } from '@/api/engdu';
 
 interface QuizPanelProps {
@@ -12,6 +14,7 @@ interface QuizPanelProps {
   isGenerating: boolean;
   onFinish: () => void;
   engduDetail?: EngduDetailResponse;
+  isMobile?: boolean;
 }
 
 function QuizPanel({
@@ -23,40 +26,38 @@ function QuizPanel({
   isGenerating,
   onFinish,
   engduDetail,
+  isMobile,
 }: QuizPanelProps) {
   const isInitial = step < 2;
   const currentPart = isInitial ? engduDetail?.parts.INITIAL : engduDetail?.parts.COMPLETE;
 
-  if (isGenerating && !currentPart) {
+  if ((isGenerating && !currentPart) || !questions[step]) {
     return (
       <div className="sticky top-0 h-fit">
-        <QuizCardSkeleton />
+        {isMobile ? <QuizContentSkeleton /> : <QuizCardSkeleton />}
       </div>
     );
   }
 
   const question = questions[step];
 
-  if (!question) {
-    return (
-      <div className="sticky top-0 h-fit">
-        <QuizCardSkeleton />
-      </div>
-    );
-  }
+  const commonProps = {
+    engduId,
+    questionId: question.questionId,
+    question,
+    handleQuestion,
+    step,
+    setStep,
+    onFinish,
+  };
 
   return (
     <div className="sticky top-0 h-fit">
-      <QuizCard
-        key={question.questionId}
-        engduId={engduId}
-        questionId={question.questionId}
-        question={question}
-        handleQuestion={handleQuestion}
-        step={step}
-        setStep={setStep}
-        onFinish={onFinish}
-      />
+      {isMobile ? (
+        <QuizContent key={question.questionId} {...commonProps} />
+      ) : (
+        <QuizCard key={question.questionId} {...commonProps} />
+      )}
     </div>
   );
 }

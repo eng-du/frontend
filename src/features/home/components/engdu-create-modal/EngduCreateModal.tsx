@@ -42,7 +42,7 @@ function EngduCreateModal({
         setIsEngduCreateModalOpen(false);
       }}
     >
-      <div className="flex w-130 flex-col gap-5 p-7">
+      <div className="flex w-[90vw] max-w-130 flex-col gap-5 p-7">
         <EngduCreateHeader />
         <EngduTypeSelector
           selectedEngduType={selectedEngduType}

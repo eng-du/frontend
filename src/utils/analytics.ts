@@ -18,7 +18,6 @@ export const stopRecording = () => {
 export type EventMap = {
   engdu_modal_open: { entry_point: string };
   engdu_create_click: { engdu_type: string; topic_length: number };
-  learning_page_enter: { is_new_creation: boolean; engdu_id: number; engdu_type?: string };
   wait_modal_view: { engdu_id?: number };
   phrasal_verb_view: { verb_en: string; verb_index: number };
   phrasal_verb_reveal_translation: { verb_en: string };
@@ -58,9 +57,7 @@ export const initAmplitude = () => {
       sessions: true,
     },
     minIdLength: 1,
-    logLevel: import.meta.env.PROD 
-      ? amplitude.Types.LogLevel.None
-      : amplitude.Types.LogLevel.Debug,
+    logLevel: import.meta.env.PROD ? amplitude.Types.LogLevel.None : amplitude.Types.LogLevel.Debug,
   });
 };
 

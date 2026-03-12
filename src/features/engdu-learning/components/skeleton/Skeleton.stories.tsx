@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import EngduLearningSkeleton from './EngduLearningSkeleton';
 import QuizCardSkeleton from './QuizCardSkeleton';
 import ReadingCardSkeleton from './ReadingCardSkeleton';
-import ProgressTitleSkeleton from './ProgressTitleSkeleton';
+import TitleSkeleton from './TitleSkeleton';
 import QuizStepIndicatorSkeleton from './QuizStepIndicatorSkeleton';
+import ReadingContentSkeleton from './ReadingContentSkeleton';
+import QuizContentSkeleton from './QuizContentSkeleton';
 
 const meta: Meta = {
   title: 'Features/EngduLearning/Skeletons',
@@ -12,7 +14,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const FullPage: StoryObj<typeof EngduLearningSkeleton> = {
+export const FullPageDesktop: StoryObj<typeof EngduLearningSkeleton> = {
   render: () => (
     <div className="h-screen w-full bg-surface-default">
       <EngduLearningSkeleton />
@@ -20,8 +22,34 @@ export const FullPage: StoryObj<typeof EngduLearningSkeleton> = {
   ),
 };
 
-export const ProgressTitle: StoryObj<typeof ProgressTitleSkeleton> = {
-  render: () => <ProgressTitleSkeleton />,
+export const FullPageMobileReading: StoryObj<typeof EngduLearningSkeleton> = {
+  render: () => (
+    <div className="h-screen w-full bg-surface-default">
+      <EngduLearningSkeleton isMobile={true} initialTab="지문" />
+    </div>
+  ),
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};
+
+export const FullPageMobileQuiz: StoryObj<typeof EngduLearningSkeleton> = {
+  render: () => (
+    <div className="h-screen w-full bg-surface-default">
+      <EngduLearningSkeleton isMobile={true} initialTab="퀴즈" />
+    </div>
+  ),
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};
+
+export const Title: StoryObj<typeof TitleSkeleton> = {
+  render: () => <TitleSkeleton />,
 };
 
 export const QuizStepIndicator: StoryObj<typeof QuizStepIndicatorSkeleton> = {
@@ -30,12 +58,14 @@ export const QuizStepIndicator: StoryObj<typeof QuizStepIndicatorSkeleton> = {
 
 export const ReadingCard: StoryObj<typeof ReadingCardSkeleton> = {
   render: () => (
-    <div className="flex h-screen items-center justify-center bg-surface-default p-10">
-      <div className="w-full max-w-2xl">
-        <ReadingCardSkeleton />
-      </div>
+    <div className="max-w-2xl bg-surface-default p-10">
+      <ReadingCardSkeleton />
     </div>
   ),
+};
+
+export const ReadingContent: StoryObj<typeof ReadingContentSkeleton> = {
+  render: () => <ReadingContentSkeleton />,
 };
 
 export const QuizCard: StoryObj<typeof QuizCardSkeleton> = {
@@ -44,4 +74,8 @@ export const QuizCard: StoryObj<typeof QuizCardSkeleton> = {
       <QuizCardSkeleton />
     </div>
   ),
+};
+
+export const QuizContent: StoryObj<typeof QuizContentSkeleton> = {
+  render: () => <QuizContentSkeleton />,
 };
