@@ -76,7 +76,7 @@ function EngduLearningMobile({
             isCompleteReady={!!engduDetail?.parts.COMPLETE}
           />
         )}
-        <div className="scrollbar-custom mb-23 flex-1 overflow-y-auto pr-2 xl:pr-4">
+        <div className="scrollbar-custom mb-23 flex-1 overflow-y-auto pr-2">
           {activeTab === '지문' ? (
             <ReaderSection
               initialArticle={engduDetail?.parts.INITIAL?.article}
