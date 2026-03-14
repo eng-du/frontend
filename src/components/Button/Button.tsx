@@ -23,10 +23,10 @@ function Button({
       className={cn(
         'flex cursor-pointer items-center',
         variant === 'primary'
-          ? 'h-14 w-full justify-center gap-2 rounded-2xl px-5'
+          ? 'h-12 w-full justify-center gap-2 rounded-xl px-5 text-14 xl:h-14 xl:rounded-2xl xl:text-16'
           : 'h-10.5 w-40 justify-between rounded-xl px-5',
         appearance === 'fill'
-          ? 'bg-surface-brand-default text-text-weak disabled:bg-surface-brand-default/32 disabled:cursor-not-allowed'
+          ? 'bg-surface-brand-default text-text-weak disabled:cursor-not-allowed disabled:bg-surface-brand-default/32'
           : 'border border-border-default bg-surface-weak text-text-secondary disabled:cursor-not-allowed',
         className,
       )}

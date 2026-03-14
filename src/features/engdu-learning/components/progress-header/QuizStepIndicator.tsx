@@ -30,7 +30,7 @@ function QuizStepIndicator({
     >
       <div
         className={clsx(
-          'flex aspect-square w-13 items-center justify-center rounded-full border-3',
+          'flex aspect-square w-11 items-center justify-center rounded-full border-3 xl:w-13',
           isCorrected
             ? 'border-border-accent bg-surface-accent'
             : 'border-border-default bg-surface-default',
@@ -38,14 +38,14 @@ function QuizStepIndicator({
         )}
       >
         {isLocked ? (
-          <LockIcon className="h-5 w-5" />
+          <LockIcon className="h-4 w-4 xl:h-5 xl:w-5" />
         ) : isCorrected ? (
-          <StarIcon className="h-6 w-6" />
+          <StarIcon className="h-5 w-5 xl:h-6 xl:w-6" />
         ) : (
-          <LockOpenIcon className="h-5 w-5" />
+          <LockOpenIcon className="h-4 w-4 xl:h-5 xl:w-5" />
         )}
       </div>
-      <div>QUIZ {step + 1}</div>
+      <div className="text-14 xl:text-16">QUIZ {step + 1}</div>
     </div>
   );
 }

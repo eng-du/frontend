@@ -45,7 +45,7 @@ function EngduLearningMobile({
           <TitleSkeleton />
         ) : (
           <div className="@container overflow-hidden whitespace-nowrap">
-            <div className="animate-title-scroll font-pinkfong text-32 font-bold">
+            <div className="animate-title-scroll font-pinkfong text-28 font-bold">
               {engduDetail?.meta?.title}
             </div>
           </div>
@@ -76,7 +76,7 @@ function EngduLearningMobile({
             isCompleteReady={!!engduDetail?.parts.COMPLETE}
           />
         )}
-        <div className="scrollbar-custom mb-23 flex-1 overflow-y-auto pr-4">
+        <div className="scrollbar-custom mb-23 flex-1 overflow-y-auto pr-2 xl:pr-4">
           {activeTab === '지문' ? (
             <ReaderSection
               initialArticle={engduDetail?.parts.INITIAL?.article}

@@ -15,7 +15,7 @@ interface QuizOptionIdleItemProps extends QuizOptionItemProps {
 }
 
 const baseStyle =
-  'flex px-5 py-2.5 w-full items-center gap-2 rounded-2xl border border-surface-weak transition-all duration-100 cursor-pointer';
+  'flex px-5 py-2.5 w-full items-center gap-2 rounded-xl xl:rounded-2xl border border-surface-weak transition-all duration-100 cursor-pointer text-14 xl:text-16';
 
 export function QuizOptionIdleItem({
   option,
