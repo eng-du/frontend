@@ -11,7 +11,7 @@ function Chunk({ chunk }: ChunkProps) {
   return (
     <span
       className={cn(
-        'mr-1 cursor-pointer rounded-lg px-1 py-1 transition-colors',
+        'mr-1 cursor-pointer rounded-lg p-1 transition-colors',
         'hover:bg-surface-brand-default/10',
         isTranslate && 'bg-surface-strong text-text-secondary',
       )}

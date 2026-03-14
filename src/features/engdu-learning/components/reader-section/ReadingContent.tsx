@@ -11,7 +11,7 @@ function ReadingContent({ article, className }: ReadingContentProps) {
   return (
     <div
       className={cn(
-        'scrollbar-custom overflow-x-hidden overflow-y-scroll pr-4 text-20 leading-10 -tracking-tight break-keep',
+        'scrollbar-custom overflow-x-hidden overflow-y-scroll pr-4 text-16 leading-8 -tracking-tight break-keep xl:text-20 xl:leading-10',
         className,
       )}
     >

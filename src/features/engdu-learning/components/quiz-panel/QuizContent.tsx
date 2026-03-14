@@ -37,7 +37,7 @@ function QuizContent({
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <div className="text-20">{question.content}</div>
+      <div className="text-16 xl:text-20">{question.content}</div>
       <ul className="flex w-full flex-col gap-2.5">
         {question.choices.map((option) => {
           switch (quizStatus) {
