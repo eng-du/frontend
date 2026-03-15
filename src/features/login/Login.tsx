@@ -1,12 +1,25 @@
+import { useState } from 'react';
 import Button from '@/components/Button/Button';
 import Card from '@/components/Card/Card';
 import { Link } from 'react-router';
 import GoogleIcon from '@/assets/icons/google.svg?react';
 import EngduFullBookIcon from '@/assets/icons/engdu-full-book.svg?react';
 import { ENV } from '@/config/env';
+import { checkIsInAppBrowser } from '@/utils/browser';
+import InAppBrowserWarningModal from '@/features/login/components/InAppBrowserWarningModal';
 
 function Login() {
-  const loginUrl = import.meta.env.DEV ? `${ENV.API_BASE_URL}/auth/local/url` : `${ENV.API_BASE_URL}/auth/url`;
+  const loginUrl = import.meta.env.DEV
+    ? `${ENV.API_BASE_URL}/auth/local/url`
+    : `${ENV.API_BASE_URL}/auth/url`;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleGoogleLoginClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (checkIsInAppBrowser()) {
+      e.preventDefault();
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <div className="flex min-h-dvh items-center justify-center px-5">
@@ -19,7 +32,7 @@ function Login() {
             <br /> 영어 학습을 시작해보세요!
           </div>
         </div>
-        <a href={loginUrl} className="w-full">
+        <a href={loginUrl} onClick={handleGoogleLoginClick} className="w-full">
           <Button variant="primary" appearance="ghost">
             <GoogleIcon />
             <div className="flex-1">구글로 시작하기</div>
@@ -37,6 +50,8 @@ function Login() {
           에 동의하게 됩니다.
         </div>
       </Card>
+
+      <InAppBrowserWarningModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
