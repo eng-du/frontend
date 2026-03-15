@@ -1,22 +1,22 @@
+const IN_APP_KEYWORDS = [
+  'kakaotalk',
+  'instagram',
+  'naver',
+  'fb_iab',
+  'fban',
+  'fbav',
+  'line',
+  'twitter',
+  'daum',
+  'everytime',
+];
+
 export const checkIsInAppBrowser = (): boolean => {
   if (typeof window === 'undefined') return false;
 
   const userAgent = navigator.userAgent.toLowerCase();
 
-  const inAppKeywords = [
-    'kakaotalk',
-    'instagram',
-    'naver',
-    'fb_iab',
-    'fban',
-    'fbav',
-    'line',
-    'twitter',
-    'daum',
-    'everytime',
-  ];
-
-  return inAppKeywords.some((keyword) => userAgent.includes(keyword));
+  return IN_APP_KEYWORDS.some((keyword) => userAgent.includes(keyword));
 };
 
 export const copyToClipboard = async (text: string) => {
