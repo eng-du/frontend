@@ -14,8 +14,12 @@ export default function InAppBrowserWarningModal({
 }: InAppBrowserWarningModalProps) {
   const handleCopyLink = async () => {
     const currentUrl = window.location.href;
-    await copyToClipboard(currentUrl);
-    toast('링크가 복사되었습니다.');
+    const success = await copyToClipboard(currentUrl);
+    if (success) {
+      toast.success('링크가 복사되었습니다.');
+    } else {
+      toast.error('링크 복사에 실패했습니다. 다시 시도해주세요.');
+    }
     onClose();
   };
 
