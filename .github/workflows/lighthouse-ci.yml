@@ -1,0 +1,94 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: ['main']
+
+jobs:
+  lighthouse-public-mobile:
+    if: github.repository == 'eng-du/frontend'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse CI (Public Mobile)
+        run: npx lhci autorun --config=lighthouserc.public.mobile.cjs
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  lighthouse-public-desktop:
+    if: github.repository == 'eng-du/frontend'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse CI (Public Desktop)
+        run: npx lhci autorun --config=lighthouserc.public.desktop.cjs
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  lighthouse-auth-mobile:
+    if: github.repository == 'eng-du/frontend'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse CI (Auth Mobile)
+        run: npx lhci autorun --config=lighthouserc.auth.mobile.cjs
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  lighthouse-auth-desktop:
+    if: github.repository == 'eng-du/frontend'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse CI (Auth Desktop)
+        run: npx lhci autorun --config=lighthouserc.auth.desktop.cjs
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
