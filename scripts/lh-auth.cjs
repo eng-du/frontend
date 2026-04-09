@@ -29,7 +29,9 @@ module.exports = async (browser, context) => {
       );
     }
 
-    const cookies = await page.cookies('https://api.engdu.shop');
+    const client = await page.target().createCDPSession();
+    const { cookies } = await client.send('Network.getAllCookies');
+    
     const hasRefreshToken = cookies.some(
       (c) => c.name === 'refresh-token' && c.domain.includes('api.engdu.shop'),
     );
