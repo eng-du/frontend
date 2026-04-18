@@ -86,10 +86,17 @@ function WaitModal({ isInitialResolved, onClose }: WaitModalProps) {
           )}
           style={{ backgroundImage: `url(${engduFullCreate})` }}
         />
-        <div className="text-center font-pinkfong text-24 font-bold whitespace-pre-line sm:text-32">
-          {isInitialResolved
-            ? '잉듀가 만들어졌어요!\n학습을 시작해보세요'
-            : '뚝딱 뚝딱 잉듀가\n만들어지고 있어요~'}
+        <div className="flex flex-col items-center gap-3">
+          <div className="font-pinkfong text-24 font-bold whitespace-pre-line sm:text-32">
+            {isInitialResolved
+              ? '잉듀가 만들어졌어요!\n학습을 시작해보세요'
+              : '뚝딱 뚝딱 잉듀가\n만들어지고 있어요~'}
+          </div>
+          {!isInitialResolved && (
+            <div className="text-12 text-text-secondary">
+              조금만 기다려 주세요! 약 1분 정도 걸려요 ⏳
+            </div>
+          )}
         </div>
         <div className="flex min-h-60 w-full flex-col items-center justify-center gap-3 rounded-md border border-border-brand-weak bg-surface-brand-weak p-4">
           <div className="rounded-full bg-surface-brand-strong px-2 py-1 text-12 font-bold text-text-brand-primary">
