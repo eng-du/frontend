@@ -10,13 +10,15 @@ export function useEngduLearning(engduId: number) {
   const queryClient = useQueryClient();
   const [isInitialTimeout, setIsInitialTimeout] = useState(false);
   const [isCompleteTimeout, setIsCompleteTimeout] = useState(false);
+  const [isInitialPostDone, setIsInitialPostDone] = useState(false);
+  const [isCompletePostDone, setIsCompletePostDone] = useState(false);
 
   // 1. 상세 정보 조회
-  const { 
-    data: engduDetail, 
-    isPending: isPendingDetail, 
+  const {
+    data: engduDetail,
+    isPending: isPendingDetail,
     isError: isErrorDetail,
-    error: detailError
+    error: detailError,
   } = useQuery({
     queryKey: ['engdu', engduId],
     queryFn: () => getEngduDetail(engduId),
@@ -31,7 +33,7 @@ export function useEngduLearning(engduId: number) {
         }
       }
       return failureCount < 3; // 기본 3회 재시도
-    }
+    },
   });
 
   const navigate = useNavigate();
@@ -57,6 +59,10 @@ export function useEngduLearning(engduId: number) {
   // 2. 파트 생성 요청 Mutation
   const { mutate: postEngduPartMutate } = useMutation({
     mutationFn: (partType: EngduPartType) => postEngduPart(engduId, partType),
+    onSuccess: (_, partType) => {
+      if (partType === 'INITIAL') setIsInitialPostDone(true);
+      if (partType === 'COMPLETE') setIsCompletePostDone(true);
+    },
   });
 
   const requestedRef = useRef<Record<EngduPartType, boolean>>({
@@ -81,7 +87,7 @@ export function useEngduLearning(engduId: number) {
   const { data: engduPartInitial } = useQuery({
     queryKey: ['engdu', engduId, 'part', 'INITIAL'],
     queryFn: () => getEngduPart(engduId, 'INITIAL'),
-    enabled: !!engduDetail && !hasInitial && requestedRef.current.INITIAL,
+    enabled: !!engduDetail && !hasInitial && isInitialPostDone,
     refetchInterval: (query) => {
       const state = query.state;
       const status = state.data?.status;
@@ -123,7 +129,7 @@ export function useEngduLearning(engduId: number) {
   const { data: engduPartComplete } = useQuery({
     queryKey: ['engdu', engduId, 'part', 'COMPLETE'],
     queryFn: () => getEngduPart(engduId, 'COMPLETE'),
-    enabled: !!engduDetail && hasInitial && !hasComplete && requestedRef.current.COMPLETE,
+    enabled: !!engduDetail && hasInitial && !hasComplete && isCompletePostDone,
     refetchInterval: (query) => {
       const state = query.state;
       const status = state.data?.status;
