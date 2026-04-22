@@ -12,7 +12,7 @@ function LandingSection({ title, description, media, order = 'default' }: Landin
   return (
     <div
       className={cn(
-        'flex w-full flex-col items-center justify-between gap-10 bg-surface-weak px-[12.5%] py-20 lg:flex-row lg:py-30 break-keep',
+        'flex w-full flex-col items-center justify-between gap-10 bg-surface-weak px-[12.5%] py-20 break-keep lg:flex-row lg:py-30',
         order === 'reverse' && 'bg-surface-brand-weak/30 lg:flex-row-reverse',
       )}
     >
@@ -24,7 +24,7 @@ function LandingSection({ title, description, media, order = 'default' }: Landin
           {description}
         </p>
       </div>
-      <div className="w-full max-w-140">{media}</div>
+      <div className="aspect-video w-full max-w-140">{media}</div>
     </div>
   );
 }
