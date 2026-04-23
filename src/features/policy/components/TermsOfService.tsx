@@ -2,7 +2,7 @@ import PolicyLayout from './PolicyLayout';
 
 function TermsOfService() {
   return (
-    <PolicyLayout title="이용약관" effectiveDate="2024년 3월 2일">
+    <PolicyLayout title="이용약관" effectiveDate="2026년 3월 2일">
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-3">
           <h2 className="text-20 font-bold">제1조 (목적)</h2>
