@@ -3,7 +3,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import { useAuth } from './hooks/useAuth';
 import Splash from './components/Splash/Splash';
-import { useEffect, useState, useRef } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 
 const DELAY_THRESHOLD = 300;
 const MIN_DURATION = 500;
@@ -69,7 +69,17 @@ export default function Layout() {
   return (
     <div>
       <Header />
-      <main className="min-h-dvh pt-15">{showSplash ? <Splash /> : !isPending && <Outlet />}</main>
+      <main className="min-h-dvh pt-15">
+        {showSplash ? (
+          <Splash />
+        ) : (
+          !isPending && (
+            <Suspense fallback={null}>
+              <Outlet />
+            </Suspense>
+          )
+        )}
+      </main>
       {!isLearningPage && <Footer />}
     </div>
   );
