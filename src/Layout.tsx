@@ -12,7 +12,7 @@ export default function Layout() {
   const { pathname } = useLocation();
   const isLearningPage = pathname.startsWith('/learning');
 
-  const { isPending } = useAuth();
+  const { user, isPending } = useAuth();
   const [showSplash, setShowSplash] = useState(false);
 
   const isSplashVisible = useRef(false);
@@ -20,6 +20,8 @@ export default function Layout() {
 
   const delayTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
+
+  const isPublicPage = pathname === '/' || pathname.startsWith('/policy');
 
   useEffect(() => {
     const clearAllTimers = () => {
@@ -73,7 +75,8 @@ export default function Layout() {
         {showSplash ? (
           <Splash />
         ) : (
-          !isPending && (
+          !isPending &&
+          (isPublicPage || user) && (
             <Suspense fallback={null}>
               <Outlet />
             </Suspense>
