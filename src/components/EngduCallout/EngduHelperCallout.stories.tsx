@@ -7,7 +7,7 @@ const meta: Meta<typeof EngduHelperCallout> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="relative h-60 w-80 bg-surface-neutral-weak">
+      <div className="bg-surface-neutral-weak relative h-60 w-80">
         <Story />
       </div>
     ),
@@ -27,8 +27,7 @@ export const MultipleLines: Story = {
   args: {
     children: (
       <div>
-        첫 번째 줄<br />
-        두 번째 줄
+        첫 번째 줄<br />두 번째 줄
       </div>
     ),
   },

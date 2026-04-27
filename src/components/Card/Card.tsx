@@ -10,7 +10,7 @@ function Card({ children, className }: CardProps) {
   return (
     <div
       className={cn(
-        'flex flex-col items-start gap-5 rounded-2xl bg-surface-weak p-7 shadow-default',
+        'relative flex flex-col items-start gap-5 rounded-2xl bg-surface-weak p-7 shadow-default',
         className,
       )}
     >

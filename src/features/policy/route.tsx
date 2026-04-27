@@ -1,6 +1,4 @@
 import { Outlet } from 'react-router';
-import TermsOfService from './components/TermsOfService';
-import PrivacyPolicy from './components/PrivacyPolicy';
 
 export const policyRoute = {
   path: 'policy',
@@ -8,11 +6,17 @@ export const policyRoute = {
   children: [
     {
       path: 'terms',
-      element: <TermsOfService />,
+      lazy: async () => {
+        const TermsOfService = (await import('./components/TermsOfService')).default;
+        return { Component: TermsOfService };
+      },
     },
     {
       path: 'privacy',
-      element: <PrivacyPolicy />,
+      lazy: async () => {
+        const PrivacyPolicy = (await import('./components/PrivacyPolicy')).default;
+        return { Component: PrivacyPolicy };
+      },
     },
   ],
 };

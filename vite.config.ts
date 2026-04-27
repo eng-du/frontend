@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
 import fs from 'node:fs';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vite.dev/config/
 import { fileURLToPath } from 'node:url';
@@ -14,7 +15,12 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig(({ command }) => ({
-  plugins: [react(), tailwindcss(), svgr()],
+  plugins: [react(), tailwindcss(), svgr(), visualizer({
+    filename: 'dist/stats.html',
+    open: true,
+    gzipSize: true,
+    brotliSize: true,
+  })],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')

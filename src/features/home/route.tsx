@@ -1,3 +1,7 @@
-import Home from './Home';
-
-export const homeRoute = { path: '/', element: <Home /> };
+export const homeRoute = {
+  path: '/',
+  lazy: async () => {
+    const Home = (await import('./Home')).default;
+    return { Component: Home };
+  },
+};
