@@ -11,7 +11,7 @@ interface EngduCalloutProps {
 function EngduCallout({ children, Icon, onClickHandler, className }: EngduCalloutProps) {
   return (
     <div
-      className={cn('flex flex-col items-center gap-4 lg:flex', className)}
+      className={cn('flex flex-col items-center gap-4', className)}
       onClick={onClickHandler}
     >
       <div
