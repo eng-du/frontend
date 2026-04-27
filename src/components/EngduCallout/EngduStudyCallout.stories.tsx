@@ -27,9 +27,9 @@ export const MultipleLines: Story = {
   args: {
     children: (
       <div className="flex flex-col gap-1">
-        <div className="font-semibold">Part 1 완료! 정말 대단해요 👏</div>
+        <div className="font-semibold">Part1 완료! 정말 대단해요 👏</div>
         <div>지금 Part 2를 열심히 쓰고 있어요.</div>
-        <div>조금만 기다려 주세요!</div>
+        <div>조금만 기다려주세요!</div>
       </div>
     ),
   },
