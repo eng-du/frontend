@@ -8,6 +8,8 @@ const APP_ORIGIN = 'https://engdu.shop/';
 module.exports = async (browser, context) => {
   const page = await browser.newPage();
 
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
   try {
     await page.goto(APP_ORIGIN, {
       waitUntil: 'networkidle2',
@@ -51,6 +53,8 @@ module.exports = async (browser, context) => {
     if (!hasRefreshToken) {
       throw new Error('[lh-auth] refresh-token cookie not found on api.engdu.shop');
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     await page.reload({
       waitUntil: 'networkidle2',
