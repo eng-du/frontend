@@ -28,6 +28,7 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
   lighthouse-public-desktop:
+    needs: lighthouse-public-mobile
     if: github.repository == 'eng-du/frontend'
     runs-on: ubuntu-latest
 
@@ -50,6 +51,7 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
   lighthouse-auth-mobile:
+    needs: lighthouse-public-desktop
     if: github.repository == 'eng-du/frontend'
     runs-on: ubuntu-latest
 
@@ -72,6 +74,7 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
   lighthouse-auth-desktop:
+    needs: lighthouse-auth-mobile
     if: github.repository == 'eng-du/frontend'
     runs-on: ubuntu-latest
 

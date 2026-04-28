@@ -22,7 +22,7 @@ function Login() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center px-5">
+    <main className="flex min-h-dvh items-center justify-center px-5">
       <Card className="w-full max-w-107.5 items-center py-10 md:py-16">
         <EngduFullBookIcon />
         <div className="flex flex-col items-center gap-3">
@@ -40,11 +40,11 @@ function Login() {
         </a>
         <div className="text-12 text-text-secondary">
           로그인 시{' '}
-          <Link to="/policy/terms" className="text-text-brand-primary">
+          <Link to="/policy/terms" className="text-text-brand-primary underline">
             이용약관
           </Link>
           과{' '}
-          <Link to="/policy/privacy" className="text-text-brand-primary">
+          <Link to="/policy/privacy" className="text-text-brand-primary underline">
             개인정보처리방침
           </Link>
           에 동의하게 됩니다.
@@ -52,7 +52,7 @@ function Login() {
       </Card>
 
       <InAppBrowserWarningModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
+    </main>
   );
 }
 

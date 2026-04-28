@@ -58,7 +58,7 @@ function EngduLearningSkeleton({ isMobile, initialTab = '지문' }: EngduLearnin
       </div>
       <div className="pointer-events-none absolute top-35 right-0 left-0 z-10 h-5 bg-surface-default" />
       <div className="grid h-full flex-1 grid-cols-[7fr_5fr] gap-10 overflow-hidden px-25 py-10">
-        <ReadingCardSkeleton />
+        <ReadingCardSkeleton part={2} />
         <div className="sticky top-0 h-fit">
           <QuizCardSkeleton />
         </div>
