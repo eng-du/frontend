@@ -26,6 +26,9 @@ export default defineConfig(({ command }) => ({
       '@': path.resolve(__dirname, './src')
     }
   },
+  build: {
+    sourcemap: 'hidden',
+  },
   test: {
     projects: [{
       extends: true,

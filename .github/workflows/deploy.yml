@@ -45,6 +45,9 @@ jobs:
           VITE_AMPLITUDE_API_KEY: ${{ env.VITE_AMPLITUDE_API_KEY }}
           VITE_ROBOTS: ${{ env.VITE_ROBOTS }}
 
+      - name: Remove sourcemaps before packaging
+        run: find dist -name "*.map" -type f -delete
+
       - name: Pack dist
         run: tar -czf dist.tgz dist
 
