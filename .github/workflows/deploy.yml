@@ -44,6 +44,10 @@ jobs:
           VITE_API_BASE_URL: ${{ env.VITE_API_BASE_URL }}
           VITE_AMPLITUDE_API_KEY: ${{ env.VITE_AMPLITUDE_API_KEY }}
           VITE_ROBOTS: ${{ env.VITE_ROBOTS }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_RELEASE: ${{ github.sha }}
 
       - name: Remove sourcemaps before packaging
         run: find dist -name "*.map" -type f -delete

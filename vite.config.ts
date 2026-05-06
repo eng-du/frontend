@@ -6,6 +6,7 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path';
 import fs from 'node:fs';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 // https://vite.dev/config/
 import { fileURLToPath } from 'node:url';
@@ -15,12 +16,25 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig(({ command }) => ({
-  plugins: [react(), tailwindcss(), svgr(), visualizer({
-    filename: 'dist/stats.html',
-    open: true,
-    gzipSize: true,
-    brotliSize: true,
-  })],
+  plugins: [
+    react(),
+    tailwindcss(),
+    svgr(),
+    visualizer({
+      filename: 'dist/stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        name: process.env.SENTRY_RELEASE,
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
