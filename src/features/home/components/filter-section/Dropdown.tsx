@@ -28,7 +28,7 @@ function Dropdown<T extends string>({ filterKey, value, setValue }: DropdownProp
       {isOpen && (
         <div
           ref={ref}
-          className="absolute top-12 w-50 overflow-hidden rounded-xl border border-border-default bg-surface-weak p-2 text-text-secondary shadow-default"
+          className="absolute top-12 z-10 w-50 overflow-hidden rounded-xl border border-border-default bg-surface-weak p-2 text-text-secondary shadow-default"
         >
           {options.map((option) => (
             <div
