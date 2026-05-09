@@ -7,11 +7,20 @@ const APP_ORIGIN = 'https://engdu.shop/';
  */
 module.exports = async (browser, context) => {
   const page = await browser.newPage();
-
+  
   try {
+    const FIRST_URL = 'https://engdu.shop';
+    
+    // 첫 번째 URL이 아닌 경우, 이미 쿠키(프로필)가 유지되므로 로그인 스크립트를 건너뜀
+    if (context.url !== FIRST_URL && context.url !== FIRST_URL + '/') {
+      return;
+    }
+
     await page.goto(APP_ORIGIN, {
       waitUntil: 'networkidle2',
     });
+    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const result = await page.evaluate(async (apiBaseUrl) => {
       try {
@@ -51,6 +60,8 @@ module.exports = async (browser, context) => {
     if (!hasRefreshToken) {
       throw new Error('[lh-auth] refresh-token cookie not found on api.engdu.shop');
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     await page.reload({
       waitUntil: 'networkidle2',
