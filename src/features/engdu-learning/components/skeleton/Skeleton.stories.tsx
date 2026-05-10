@@ -59,7 +59,7 @@ export const QuizStepIndicator: StoryObj<typeof QuizStepIndicatorSkeleton> = {
 export const ReadingCard: StoryObj<typeof ReadingCardSkeleton> = {
   render: () => (
     <div className="max-w-2xl bg-surface-default p-10">
-      <ReadingCardSkeleton />
+      <ReadingCardSkeleton part={1} />
     </div>
   ),
 };

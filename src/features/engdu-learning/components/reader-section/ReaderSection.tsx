@@ -62,7 +62,7 @@ function ReaderSection({
     <div className="flex flex-col gap-10">
       <div ref={initialRef}>
         {!initialArticle ? (
-          <ReadingCardSkeleton />
+          <ReadingCardSkeleton part={1} />
         ) : (
           <ReadingCard part={1} article={initialArticle} />
         )}
@@ -70,7 +70,7 @@ function ReaderSection({
       <div ref={completeRef}>
         {!isLocked &&
           (!completeArticle ? (
-            <ReadingCardSkeleton />
+            <ReadingCardSkeleton part={2} />
           ) : (
             <ReadingCard part={2} article={completeArticle} />
           ))}

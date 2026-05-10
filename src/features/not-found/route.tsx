@@ -1,6 +1,7 @@
-import NotFound from './NotFound';
-
 export const notFoundRoute = {
   path: '*',
-  element: <NotFound />,
+  lazy: async () => {
+    const NotFound = (await import('./NotFound')).default;
+    return { Component: NotFound };
+  },
 };

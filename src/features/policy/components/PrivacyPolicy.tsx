@@ -2,7 +2,7 @@ import PolicyLayout from './PolicyLayout';
 
 function PrivacyPolicy() {
   return (
-    <PolicyLayout title="개인정보처리방침" effectiveDate="2024년 3월 2일">
+    <PolicyLayout title="개인정보처리방침" effectiveDate="2026년 3월 2일">
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-3">
           <h2 className="text-20 font-bold">1. 개인정보의 처리 목적</h2>
@@ -78,7 +78,7 @@ function PrivacyPolicy() {
         <section className="flex flex-col gap-3">
           <h2 className="text-20 font-bold">6. 개인정보 처리 위탁</h2>
           <p>“서비스”는 원활한 운영을 위하여 다음과 같이 개인정보 처리를 위탁하고 있습니다.</p>
-          <table className="text-14 w-full border-collapse border border-border-default text-left">
+          <table className="w-full border-collapse border border-border-default text-left text-14">
             <thead>
               <tr className="bg-surface-weak">
                 <th className="border border-border-default p-3 font-bold">수탁업체</th>

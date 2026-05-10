@@ -26,22 +26,22 @@ function Header() {
         </div>
       </Link>
       {!isPending && (
-        <ul className="flex gap-5 text-12 text-text-secondary">
+        <div className="flex gap-5 text-12 text-text-secondary">
           {user ? (
             <>
-              <Link to="/mypage">
-                <button className="cursor-pointer">{user.name}</button>
+              <Link to="/mypage" className="cursor-pointer">
+                {user.name}
               </Link>
               <button className="cursor-pointer" onClick={() => logoutMutate()}>
                 로그아웃
               </button>
             </>
           ) : (
-            <button>
-              <Link to="/login">로그인</Link>
-            </button>
+            <Link to="/login" className="cursor-pointer">
+              로그인
+            </Link>
           )}
-        </ul>
+        </div>
       )}
     </header>
   );
