@@ -5,9 +5,19 @@ on:
     branches: ['main']
 
 jobs:
-  lighthouse-public-mobile:
+  lighthouse:
     if: github.repository == 'eng-du/frontend'
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1 # 토큰 발급 이슈 방지를 위해 순차 실행
+      matrix:
+        config: [
+          { name: 'public-mobile', file: 'lighthouserc.public.mobile.cjs' },
+          { name: 'public-desktop', file: 'lighthouserc.public.desktop.cjs' },
+          { name: 'auth-mobile', file: 'lighthouserc.auth.mobile.cjs' },
+          { name: 'auth-desktop', file: 'lighthouserc.auth.desktop.cjs' }
+        ]
+    name: lighthouse-${{ matrix.config.name }}
 
     steps:
       - name: Checkout
@@ -22,73 +32,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Lighthouse CI (Public Mobile)
-        run: npx lhci autorun --config=lighthouserc.public.mobile.cjs
+      - name: Run Lighthouse CI
+        run: npx lhci autorun --config=${{ matrix.config.file }}
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-  lighthouse-public-desktop:
-    if: github.repository == 'eng-du/frontend'
-    runs-on: ubuntu-latest
+      - name: Extract Metrics
+        run: node scripts/extract-metrics.cjs
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Post PR Comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          header: lighthouse-${{ matrix.config.name }}
+          path: .lighthouseci/reports/summary.md
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Lighthouse CI (Public Desktop)
-        run: npx lhci autorun --config=lighthouserc.public.desktop.cjs
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-  lighthouse-auth-mobile:
-    if: github.repository == 'eng-du/frontend'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Lighthouse CI (Auth Mobile)
-        run: npx lhci autorun --config=lighthouserc.auth.mobile.cjs
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-  lighthouse-auth-desktop:
-    if: github.repository == 'eng-du/frontend'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Lighthouse CI (Auth Desktop)
-        run: npx lhci autorun --config=lighthouserc.auth.desktop.cjs
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          name: lighthouse-${{ matrix.config.name }}-${{ github.sha }}
+          path: .lighthouseci/reports/
