@@ -8,6 +8,9 @@ jobs:
   lighthouse:
     if: github.repository == 'eng-du/frontend'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       max-parallel: 1 # 토큰 발급 이슈 방지를 위해 순차 실행
       matrix:
