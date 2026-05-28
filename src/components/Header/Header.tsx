@@ -29,6 +29,9 @@ function Header() {
         <div className="flex gap-5 text-12 text-text-secondary">
           {user ? (
             <>
+              <Link to="/run-and-learn" className="cursor-pointer">
+                런앤런
+              </Link>
               <Link to="/mypage" className="cursor-pointer">
                 {user.name}
               </Link>
