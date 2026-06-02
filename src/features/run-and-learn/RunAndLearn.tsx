@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import GameScene from './components/GameScene';
 
 export default function RunAndLearn() {
   return (
-    <div className="flex h-[calc(100vh-3.75rem)] items-center justify-center bg-surface-default p-4 sm:p-6 lg:p-8 animate-fade-in-up overflow-hidden">
+    <div className="relative flex h-[calc(100vh-3.75rem)] items-center justify-center bg-surface-default p-4 sm:p-6 lg:p-8 animate-fade-in-up overflow-hidden">
+      
       {/* 
         Aspect-Ratio Locking Responsive Wrapper:
         Calculates the maximum width that keeps the 1240:890 aspect ratio inside the available screen height:
@@ -23,14 +25,22 @@ export default function RunAndLearn() {
           border-border-default 
           bg-slate-950 
           shadow-default 
-          flex 
-          shrink-0 
-          [&_canvas]:!w-full 
-          [&_canvas]:!h-full 
-          [&_canvas]:!block
+          relative
         "
       >
-        <GameScene />
+        <Suspense fallback={
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 z-50">
+            <div className="relative flex items-center justify-center mb-4">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-indigo-500 border-r-indigo-500 border-b-slate-800 border-l-slate-800"></div>
+              <span className="absolute text-12 font-bold font-mono text-indigo-400">3D</span>
+            </div>
+            <span className="text-14 font-medium text-slate-300 font-sans tracking-wide">
+              3D 월드 리소스를 로딩하는 중...
+            </span>
+          </div>
+        }>
+          <GameScene />
+        </Suspense>
       </div>
     </div>
   );
