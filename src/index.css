@@ -131,6 +131,9 @@
   --text-50: 3.125rem;
   --text-50--line-height: 4rem;
 
+  --text-80: 5rem;
+  --text-80--line-height: 6.25rem;
+
   /* 그림자 */
   --shadow-*: initial;
   --shadow-default: 0px 0px 10px rgba(20, 20, 43, 0.08);
@@ -229,8 +232,18 @@
       @apply bg-surface-brand-default/10 rounded-sm;
     }
   }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 body {
   @apply bg-surface-default font-pretendard text-16 text-text-primary;
 }
+
+/* Force Tailwind rebuild for newly created files */
