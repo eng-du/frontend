@@ -1,7 +1,7 @@
-import imgStarLarge from '@/assets/game/start/start_star_large.svg';
-import imgStarSmall from '@/assets/game/start/start_star_small.svg';
-import imgDecoCurlRight from '@/assets/game/start/start_deco_curl_right.svg';
-import imgDecoCurlLeft from '@/assets/game/start/start_deco_curl_left.svg';
+import StarLargeIcon from '@/assets/game/start/start_star_large.svg?react';
+import StarSmallIcon from '@/assets/game/start/start_star_small.svg?react';
+import DecoCurlRightIcon from '@/assets/game/start/start_deco_curl_right.svg?react';
+import DecoCurlLeftIcon from '@/assets/game/start/start_deco_curl_left.svg?react';
 
 // WebkitTextFillColor, WebkitBackgroundClip, paintOrder, WebkitTextStroke는
 // Tailwind가 지원하지 않는 비표준 CSS 속성이므로 style 속성 사용 (GEMINI.md 허용 예외)
@@ -20,27 +20,27 @@ export default function StartTitle() {
 
       {/* ── 장식: 큰 별 왼쪽 (Figma: left-[-144px] top-[-38px] size-[266.94px] rotate-[47.83deg]) ── */}
       <div className="absolute left-[-144px] top-[-38px] w-[266.94px] h-[266.94px] flex items-center justify-center">
-        <img src={imgStarLarge} alt="" className="w-[188.986px] h-[188.986px] rotate-[47.83deg]" />
+        <StarLargeIcon className="w-[188.986px] h-[188.986px] rotate-[47.83deg]" />
       </div>
 
       {/* ── 장식: 큰 별 오른쪽 (Figma: right-[-130px] top-[82px] size-[230.712px] rotate-[104.68deg]) ── */}
       <div className="absolute right-[-130px] top-[82px] w-[230.712px] h-[230.712px] flex items-center justify-center">
-        <img src={imgStarLarge} alt="" className="w-[188.986px] h-[188.986px] rotate-[104.68deg]" />
+        <StarLargeIcon className="w-[188.986px] h-[188.986px] rotate-[104.68deg]" />
       </div>
 
       {/* ── 장식: 오른쪽 곡선 데코 (Figma: left-[518px] top-[34px] w-[93.182px] h-[48.171px] rotate-[-8.09deg]) ── */}
       <div className="absolute left-[518px] top-[34px] w-[93.182px] h-[48.171px] flex items-center justify-center">
-        <img src={imgDecoCurlRight} alt="" className="w-[89px] h-[36px] rotate-[-8.09deg]" />
+        <DecoCurlRightIcon className="w-[89px] h-[36px] rotate-[-8.09deg]" />
       </div>
 
       {/* ── 장식: 작은 별 + 왼쪽 곡선 데코 (Figma: left-[-13px] top-[211px] size-[71.155px] rotate-[-12.22deg]) ── */}
       <div className="absolute left-[-13px] top-[211px] w-[71.155px] h-[71.155px] flex items-center justify-center">
-        <img src={imgStarSmall} alt="" className="w-[59.845px] h-[59.845px] rotate-[-12.22deg]" />
+        <StarSmallIcon className="w-[59.845px] h-[59.845px] rotate-[-12.22deg]" />
       </div>
 
       {/* ── 장식: 왼쪽 곡선 데코 (Figma: left-[-89px] top-[247px] w-[65.199px] h-[43.525px] rotate-[-20.29deg]) ── */}
       <div className="absolute left-[-89px] top-[247px] w-[65.199px] h-[43.525px] flex items-center justify-center">
-        <img src={imgDecoCurlLeft} alt="" className="w-[60.644px] h-[23.986px] rotate-[-20.29deg]" />
+        <DecoCurlLeftIcon className="w-[60.644px] h-[23.986px] rotate-[-20.29deg]" />
       </div>
 
       {/* ── 본문: 제목 + 설명 ── */}
