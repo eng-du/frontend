@@ -2,13 +2,17 @@ import { cn } from '@/utils/cn';
 
 interface StatCardProps {
   type: 'rank' | 'score';
-  value: number;
+  value?: number | null;
   className?: string;
 }
 
 function StatCard({ type, value, className }: StatCardProps) {
   const title = type === 'rank' ? '내 순위' : '내 점수';
-  const formattedValue = type === 'rank' ? `${value}위` : `${value}점`;
+  
+  const formattedValue =
+    value === undefined || value === null || value === 0
+      ? (type === 'rank' ? '-' : '0점')
+      : (type === 'rank' ? `${value}위` : `${value}점`);
 
   return (
     <div
