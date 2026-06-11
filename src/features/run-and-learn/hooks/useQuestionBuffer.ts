@@ -36,11 +36,24 @@ export function useQuestionBuffer(sessionId: number | null) {
     }
   }, [sessionId, isFetching]);
 
-  // 최초 로딩 (세션이 생성되고 버퍼가 비어있을 때 명시적으로 호출)
-  const initializeBuffer = useCallback(async () => {
-    if (!sessionId || nextStartIndexRef.current > 0) return;
-    await fetchQuestions(10);
-  }, [sessionId, fetchQuestions]);
+  // 최초 10문항 로딩 및 대기용 초기화 함수
+  const initializeQuestions = useCallback(async (sid: number) => {
+    try {
+      setIsFetching(true);
+      const newQuestions = await getRunAndLearnQuestions({
+        sessionId: sid,
+        startIndex: 0,
+        count: 10
+      });
+      setBuffer(newQuestions);
+      nextStartIndexRef.current = 10;
+    } catch (err) {
+      toast.error('문제 목록을 불러오는데 실패했습니다.');
+      throw err;
+    } finally {
+      setIsFetching(false);
+    }
+  }, []);
 
   // 문제 소모 (맨 앞의 문제를 제거)
   const consumeQuestion = useCallback(() => {
@@ -62,6 +75,6 @@ export function useQuestionBuffer(sessionId: number | null) {
     currentQuestion: buffer[0] ?? null,
     isFetching,
     consumeQuestion,
-    initializeBuffer,
+    initializeQuestions,
   };
 }

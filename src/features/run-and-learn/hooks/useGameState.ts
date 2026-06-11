@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 
-export type GamePhase = 'PREPARING' | 'IDLE' | 'PLAYING' | 'CORRECT_PASSING' | 'NEXT' | 'GAME_OVER';
+export type GamePhase = 'IDLE' | 'PLAYING' | 'CORRECT_PASSING' | 'NEXT' | 'GAME_OVER';
 
 const BASE_SPEED = 0.08;
 const MAX_SPEED = 0.2;
 
 export function useGameState() {
-  const [phase, setPhase] = useState<GamePhase>('PREPARING');
+  const [phase, setPhase] = useState<GamePhase>('IDLE');
   const [lane, setLane] = useState<number>(1); // 0 = Left, 1 = Middle, 2 = Right
   const [correctCount, setCorrectCount] = useState(0);
 
@@ -28,7 +28,7 @@ export function useGameState() {
   const restart = useCallback(() => {
     setCorrectCount(0);
     setLane(1);
-    setPhase('PREPARING');
+    setPhase('IDLE');
   }, []);
 
   return {
