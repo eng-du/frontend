@@ -1,38 +1,30 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getLeaderboard, getMyLeaderboard } from '@/api/runAndLearn';
+import { useAuth } from '@/hooks/useAuth';
+import RankingSkeleton from './skeleton/RankingSkeleton';
 import RankingTabItem from './RankingTabItem';
 import RankingItem from './RankingItem';
 import StatCard from './StatCard';
 
-interface RankingData {
-  rank: number;
-  nickname: string;
-  score: number;
-}
-
-const WEEKLY_RANKINGS: RankingData[] = [
-  { rank: 1, nickname: '@ 울퉁불퉁한 오리너구리', score: 320 },
-  { rank: 2, nickname: '@ 영리한 돌고래', score: 310 },
-  { rank: 3, nickname: '@ 날렵한 치타', score: 290 },
-  { rank: 4, nickname: '@ 울퉁불퉁한 오리너구리', score: 250 },
-  { rank: 5, nickname: '@ 명랑한 펭귄', score: 210 },
-];
-
-const DAILY_RANKINGS: RankingData[] = [
-  { rank: 1, nickname: '@ 용감한 사자', score: 450 },
-  { rank: 2, nickname: '@ 친절한 판다', score: 420 },
-  { rank: 3, nickname: '@ 날렵한 치타', score: 390 },
-  { rank: 4, nickname: '@ 울퉁불퉁한 오리너구리', score: 320 },
-  { rank: 5, nickname: '@ 명랑한 펭귄', score: 280 },
-];
-
 function Ranking() {
-  const [activeTab, setActiveTab] = useState<'weekly' | 'daily'>('weekly');
+  const [activeTab, setActiveTab] = useState<'weekly' | 'all_time'>('weekly');
+  const { user } = useAuth();
 
-  const rankings = activeTab === 'weekly' ? WEEKLY_RANKINGS : DAILY_RANKINGS;
+  const rankingType = activeTab === 'weekly' ? 'WEEKLY' : 'ALL_TIME';
 
-  const myRankingInfo = rankings.find(
-    (item) => item.nickname === '@ 울퉁불퉁한 오리너구리' && item.rank === 4,
-  ) || { rank: 4, score: 320 };
+  const { data: leaderboard = [], isPending: isLeaderboardPending } = useQuery({
+    queryKey: ['runAndLearn', 'leaderboard', activeTab],
+    queryFn: () => getLeaderboard({ rankingType, size: 5 }),
+  });
+
+  const { data: myRanking, isPending: isMyRankingPending } = useQuery({
+    queryKey: ['runAndLearn', 'leaderboard', 'me', activeTab],
+    queryFn: () => getMyLeaderboard({ rankingType }),
+    enabled: !!user,
+  });
+
+  const isLoading = isLeaderboardPending || (!!user && isMyRankingPending);
 
   return (
     <div className="w-full h-full overflow-y-auto scrollbar-none bg-surface-weak flex flex-col gap-4 items-start p-[30px] rounded-2xl shadow-default">
@@ -45,39 +37,53 @@ function Ranking() {
           className="w-full"
         />
         <RankingTabItem
-          label="일간 랭킹"
-          selected={activeTab === 'daily'}
-          onClick={() => setActiveTab('daily')}
+          label="역대 랭킹"
+          selected={activeTab === 'all_time'}
+          onClick={() => setActiveTab('all_time')}
           className="w-full"
         />
       </div>
 
-      {/* 마이 랭킹 */}
-      <div className="flex flex-col gap-2 w-full items-start">
-        <span className="font-pinkfong font-normal text-16 text-text-primary">마이 랭킹</span>
-        <div className="grid grid-cols-2 gap-3 w-full">
-          <StatCard type="rank" value={myRankingInfo.rank} className="w-full" />
-          <StatCard type="score" value={myRankingInfo.score} className="w-full" />
-        </div>
-      </div>
+      {isLoading ? (
+        <RankingSkeleton />
+      ) : (
+        <>
+          {/* 마이 랭킹 */}
+          <div className="flex flex-col gap-2 w-full items-start">
+            <span className="font-pinkfong font-normal text-16 text-text-primary">마이 랭킹</span>
+            <div className="grid grid-cols-2 gap-3 w-full">
+              <StatCard type="rank" value={myRanking?.rank ?? null} className="w-full" />
+              <StatCard type="score" value={myRanking?.bestScore ?? null} className="w-full" />
+            </div>
+          </div>
 
-      {/* top 5 명예의 전당 */}
-      <div className="flex flex-col gap-2.5 w-full items-start">
-        <span className="font-pinkfong font-normal text-16 text-text-primary">
-          top 5 명예의 전당
-        </span>
-        <div className="flex flex-col gap-3 w-full">
-          {rankings.map((item) => (
-            <RankingItem
-              key={`${activeTab}-${item.rank}`}
-              rank={item.rank}
-              nickname={item.nickname}
-              score={item.score}
-              isMyRanking={item.nickname === '@ 울퉁불퉁한 오리너구리' && item.rank === 4}
-            />
-          ))}
-        </div>
-      </div>
+          {/* top 5 명예의 전당 */}
+          <div className="flex flex-col gap-2.5 w-full items-start">
+            <span className="font-pinkfong font-normal text-16 text-text-primary">
+              top 5 명예의 전당
+            </span>
+            {leaderboard.length === 0 ? (
+              <div className="w-full py-8 flex items-center justify-center border border-dashed border-border-default rounded-xl bg-surface-weak">
+                <span className="font-pretendard text-14 text-text-secondary">
+                  아직 등록된 랭킹이 없습니다.
+                </span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 w-full">
+                {leaderboard.slice(0, 5).map((item, idx) => (
+                  <RankingItem
+                    key={`${activeTab}-${item.userName}-${item.achievedAt}-${idx}`}
+                    rank={item.rank}
+                    nickname={item.userName}
+                    score={item.bestScore}
+                    isMyRanking={!!user && item.userName === user.name}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
