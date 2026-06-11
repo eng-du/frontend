@@ -10,9 +10,8 @@ export function useGameState() {
   const [lane, setLane] = useState<number>(1); // 0 = Left, 1 = Middle, 2 = Right
   const [correctCount, setCorrectCount] = useState(0);
 
-  // 정답 수에 비례하여 속도 단계적 상승 (5개 맞출 때마다 증가)
-  const stage = Math.floor(correctCount / 5);
-  const wallSpeed = Math.min(BASE_SPEED + stage * 0.02, MAX_SPEED);
+  // 정답 수에 비례하여 속도 단계적 상승 (1개 맞출 때마다 0.01씩 증가)
+  const wallSpeed = Math.min(BASE_SPEED + correctCount * 0.01, MAX_SPEED);
 
   // 정답 판정: 멈추지 않고 CORRECT_PASSING 상태로 전환
   // 벽이 카메라 뒤로 완전히 퇴장한 시점(z >= 38)을 GameScene 프레임루프에서 감지하여 NEXT → PLAYING 순서로 전환
