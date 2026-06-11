@@ -1,12 +1,14 @@
 import { Suspense, useRef, useEffect, useState, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { useQueryClient } from '@tanstack/react-query';
 import Background from './Background';
 import Pathway from './Pathway';
 import Scenery from './Scenery';
 import Character from './Character';
 import { useGameState } from '../../hooks/useGameState';
 import { useQuestionBuffer } from '../../hooks/useQuestionBuffer';
-import { createRunAndLearnSession, startRunAndLearnSession } from '@/api/runAndLearn';
+import { createRunAndLearnSession, endRunAndLearnSession } from '@/api/runAndLearn';
+import type { SubmittedAnswer } from '@/api/runAndLearn';
 import GameStartScreen from '../start-screen/GameStartScreen';
 import DoorBreakEffect from './DoorBreakEffect';
 import LightbulbIcon from '@/assets/game/lightbulb.svg?react';
@@ -22,6 +24,7 @@ function CameraController() {
 }
 
 export default function GameScene() {
+  const queryClient = useQueryClient();
   const {
     phase,
     setPhase,
@@ -36,19 +39,19 @@ export default function GameScene() {
   const [sessionId, setSessionId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+
+  // 사용자가 제출한 답변 기록 수집
+  const [submissions, setSubmissions] = useState<SubmittedAnswer[]>([]);
 
   // 게임 재시작 핸들러
-  const handleRestart = useCallback(async () => {
+  const handleRestart = useCallback(() => {
     setSessionId(null);
+    setSubmissions([]);
     restart();
     setIsGameOverModalOpen(false);
-    try {
-      const res = await createRunAndLearnSession();
-      setSessionId(res.sessionId);
-    } catch (err) {
-      console.error(err);
-    }
   }, [restart]);
+
   const [scale, setScale] = useState(1);
   const BASE_WIDTH = 1240;
   const BASE_HEIGHT = 890;
@@ -68,8 +71,51 @@ export default function GameScene() {
     return () => observer.disconnect();
   }, []);
 
+  // 퀴즈 버퍼링 훅 연결
+  const { currentQuestion, consumeQuestion, initializeQuestions } = useQuestionBuffer(sessionId);
+
+  // START 버튼 클릭 시 세션 생성 및 10개 문항 패칭
+  const handleStartGame = useCallback(async () => {
+    if (isStarting) return;
+    setIsStarting(true);
+    setSubmissions([]);
+
+    try {
+      // 1. 세션 생성 API 호출
+      const res = await createRunAndLearnSession();
+      const sid = res.sessionId;
+      setSessionId(sid);
+
+      // 2. 최초 10문항 로딩 및 대기
+      await initializeQuestions(sid);
+
+      // 3. 완료 시 즉시 PLAYING 단계로 전환
+      setPhase('PLAYING');
+    } catch (err) {
+      setSessionId(null);
+    } finally {
+      setIsStarting(false);
+    }
+  }, [isStarting, initializeQuestions, setPhase]);
+
   useEffect(() => {
     if (phase === 'GAME_OVER') {
+      // 게임 종료 시점: 서버에 결과 제출
+      if (sessionId) {
+        endRunAndLearnSession(sessionId, {
+          clientTotalScore: correctCount * 10,
+          submittedAnswers: submissions,
+        })
+          .then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ['runAndLearn', 'leaderboard'],
+            });
+          })
+          .catch((err) => {
+            console.error('세션 종료 결과 제출 실패:', err);
+          });
+      }
+
       const timer = setTimeout(() => {
         setIsGameOverModalOpen(true);
       }, 1000);
@@ -77,17 +123,13 @@ export default function GameScene() {
     } else {
       setIsGameOverModalOpen(false);
     }
-  }, [phase]);
-
-  // 퀴즈 버퍼링 훅 연결
-  const { buffer, currentQuestion, isFetching, consumeQuestion, initializeBuffer } = useQuestionBuffer(sessionId);
+  }, [phase, sessionId, correctCount, submissions, queryClient]);
 
   // 💥 월드 스페이스 이펙트 상태 관리
   const [activeEffects, setActiveEffects] = useState<{ id: number; position: [number, number, number] }[]>([]);
 
   const triggerBreakEffect = useCallback((x: number) => {
     const id = Date.now();
-    // 문의 실제 월드 X 좌표는 레인 X(x)와 완벽하게 일치하므로 보정값 제거!
     setActiveEffects((prev) => [...prev, { id, position: [x, -1.2, -1.4] }]);
 
     // 1.2초 후 자동 소멸
@@ -96,54 +138,23 @@ export default function GameScene() {
     }, 1200);
   }, []);
 
-  // 1. 컴포넌트 마운트 시 세션 생성
-  useEffect(() => {
-    createRunAndLearnSession().then((res) => {
-      setSessionId(res.sessionId);
-    });
-  }, []);
-
-  // 2. 세션이 발급되었고 PREPARING 상태라면 최초 10개 버퍼링 시작
-  useEffect(() => {
-    if (phase === 'PREPARING' && sessionId && !isFetching && buffer.length === 0) {
-      initializeBuffer();
-    }
-  }, [phase, sessionId, initializeBuffer, isFetching, buffer.length]);
-
-  // 3. 로딩이 완료되어 퀴즈가 준비되면 IDLE(대기) 상태 전환
-  useEffect(() => {
-    if (phase === 'PREPARING' && sessionId && currentQuestion) {
-      setPhase('IDLE');
-    }
-  }, [phase, sessionId, currentQuestion, setPhase]);
-
-  // 4. NEXT(다음 문제로 넘어감) 상태 감지 시 앞의 문제 소모 후 즉시 PLAYING으로 전환
+  // NEXT(다음 문제로 넘어감) 상태 감지 시 앞의 문제 소모 후 즉시 PLAYING으로 전환
   useEffect(() => {
     if (phase === 'NEXT') {
       consumeQuestion();
-      // rAF 없이 즉시 전환하여 끊김 방지 (벽 위치 리셋은 useFrame에서 NEXT 프레임에 처리)
       setPhase('PLAYING');
     }
   }, [phase, consumeQuestion, setPhase]);
 
-  // 5. 벽이 카메라 뒤로 완전히 퇴장한 시점 (CORRECT_PASSING → NEXT)
+  // 벽이 카메라 뒤로 완전히 퇴장한 시점 (CORRECT_PASSING → NEXT)
   const handleExit = useCallback(() => {
     setPhase('NEXT');
   }, [setPhase]);
 
   // 🕹️ KEYBOARD LANE INTERACTION
   useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
-      // IDLE 상태에서 스페이스바를 누르면 세션 시작 API 호출 후 게임 스타트
-      if (phase === 'IDLE' && e.code === 'Space') {
-        if (sessionId) {
-          await startRunAndLearnSession(sessionId);
-          setPhase('PLAYING');
-        }
-        return;
-      }
-
-      // PLAYING 상태에서만 레인 조작 허용 (CORRECT_PASSING 중에는 이미 통과 중이므로 이동 차단)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // PLAYING 상태에서만 레인 조작 허용 (CORRECT_PASSING 중에는 이동 차단)
       if (phase === 'PLAYING') {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A' || e.key === 'ㅁ') {
           setLane((prev) => Math.max(0, prev - 1));
@@ -158,7 +169,7 @@ export default function GameScene() {
       containerRef.current.focus();
     }
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [phase, sessionId, setPhase, setLane]);
+  }, [phase, setLane]);
 
   // Exact X-coordinate conversions for pixel-perfect centering in 3D
   const lanes = [-1.54, 0.0, 1.54];
@@ -168,19 +179,13 @@ export default function GameScene() {
     <div
       ref={containerRef}
       tabIndex={0}
-      // 오답 시 전체 화면이 미세하게 떨리는 tailwind 클래스가 있다면 추가 (여기선 임시 제외)
       className="absolute inset-0 w-full h-full overflow-hidden outline-none"
     >
-      {/* 시작 화면 (PREPARING + IDLE 상태 모두 표시, 버튼은 IDLE일 때만 활성화) */}
-      {(phase === 'PREPARING' || phase === 'IDLE') && (
+      {/* 시작 화면 (IDLE 상태일 때만 노출) */}
+      {phase === 'IDLE' && (
         <GameStartScreen
-          isLoading={phase === 'PREPARING'}
-          onStart={async () => {
-            if (sessionId) {
-              await startRunAndLearnSession(sessionId);
-            }
-            setPhase('PLAYING');
-          }}
+          isLoading={isStarting}
+          onStart={handleStartGame}
         />
       )}
 
@@ -243,9 +248,23 @@ export default function GameScene() {
             onCorrect={() => {
               const currentX = lanes[lane];
               triggerBreakEffect(currentX);
+              if (currentQuestion) {
+                setSubmissions((prev) => [
+                  ...prev,
+                  { questionId: currentQuestion.id, userAnswer: lane + 1 },
+                ]);
+              }
               handleCorrect();
             }}
-            onWrong={handleWrong}
+            onWrong={() => {
+              if (currentQuestion) {
+                setSubmissions((prev) => [
+                  ...prev,
+                  { questionId: currentQuestion.id, userAnswer: lane + 1 },
+                ]);
+              }
+              handleWrong();
+            }}
             onExit={handleExit}
             currentQuestion={currentQuestion}
             currentLane={lane}
