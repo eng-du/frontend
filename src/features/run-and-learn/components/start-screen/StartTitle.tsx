@@ -12,10 +12,101 @@ const titleGradientStyle = {
   backgroundClip: 'text' as const,
 };
 
-export default function StartTitle() {
+interface StartTitleProps {
+  isMobile?: boolean;
+}
+
+export default function StartTitle({ isMobile = false }: StartTitleProps) {
+  if (isMobile) {
+    return (
+      <div className="relative flex flex-col items-center justify-center mt-10" style={{ width: '220px' }}>
+        {/* 모바일 장식 요소들 */}
+        {/* Star 2 (왼쪽 아래) */}
+        <div className="absolute left-[-13.6px] top-[86px] w-[53.865px] h-[53.865px] flex items-center justify-center pointer-events-none">
+          <StarSmallIcon className="w-[42.902px] h-[42.902px] rotate-[17.6deg]" />
+        </div>
+
+        {/* Star 3 (오른쪽 중간) */}
+        <div className="absolute left-[186.88px] top-[41px] w-[100.88px] h-[100.88px] flex items-center justify-center pointer-events-none">
+          <StarLargeIcon className="w-[82.635px] h-[82.635px] rotate-[104.68deg]" />
+        </div>
+
+        {/* Star 4 (왼쪽 위) */}
+        <div className="absolute left-[-50.78px] top-[-31.34px] w-[111.798px] h-[111.798px] flex items-center justify-center pointer-events-none">
+          <StarLargeIcon className="w-[79.15px] h-[79.15px] rotate-[47.83deg]" />
+        </div>
+
+        {/* DecoCurlRight (오른쪽 위) */}
+        <div className="absolute left-[210.4px] top-[-5.92px] w-[45.107px] h-[23.318px] flex items-center justify-center pointer-events-none">
+          <DecoCurlRightIcon className="w-[43.082px] h-[17.427px] rotate-[-8.09deg]" />
+        </div>
+
+        {/* DecoCurlLeft (왼쪽 중간) */}
+        <div className="absolute left-[-37.6px] top-[81px] w-[45.623px] h-[37.254px] flex items-center justify-center pointer-events-none">
+          <DecoCurlLeftIcon className="w-[43.12px] h-[17.054px] rotate-[-31.88deg]" />
+        </div>
+
+        {/* 제목 글자 영역 */}
+        <div className="flex gap-[20px] h-[108px] items-center justify-center relative shrink-0 z-10">
+          {/* 런 */}
+          <div className="relative flex items-center justify-center shrink-0 w-[74.905px] h-[108.155px]">
+            <span
+              className="absolute -rotate-9 not-italic leading-[108px] w-[75px] h-[108px] font-pinkfong font-bold text-[80px] text-[#452508] select-none text-center"
+              style={{ WebkitTextStroke: '8px #452508' }}
+            >
+              런
+            </span>
+            <span
+              className="-rotate-9 not-italic leading-[108px] w-[75px] h-[108px] font-pinkfong font-bold text-[80px] relative z-10 text-center"
+              style={titleGradientStyle}
+            >
+              런
+            </span>
+          </div>
+
+          {/* 앤 */}
+          <div className="relative flex items-center justify-center shrink-0 w-[50px] h-[108.155px]">
+            <span
+              className="absolute not-italic leading-[108px] w-[50px] h-[108px] font-pinkfong font-bold text-[50px] text-[#452508] select-none text-center"
+              style={{ WebkitTextStroke: '8px #452508' }}
+            >
+              앤
+            </span>
+            <span
+              className="not-italic leading-[108px] w-[50px] h-[108px] font-pinkfong font-bold text-[50px] relative z-10 text-center"
+              style={titleGradientStyle}
+            >
+              앤
+            </span>
+          </div>
+
+          {/* 런 */}
+          <div className="relative flex items-center justify-center shrink-0 w-[74.905px] h-[108.155px]">
+            <span
+              className="absolute rotate-9 not-italic leading-[108px] w-[75px] h-[108px] font-pinkfong font-bold text-[80px] text-[#452508] select-none text-center"
+              style={{ WebkitTextStroke: '8px #452508' }}
+            >
+              런
+            </span>
+            <span
+              className="rotate-9 not-italic leading-[108px] w-[75px] h-[108px] font-pinkfong font-bold text-[80px] relative z-10 text-center"
+              style={titleGradientStyle}
+            >
+              런
+            </span>
+          </div>
+        </div>
+
+        {/* 설명 문구 */}
+        <p className="shrink-0 not-italic leading-normal text-center text-[#452508] w-[215px] font-pinkfong font-normal text-16 mt-4 z-10">
+          다가오는 문, 오답을 피해 끝까지 달려봐!
+        </p>
+      </div>
+    );
+  }
+
+  // PC 버전 레이아웃
   return (
-    // 피그마: flex row, gap-20, py-[11px], items-center, justify-center
-    // 별/데코 장식들은 이 flex 컨테이너 기준으로 absolute overflow
     <div className="relative flex items-center justify-center gap-5 py-3">
 
       {/* ── 장식: 큰 별 왼쪽 (Figma: left-[-144px] top-[-38px] size-[266.94px] rotate-[47.83deg]) ── */}

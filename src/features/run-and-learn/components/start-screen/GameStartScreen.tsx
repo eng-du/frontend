@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { cn } from '@/utils/cn';
 import StartTitle from './StartTitle';
 import StartScenery from './StartScenery';
 import StartButton from './StartButton';
 import GameButton from '../common/GameButton';
 import GameTutorialModal from './GameTutorialModal';
-
-// 피그마 기준 해상도
-const BASE_WIDTH = 1240;
-const BASE_HEIGHT = 890;
 
 interface GameStartScreenProps {
   onStart: () => void;
@@ -17,6 +14,7 @@ interface GameStartScreenProps {
 export default function GameStartScreen({ onStart, isLoading = false }: GameStartScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   useEffect(() => {
@@ -25,9 +23,21 @@ export default function GameStartScreen({ onStart, isLoading = false }: GameStar
 
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const scaleX = width / BASE_WIDTH;
-      const scaleY = height / BASE_HEIGHT;
-      setScale(Math.min(scaleX, scaleY));
+      const aspect = width / height;
+      const mobile = aspect < 1.2;
+      setIsMobile(mobile);
+
+      if (mobile) {
+        // 모바일(세로 카드 모드): 327 x 592 피그마 규격 기준
+        // 높이에 맞추고 좌우는 클리핑 (부모 aspect가 327:592이므로 사실상 꽉 참)
+        const scaleY = height / 592;
+        setScale(scaleY);
+      } else {
+        // PC/태블릿: 1240 x 890 피그마 규격 기준
+        const scaleX = width / 1240;
+        const scaleY = height / 890;
+        setScale(Math.min(scaleX, scaleY));
+      }
     });
 
     observer.observe(container);
@@ -35,24 +45,25 @@ export default function GameStartScreen({ onStart, isLoading = false }: GameStar
   }, []);
 
   return (
-    // 컨테이너: 부모(aspect-[1240/890])를 꽉 채움
+    // 컨테이너: 부모를 꽉 채움
     <div ref={containerRef} className="absolute inset-0 overflow-hidden z-20">
-      {/* 1240×890 고정 설계, scale로 통째로 축소 (동적 값이므로 style 허용) */}
+      {/* 피그마 프레임 크기에 맞춰 배치 후 scale로 비율 조정 */}
       <div
-        className="absolute w-[1240px] h-[890px] left-1/2 top-1/2 bg-[#d6f3ff] overflow-hidden"
+        className={cn(
+          "absolute left-1/2 top-1/2 bg-[#d6f3ff] overflow-hidden",
+          isMobile ? "w-[327px] h-[592px]" : "w-[1240px] h-[890px]"
+        )}
         style={{ 
           transform: `translate(-50%, -50%) scale(${scale})`,
           transformOrigin: 'center center'
         }}
       >
-        {/*
-          피그마 최상위 구조: flex-col, justify-between, items-center, pt-[40px]
-          ├── StartTitle  (상단 타이틀+설명)
-          ├── StartButton/GameButton (중앙 버튼들)
-          └── StartScenery (하단 씬 배경)
-        */}
-        <div className="flex flex-col items-center justify-between h-full pt-10">
-          <StartTitle />
+        <div className={cn(
+          "flex flex-col items-center justify-between h-full pt-10",
+          isMobile ? "pt-0" : "pt-10"
+        )}>
+          <StartTitle isMobile={isMobile} />
+          
           <div className="flex flex-row gap-4 items-center justify-center z-30">
             <GameButton
               variant="secondary"
@@ -63,10 +74,11 @@ export default function GameStartScreen({ onStart, isLoading = false }: GameStar
             </GameButton>
             <StartButton onStart={onStart} isLoading={isLoading} />
           </div>
-          <StartScenery />
+          
+          <StartScenery isMobile={isMobile} />
         </div>
 
-        {/* 게임 방법 설명 모달 (scale 축소 영역 내부로 진입하여 함께 축소되도록 함) */}
+        {/* 게임 방법 설명 모달 */}
         <GameTutorialModal
           isOpen={isTutorialOpen}
           onClose={() => setIsTutorialOpen(false)}

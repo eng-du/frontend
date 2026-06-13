@@ -13,9 +13,9 @@ function TutorialStep({ step, text, children, className }: TutorialStepProps) {
   return (
     <div className={cn('flex gap-3 items-start', className)}>
       <StepBadge step={step} />
-      <div className="font-medium text-20 text-text-secondary">
+      <div className="font-medium text-14 sm:text-20 text-text-secondary">
         {text && <p className="m-0">{text}</p>}
-        {children && <ul className="mt-1 list-disc pl-6">{children}</ul>}
+        {children && <ul className="mt-1 list-disc pl-6 text-12 sm:text-16">{children}</ul>}
       </div>
     </div>
   );
