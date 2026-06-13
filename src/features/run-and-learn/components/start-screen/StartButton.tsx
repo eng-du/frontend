@@ -5,7 +5,10 @@ interface StartButtonProps {
   isLoading?: boolean;
 }
 
-export default function StartButton({ onStart, isLoading = false }: StartButtonProps) {
+export default function StartButton({
+  onStart,
+  isLoading = false,
+}: StartButtonProps) {
   return (
     <GameButton
       onClick={onStart}

@@ -6,7 +6,7 @@ interface GameButtonProps {
   disabled?: boolean;
   isLoading?: boolean;
   variant?: 'primary' | 'secondary';
-  size?: 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
   children: ReactNode;
 }
@@ -28,8 +28,13 @@ export default function GameButton({
       onClick={disabled || isLoading ? undefined : onClick}
       disabled={disabled || isLoading}
       className={cn(
-        'flex items-center justify-center shrink-0 pb-1',
-        'w-[259px] h-[69px] rounded-full border-solid',
+        'flex items-center justify-center shrink-0 pb-1 border-solid',
+        
+        // 반응형 버튼 크기 및 테두리 반경 설정
+        size === 'lg' && 'w-[140px] h-[46px] rounded-[100px] md:w-[259px] md:h-[69px] md:rounded-full',
+        size === 'md' && 'w-[140px] h-[46px] rounded-[100px] md:w-[259px] md:h-[69px] md:rounded-full',
+        size === 'sm' && 'w-[140px] h-[46px] rounded-[100px] md:w-[180px] md:h-[54px] md:rounded-full',
+        
         isPrimary
           ? 'bg-surface-brand-default border-[#314778] border-b-4 shadow-md shadow-blue-600/20'
           : 'bg-surface-weak border-border-default border-b-4 shadow-sm',
@@ -44,7 +49,11 @@ export default function GameButton({
         className={cn(
           'font-pinkfong font-bold text-center leading-none whitespace-nowrap shrink-0',
           isPrimary ? 'text-text-weak' : 'text-text-primary',
-          size === 'lg' ? 'text-[40px]' : 'text-32'
+          
+          // 반응형 텍스트 크기 설정
+          size === 'lg' && 'text-24 md:text-[40px]',
+          size === 'md' && 'text-24 md:text-32',
+          size === 'sm' && 'text-[20px] md:text-[24px]'
         )}
       >
         {children}

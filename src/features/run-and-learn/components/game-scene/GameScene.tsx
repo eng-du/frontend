@@ -1,5 +1,6 @@
 import { Suspense, useRef, useEffect, useState, useCallback } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { PerspectiveCamera } from 'three';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useQueryClient } from '@tanstack/react-query';
 import Background from './Background';
 import Pathway from './Pathway';
@@ -15,8 +16,25 @@ import LightbulbIcon from '@/assets/game/lightbulb.svg?react';
 import MovingAnswerWall from './MovingAnswerWall';
 import GameOverModal from './GameOverModal';
 
-// 카메라 시선 고정 헬퍼
-function CameraController() {
+// 카메라 시선 고정 및 모바일 반응형 FOV/위치 헬퍼
+function CameraController({ aspect }: { aspect: number }) {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    if (camera instanceof PerspectiveCamera) {
+      if (aspect < 1.2) {
+        // 모바일(세로 카드 모드) 설정: 카메라 높이(Y)를 기존 0.3에서 0.8로 살짝 높임
+        camera.position.set(0, 1.0, 8.0);
+        camera.fov = 40; // 원하는 시야각(FOV)으로 여기서 직접 조절하실 수 있습니다.
+      } else {
+        // PC 설정: 기존 기본값으로 복원
+        camera.position.set(0, 0.3, 8.0);
+        camera.fov = 26;
+      }
+      camera.updateProjectionMatrix();
+    }
+  }, [aspect, camera]);
+
   useFrame((state) => {
     state.camera.lookAt(0, 0.3, -5.0);
   });
@@ -38,6 +56,7 @@ export default function GameScene() {
   } = useGameState();
   const [sessionId, setSessionId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
@@ -53,6 +72,7 @@ export default function GameScene() {
   }, [restart]);
 
   const [scale, setScale] = useState(1);
+  const [aspect, setAspect] = useState(1240 / 890);
   const BASE_WIDTH = 1240;
   const BASE_HEIGHT = 890;
 
@@ -65,6 +85,7 @@ export default function GameScene() {
       const scaleX = width / BASE_WIDTH;
       const scaleY = height / BASE_HEIGHT;
       setScale(Math.min(scaleX, scaleY));
+      setAspect(width / height);
     });
 
     observer.observe(container);
@@ -91,7 +112,7 @@ export default function GameScene() {
 
       // 3. 완료 시 즉시 PLAYING 단계로 전환
       setPhase('PLAYING');
-    } catch (err) {
+    } catch {
       setSessionId(null);
     } finally {
       setIsStarting(false);
@@ -171,6 +192,32 @@ export default function GameScene() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [phase, setLane]);
 
+  // 🕹️ MOBILE GESTURE (SWIPE) INTERACTION
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (phase !== 'PLAYING') return;
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, [phase]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (phase !== 'PLAYING' || !touchStartRef.current) return;
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+
+    const threshold = 50; // 스와이프 최소 픽셀 임계값 (값을 높일수록 더 많이 쓸어넘겨야 조작되어 감도가 낮아집니다)
+
+    // 가로 이동 거리가 세로보다 크고 스레숄드를 넘었을 경우에만 스와이프로 인정
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
+      if (deltaX < 0) {
+        setLane((prev) => Math.max(0, prev - 1)); // 왼쪽 스와이프 -> 왼쪽 이동
+      } else {
+        setLane((prev) => Math.min(2, prev + 1)); // 오른쪽 스와이프 -> 오른쪽 이동
+      }
+    }
+    touchStartRef.current = null;
+  }, [phase, setLane]);
+
   // Exact X-coordinate conversions for pixel-perfect centering in 3D
   const lanes = [-1.54, 0.0, 1.54];
   const targetX = lanes[lane];
@@ -179,7 +226,10 @@ export default function GameScene() {
     <div
       ref={containerRef}
       tabIndex={0}
-      className="absolute inset-0 w-full h-full overflow-hidden outline-none"
+      className="absolute inset-0 w-full h-full overflow-hidden outline-none select-none"
+      style={{ touchAction: 'none' }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* 시작 화면 (IDLE 상태일 때만 노출) */}
       {phase === 'IDLE' && (
@@ -189,40 +239,74 @@ export default function GameScene() {
         />
       )}
 
-      {/* HTML OVERLAY UI (상태에 따른 인터페이스 오버레이, scale에 따라 정밀 축소) */}
-      <div 
-        className="absolute w-[1240px] h-[890px] left-1/2 top-1/2 pointer-events-none z-10 overflow-hidden"
-        style={{ 
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          transformOrigin: 'center center'
-        }}
-      >
-        {/* 상단 현재 문제 (게임 진행 및 게임오버 상태에서 노출) */}
-        {(phase === 'PLAYING' || phase === 'CORRECT_PASSING' || phase === 'NEXT' || phase === 'GAME_OVER') && currentQuestion && (
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-surface-weak px-6 py-5 rounded-full text-center z-50">
-            <h3 className="text-32 font-pinkfong font-bold whitespace-nowrap">{currentQuestion.question}</h3>
-          </div>
-        )}
-
-        {/* 정답 통과 중 및 게임오버 시 해설 노출 */}
-        {(phase === 'CORRECT_PASSING' || phase === 'GAME_OVER') && currentQuestion?.explanation && (
-          <div className="absolute top-36 left-1/2 -translate-x-1/2 bg-surface-accent border border-border-accent flex items-center gap-3 px-6 py-4 rounded-2xl shadow-lg z-50 animate-fade-in-up">
-            <div className="w-6 h-[31px] flex-shrink-0 flex items-center justify-center">
-              <LightbulbIcon className="w-full h-full object-contain" />
+      {/* HTML OVERLAY UI (상태에 따른 인터페이스 오버레이, 모바일/데스크톱 대응) */}
+      {aspect < 1.2 ? (
+        /* HTML OVERLAY UI (모바일 반응형 카드 내부 레이아웃) */
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
+          {/* 상단 현재 문제 (게임 진행 및 게임오버 상태에서 노출) */}
+          {(phase === 'PLAYING' || phase === 'CORRECT_PASSING' || phase === 'NEXT' || phase === 'GAME_OVER') && currentQuestion && (
+            <div className="absolute top-6 left-6 right-6 bg-surface-weak px-4 py-3 rounded-2xl text-center z-50 shadow-md">
+              <h3 className="text-16 sm:text-20 font-pinkfong font-bold break-keep">{currentQuestion.question}</h3>
             </div>
-            <p className="font-pinkfong font-bold text-20 text-text-primary text-left break-keep">
-              {currentQuestion.explanation}
-            </p>
-          </div>
-        )}
+          )}
 
-        {/* 게임오버 모달 (scale 축소 영역 내부로 진입하여 함께 축소되도록 함) */}
-        <GameOverModal
-          isOpen={isGameOverModalOpen}
-          correctCount={correctCount}
-          onRestart={handleRestart}
-        />
-      </div>
+          {/* 정답 통과 중 및 게임오버 시 해설 노출 */}
+          {(phase === 'CORRECT_PASSING' || phase === 'GAME_OVER') && currentQuestion?.explanation && (
+            <div className="absolute top-28 left-6 right-6 bg-surface-accent border border-border-accent flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg z-50 animate-fade-in-up">
+              <div className="w-5 h-[24px] flex-shrink-0 flex items-center justify-center">
+                <LightbulbIcon className="w-full h-full object-contain" />
+              </div>
+              <p className="font-pinkfong font-bold text-14 text-text-primary text-left break-keep">
+                {currentQuestion.explanation}
+              </p>
+            </div>
+          )}
+
+          {/* 게임오버 모달 (카드 중앙 정렬) */}
+          <GameOverModal
+            isOpen={isGameOverModalOpen}
+            correctCount={correctCount}
+            onRestart={handleRestart}
+            isMobile={true}
+          />
+        </div>
+      ) : (
+        /* HTML OVERLAY UI (기존 데스크톱 고정 디자인) */
+        <div
+          className="absolute w-[1240px] h-[890px] left-1/2 top-1/2 pointer-events-none z-10 overflow-hidden"
+          style={{
+            transform: `translate(-50%, -50%) scale(${scale})`,
+            transformOrigin: 'center center'
+          }}
+        >
+          {/* 상단 현재 문제 */}
+          {(phase === 'PLAYING' || phase === 'CORRECT_PASSING' || phase === 'NEXT' || phase === 'GAME_OVER') && currentQuestion && (
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-surface-weak px-6 py-5 rounded-full text-center z-50">
+              <h3 className="text-32 font-pinkfong font-bold whitespace-nowrap">{currentQuestion.question}</h3>
+            </div>
+          )}
+
+          {/* 정답 통과 중 및 게임오버 시 해설 노출 */}
+          {(phase === 'CORRECT_PASSING' || phase === 'GAME_OVER') && currentQuestion?.explanation && (
+            <div className="absolute top-36 left-1/2 -translate-x-1/2 bg-surface-accent border border-border-accent flex items-center gap-3 px-6 py-4 rounded-2xl shadow-lg z-50 animate-fade-in-up">
+              <div className="w-6 h-[31px] flex-shrink-0 flex items-center justify-center">
+                <LightbulbIcon className="w-full h-full object-contain" />
+              </div>
+              <p className="font-pinkfong font-bold text-20 text-text-primary text-left break-keep">
+                {currentQuestion.explanation}
+              </p>
+            </div>
+          )}
+
+          {/* 게임오버 모달 */}
+          <GameOverModal
+            isOpen={isGameOverModalOpen}
+            correctCount={correctCount}
+            onRestart={handleRestart}
+            isMobile={false}
+          />
+        </div>
+      )}
 
 
       <Canvas
@@ -235,7 +319,7 @@ export default function GameScene() {
         <ambientLight intensity={1.5} />
         <directionalLight position={[0, 10, 5]} intensity={0.5} />
 
-        <CameraController />
+        <CameraController aspect={aspect} />
 
         <Suspense fallback={null}>
           <Background />

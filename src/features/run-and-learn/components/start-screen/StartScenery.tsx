@@ -5,10 +5,85 @@ import imgFlower from '@/assets/game/flower.svg';
 import imgShadowFlower from '@/assets/game/shadow_flower.svg';
 import imgRockLeft from '@/assets/game/rock_left.svg';
 import imgShadowRock from '@/assets/game/shadow_rock.svg';
+import imgStartMobileBg from '@/assets/game/start/start_mobile_bg.svg';
+import imgStartMobileIntersect from '@/assets/game/start/start_mobile_intersect.svg';
+
+interface StartSceneryProps {
+  isMobile?: boolean;
+}
 
 // 피그마: 하단 씬 영역 (relative + 배경 absolute 레이어 허용)
-// 배경(언덕/흙길)은 씬 전체를 덮는 배경 레이어이므로 absolute 허용 (GEMINI.md 허용 예외)
-export default function StartScenery() {
+export default function StartScenery({ isMobile = false }: StartSceneryProps) {
+  if (isMobile) {
+    return (
+      <div className="relative w-[327px] h-[250px] shrink-0 overflow-hidden select-none pointer-events-none">
+        {/* 1. 배경 산/바닥 (Vector) */}
+        <img
+          src={imgStartMobileBg}
+          alt=""
+          className="absolute left-0 top-[25px] w-[327px] h-[225px]"
+        />
+
+        {/* 2. 꽃 오른쪽 그림자 */}
+        <img
+          src={imgShadowFlower}
+          alt=""
+          className="absolute left-[238px] top-[45px] w-[53px] h-[19px] -scale-y-100 rotate-180"
+        />
+
+        {/* 3. 꽃 오른쪽 */}
+        <img
+          src={imgFlower}
+          alt=""
+          className="absolute left-[244px] top-0 w-[40px] h-[54px] -scale-y-100 rotate-180"
+        />
+
+        {/* 4. 바위 그림자 */}
+        <img
+          src={imgShadowRock}
+          alt=""
+          className="absolute left-[14px] top-[115px] w-[109px] h-[41px]"
+        />
+
+        {/* 5. 바위 */}
+        <img
+          src={imgRockLeft}
+          alt=""
+          className="absolute left-[31px] top-[97px] w-[86px] h-[52px]"
+        />
+
+        {/* 6. 꽃 왼쪽 그림자 */}
+        <img
+          src={imgShadowFlower}
+          alt=""
+          className="absolute left-[83px] top-[68px] w-[53px] h-[19px] -scale-y-100 rotate-180"
+        />
+
+        {/* 7. 꽃 왼쪽 */}
+        <img
+          src={imgFlower}
+          alt=""
+          className="absolute left-[89px] top-[23px] w-[40px] h-[54px] -scale-y-100 rotate-180"
+        />
+
+        {/* 8. Intersect 길 오버레이 */}
+        <img
+          src={imgStartMobileIntersect}
+          alt=""
+          className="absolute left-[33px] top-[72px] w-[294px] h-[178px]"
+        />
+
+        {/* 9. 달리는 병아리 캐릭터 */}
+        <img
+          src={imgStartCharacter}
+          alt="달리는 캐릭터"
+          className="absolute left-[136px] top-[70px] w-[160.7px] h-[155px]"
+        />
+      </div>
+    );
+  }
+
+  // PC 버전
   return (
     <div className="relative w-full h-[393px] shrink-0">
       {/* 1. Hill (초록 언덕 - 가장 뒤) */}
