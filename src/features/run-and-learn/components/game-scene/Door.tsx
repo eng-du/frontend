@@ -20,8 +20,8 @@ export default function Door({
   const patternTexture = useTexture(keyholeTextureUrl);
   patternTexture.colorSpace = THREE.SRGBColorSpace;
 
-  // 🚪 Generate clean 3D Vector Geometry with an Arched top!
-  const doorGeometry = useMemo(() => {
+  // 🚪 Generate clean 3D Vector Shape with an Arched top!
+  const doorShape = useMemo(() => {
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     shape.lineTo(0, 0.916);
@@ -29,7 +29,7 @@ export default function Door({
     shape.bezierCurveTo(0.683, 1.20, 0.88, 0.916 + 0.127, 0.88, 0.916);
     shape.lineTo(0.88, 0);
     shape.closePath();
-    return new THREE.ShapeGeometry(shape);
+    return shape;
   }, []);
 
   const groupRef = useRef<THREE.Group>(null);
@@ -54,7 +54,8 @@ export default function Door({
       {/* Door Frame & Body group */}
       <group ref={groupRef}>
         {/* A. Arched Door Base Mesh */}
-        <mesh geometry={doorGeometry}>
+        <mesh>
+          <shapeGeometry args={[doorShape]} />
           <meshBasicMaterial color="#9e5c36" side={THREE.DoubleSide} />
         </mesh>
 

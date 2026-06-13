@@ -25,8 +25,8 @@ export default function AnswerCard({
   phase = 'PLAYING',
 }: AnswerCardProps) {
 
-  // 1. Generate clean 3D Vector Geometry with a physical Door Hole punched in it!
-  const cardGeometry = useMemo(() => {
+  // 1. Generate clean 3D Vector Shape with a physical Door Hole punched in it!
+  const cardShape = useMemo(() => {
     const shape = new THREE.Shape();
 
     // --- Outer Card Boundary (width = 1.54, height = 2.48) ---
@@ -68,13 +68,14 @@ export default function AnswerCard({
     // Punch the hole into our main card shape!
     shape.holes.push(hole);
 
-    return new THREE.ShapeGeometry(shape);
+    return shape;
   }, [corner]);
 
   return (
     <group position={position} scale={[scale, scale, 1]}>
       {/* 1. Main Vector Card Frame with punched hole */}
-      <mesh geometry={cardGeometry}>
+      <mesh>
+        <shapeGeometry args={[cardShape]} />
         {/* Matches original Pixi color #c79761 */}
         <meshBasicMaterial color="#c79761" side={THREE.DoubleSide} />
       </mesh>
