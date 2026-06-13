@@ -38,14 +38,15 @@ export default function Character({
   // 그림자 크기: GAME_OVER 시 너비는 유지하고 세로 길이를 늘려 원에 가깝게 변경 (0.6 -> 0.8)
   const shadowScale: [number, number, number] = isWrong ? [0.8, 1.6, 1.0] : [0.8, 1.0, 1.0];
 
-  // Snappy, smooth 60fps keyboard lateral sliding (Lerp) and frame alternating
-  useFrame((state) => {
+  // Snappy, smooth keyboard lateral sliding (Lerp) and frame alternating
+  useFrame((state, delta) => {
     if (groupRef.current) {
-      // x축은 Lerp 슬라이딩
+      // 프레임레이트에 독립적인 Lerp 슬라이딩 적용
+      const alpha = 1 - Math.exp(-12 * delta);
       groupRef.current.position.x = THREE.MathUtils.lerp(
         groupRef.current.position.x,
         targetX,
-        0.20 // Snappy 20% interpolation per frame
+        alpha
       );
       // y축과 z축은 props 값을 직접 대입하여 리액트 리렌더링 시 x가 0으로 강제 초기화되는 현상 방지
       groupRef.current.position.y = position[1];

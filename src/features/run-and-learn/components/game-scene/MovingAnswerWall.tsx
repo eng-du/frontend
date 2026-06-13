@@ -29,7 +29,7 @@ export default function MovingAnswerWall({
   const judgedRef = useRef(false);
   const exitedRef = useRef(false);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!groupRef.current) return;
 
     // PLAYING으로 전환되는 첫 프레임: 이전 사이클의 플래그를 모두 초기화
@@ -41,8 +41,8 @@ export default function MovingAnswerWall({
     prevPhaseRef.current = phase;
 
     if (phase === 'PLAYING' || phase === 'CORRECT_PASSING') {
-      // 정답/오답 여부와 무관하게 벽은 계속 전진
-      groupRef.current.position.z += speed;
+      // 정답/오답 여부와 무관하게 벽은 계속 전진 (주사율에 상관없이 일정한 속도 유지)
+      groupRef.current.position.z += speed * 60 * delta;
 
       // 판정 임계값 28.0 = 스폰 오프셋(30) + 캐릭터 z 위치(-2.0)
       if (phase === 'PLAYING' && groupRef.current.position.z >= 28.0 && !judgedRef.current) {
