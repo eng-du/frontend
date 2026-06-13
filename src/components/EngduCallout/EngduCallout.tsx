@@ -1,9 +1,9 @@
-import type { ReactNode, ElementType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 interface EngduCalloutProps {
   children: ReactNode;
-  Icon: ElementType;
+  Icon: ComponentType<{ className?: string }>;
   onClickHandler?: () => void;
   className?: string;
 }
