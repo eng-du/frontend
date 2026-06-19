@@ -6,33 +6,43 @@ import HashTagIcon from '@/assets/icons/hash.svg?react';
 import Label from './Label';
 import formatRelativeTime from '@/utils/formatRelativeTime';
 import LearnActionButton from './LearnActionButton';
+import { cn } from '@/utils/cn';
 
 interface EngduCardProps {
   engdu: EngduSummary;
+  device?: 'desktop' | 'tablet' | 'mobile';
 }
 
-function EngduCard({ engdu }: EngduCardProps) {
+function EngduCard({ engdu, device = 'desktop' }: EngduCardProps) {
   const progress = engdu.totalCount > 0 ? (engdu.solvedCount / engdu.totalCount) * 100 : 0;
+  const isMobile = device === 'mobile';
 
   return (
     <Card>
       <div className="flex w-full items-center gap-2 text-text-secondary">
         <Label type={'지문'} />
-        <div className="flex overflow-hidden items-center">
-          <HashTagIcon className="h-4 w-4" />
+        <div className="flex items-center gap-0.5 overflow-hidden text-14">
+          <HashTagIcon className="h-4 w-4 shrink-0" />
           <span className="w-full truncate">{engdu.topic}</span>
         </div>
       </div>
       {/* 제목 */}
-      <div className="line-clamp-2 h-16 w-full text-20 font-bold">{engdu.title}</div>
+      <div
+        className={cn(
+          'w-full font-bold',
+          isMobile ? 'truncate text-16' : 'line-clamp-2 h-16 text-20',
+        )}
+      >
+        {engdu.title}
+      </div>
       {/* 생성 날짜, 진행률 */}
-      <div className="flex gap-5 text-text-secondary">
+      <div className={cn('flex gap-5 text-text-secondary', isMobile ? 'text-14' : 'text-16')}>
         <div className="flex items-center gap-2">
-          <ClockIcon />
+          <ClockIcon className="size-4" />
           <div>{formatRelativeTime(engdu.createdAt)}</div>
         </div>
         <div className="flex items-center gap-2">
-          <BookIcon />
+          <BookIcon className="size-4" />
           <div>{progress}% 완료</div>
         </div>
       </div>
@@ -44,7 +54,7 @@ function EngduCard({ engdu }: EngduCardProps) {
         ></div>
       </div>
       {/* 버튼 */}
-      <LearnActionButton engduId={engdu.engduId} progress={progress} />
+      <LearnActionButton engduId={engdu.engduId} progress={progress} device={device} />
     </Card>
   );
 }
