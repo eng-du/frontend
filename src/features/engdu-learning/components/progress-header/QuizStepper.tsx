@@ -7,6 +7,7 @@ interface QuizStepperProps {
   isQuestionsCorrected: boolean[];
   isInitialReady: boolean;
   isCompleteReady: boolean;
+  isDesktop?: boolean;
 }
 
 function QuizStepper({
@@ -15,13 +16,14 @@ function QuizStepper({
   isQuestionsCorrected,
   isInitialReady,
   isCompleteReady,
+  isDesktop = true,
 }: QuizStepperProps) {
   return (
     <div className="flex items-center gap-4 self-center">
       {!isInitialReady ? (
         <>
-          <QuizStepIndicatorSkeleton />
-          <QuizStepIndicatorSkeleton />
+          <QuizStepIndicatorSkeleton isDesktop={isDesktop} />
+          <QuizStepIndicatorSkeleton isDesktop={isDesktop} />
         </>
       ) : (
         <>
@@ -35,6 +37,7 @@ function QuizStepper({
                 isLocked={!isReachable}
                 isCorrected={isCorrected}
                 isActive={step === idx}
+                isDesktop={isDesktop}
                 setStep={setStep}
               />
             );
@@ -44,8 +47,8 @@ function QuizStepper({
 
       {!isCompleteReady ? (
         <>
-          <QuizStepIndicatorSkeleton />
-          <QuizStepIndicatorSkeleton />
+          <QuizStepIndicatorSkeleton isDesktop={isDesktop} />
+          <QuizStepIndicatorSkeleton isDesktop={isDesktop} />
         </>
       ) : (
         <>
@@ -59,6 +62,7 @@ function QuizStepper({
                 isLocked={!isReachable}
                 isCorrected={isCorrected}
                 isActive={step === idx}
+                isDesktop={isDesktop}
                 setStep={setStep}
               />
             );
