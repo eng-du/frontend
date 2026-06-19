@@ -7,6 +7,8 @@ import ChickIcon from '@/assets/icons/engdu-face-good.svg?react';
 import FeedbackTypeButton from './FeedbackTypeButton';
 import { postEngduLike } from '@/api/engdu';
 import { toast } from 'sonner';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { cn } from '@/utils/cn';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -17,6 +19,8 @@ interface FeedbackModalProps {
 type FeedbackState = 'initial' | 'liked' | 'disliked';
 
 export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModalProps) {
+  const deviceType = useDeviceType();
+  const isMobile = deviceType === 'mobile';
   const [state, setState] = useState<FeedbackState>('initial');
   const navigate = useNavigate();
 
@@ -52,8 +56,8 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
         </div>
 
         <div className="flex flex-col items-center gap-3">
-          <h2 className="font-pinkfong text-36">문제를 전부 해결 했어요!</h2>
-          <div className="text-text-secondary">
+          <h2 className={cn("font-pinkfong", isMobile ? "text-28" : "text-36")}>문제를 전부 해결 했어요!</h2>
+          <div className={cn("text-text-secondary", isMobile && "text-14")}>
             <p>오늘 학습이 마음에 드셨나요?</p>
             <p>평가를 남겨주시면 콘텐츠 개선에 도움이 돼요!</p>
           </div>
@@ -83,7 +87,7 @@ export default function FeedbackModal({ isOpen, onClose, engduId }: FeedbackModa
             <button
               onClick={() => navigate('/')}
               disabled={isPending}
-              className="cursor-pointer text-16 text-text-secondary underline decoration-text-secondary/50 decoration-1 underline-offset-4 disabled:opacity-50"
+              className={cn("cursor-pointer underline decoration-text-secondary/50 decoration-1 underline-offset-4 disabled:opacity-50", isMobile && "text-14")}
             >
               다음에 할게요
             </button>

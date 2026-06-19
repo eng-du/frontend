@@ -6,7 +6,7 @@ import { trackEvent, startRecording, stopRecording } from '@/utils/analytics';
 import FeedbackModal from './components/FeedbackModal';
 import { useEngduLearning } from '@/hooks/useEngduLearning';
 import { toast } from 'sonner';
-import { useIsDesktop } from '@/hooks/useMediaQuery';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 import EngduLearningDesktop from './components/layout/EngduLearningDesktop';
 import EngduLearningMobile from './components/layout/EngduLearningMobile';
 import ConfettiEffect from '@/components/ConfettiEffect/ConfettiEffect';
@@ -15,7 +15,8 @@ function EngduLearning() {
   const params = useParams();
   const engduId = Number(params.engduId);
   const navigate = useNavigate();
-  const isDesktop = useIsDesktop();
+  const deviceType = useDeviceType();
+  const isDesktop = deviceType === 'desktop';
 
   const {
     engduDetail,

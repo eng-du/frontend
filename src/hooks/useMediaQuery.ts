@@ -16,6 +16,13 @@ export function useMediaQuery(query: string) {
   return matches;
 }
 
-export function useIsDesktop() {
-  return useMediaQuery('(min-width: 1280px)');
+export type DeviceType = 'mobile' | 'tablet' | 'desktop';
+
+export function useDeviceType(): DeviceType {
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1279px)');
+
+  if (isMobile) return 'mobile';
+  if (isTablet) return 'tablet';
+  return 'desktop';
 }

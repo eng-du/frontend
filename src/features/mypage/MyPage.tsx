@@ -1,84 +1,67 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import FormField from './components/FormField';
-import MailIcon from '@/assets/icons/mail.svg?react';
 import UserIcon from '@/assets/icons/user.svg?react';
-import WithdrawIcon from '@/assets/icons/log-out.svg?react';
-import WithdrawModal from './components/WithdrawModal';
-import { deleteWithdraw, getMeDetail, patchName } from '@/api/user';
+import FileTextIcon from '@/assets/icons/file-text.svg?react';
+import ShieldCheckIcon from '@/assets/icons/shield-check.svg?react';
+import MailIcon from '@/assets/icons/mail.svg?react';
+import { MenuButton, MenuGroup } from './components/MenuButton/MenuButton';
 import { useAuth } from '@/hooks/useAuth';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { logout } from '@/api/auth';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 function MyPage() {
   const navigate = useNavigate();
-  const { refreshMe, clearAuth } = useAuth();
-  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const queryClient = useQueryClient();
+  const { clearAuth } = useAuth();
 
-  const { data: user } = useQuery({
-    queryKey: ['user', 'detail'],
-    queryFn: getMeDetail,
-  });
-
-  const { mutateAsync: patchNameMutateAsync, isPending: isPatching } = useMutation({
-    mutationFn: patchName,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user', 'detail'] });
-      refreshMe();
-      toast.success('닉네임이 변경되었습니다.');
-    },
-    onError: () => {
-      toast.error('닉네임 변경에 실패했습니다.');
-    },
-  });
-
-  const { mutate: deleteWithdrawMutate } = useMutation({
-    mutationFn: deleteWithdraw,
+  const { mutate: logoutMutate } = useMutation({
+    mutationFn: logout,
     onSuccess: () => {
       clearAuth();
-      setIsWithdrawModalOpen(false);
       navigate('/');
     },
     onError: () => {
-      alert('회원 탈퇴에 실패했습니다. 다시 시도해 주세요.');
+      toast.error('로그아웃에 실패했습니다.');
     },
   });
-
   return (
-    user && (
-      <div className="flex h-full justify-center pt-40">
-        <div className="flex w-full flex-col gap-8 px-10 sm:px-20 md:px-40 xl:px-80">
-          <div className="flex flex-col gap-5">
-            <FormField label="이메일" value={user.email} type="email" Icon={MailIcon} />
-            <FormField
-              label="닉네임"
-              value={user.name}
-              type="text"
-              Icon={UserIcon}
-              disabled={false}
-              maxLength={30}
-              onChangeHandler={patchNameMutateAsync}
-              isSaving={isPatching}
-            />
-          </div>
-          <hr className="border-0.5 border-border-default" />
-          <button
-            onClick={() => setIsWithdrawModalOpen(true)}
-            className="flex cursor-pointer items-center gap-2 self-end text-text-danger"
-          >
-            <WithdrawIcon className="h-5 w-5" />
-            회원 탈퇴
-          </button>
-        </div>
-
-        <WithdrawModal
-          isOpen={isWithdrawModalOpen}
-          onClose={() => setIsWithdrawModalOpen(false)}
-          onWithdraw={deleteWithdrawMutate}
+    <div className="flex h-full w-full flex-col items-center justify-between pt-8 pb-6 md:pt-20 md:pb-10">
+      <div className="flex w-full max-w-[480px] flex-col gap-6 px-5">
+        <MenuButton
+          isSingle
+          icon={<UserIcon className="h-5 w-5" />}
+          label="내 정보"
+          onClick={() => navigate('/mypage/my-info')}
         />
+
+        <MenuGroup>
+          <MenuButton
+            icon={<FileTextIcon className="h-5 w-5" />}
+            label="이용약관"
+            onClick={() => navigate('/policy/terms')}
+          />
+          <MenuButton
+            icon={<ShieldCheckIcon className="h-5 w-5" />}
+            label="개인정보처리방침"
+            onClick={() => navigate('/policy/privacy')}
+          />
+        </MenuGroup>
+
+        <MenuButton isSingle label="로그아웃" hasArrow={false} onClick={() => logoutMutate()} />
       </div>
-    )
+
+      {/* 모바일 전용 하단 정보 (데스크톱/태블릿은 Layout의 Footer 사용) */}
+      <div className="mt-8 flex flex-col items-center gap-3 md:hidden">
+        <div className="flex items-center gap-2">
+          <MailIcon className="h-5 w-5 text-text-secondary" />
+          <span className="font-pretendard text-16 font-medium text-text-secondary">
+            engdu.official@gmail.com
+          </span>
+        </div>
+        <span className="font-pretendard text-14 font-medium text-text-secondary">
+          © 2026 Engdu. All rights reserved.
+        </span>
+      </div>
+    </div>
   );
 }
 

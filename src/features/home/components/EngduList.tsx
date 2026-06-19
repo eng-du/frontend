@@ -7,12 +7,40 @@ import EngduListPagination from './EngduListPagination';
 import Dropdown from './filter-section/Dropdown';
 import NewEngduButton from './filter-section/NewEngduButton';
 import EngduFullFindIcon from '@/assets/icons/engdu-full-find.svg?react';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EngduListProps {
   onOpenHandler: () => void;
 }
 
+interface EngduListContentProps extends EngduListProps {
+  device?: 'desktop' | 'tablet' | 'mobile';
+}
+
 function EngduList({ onOpenHandler }: EngduListProps) {
+  const { user } = useAuth();
+  const deviceType = useDeviceType();
+  const isMobile = deviceType === 'mobile';
+
+  if (isMobile) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        {/* 안녕하세요, 사용자이름님 */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-14 font-medium text-text-secondary">안녕하세요,</span>
+          <h1 className="font-pinkfong text-24 font-bold text-text-primary">{user?.name}님</h1>
+        </div>
+
+        {/* 나의 잉듀 목록 */}
+        <div className="flex flex-col gap-3">
+          <h2 className="font-pinkfong text-20 font-bold text-text-primary">나의 잉듀 목록</h2>
+          <EngduListContent onOpenHandler={onOpenHandler} device="mobile" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* 나의 잉듀 목록 */}
@@ -25,13 +53,13 @@ function EngduList({ onOpenHandler }: EngduListProps) {
           </div>
         </div>
         {/* 데이터 및 필터 영역 */}
-        <EngduListContent onOpenHandler={onOpenHandler} />
+        <EngduListContent onOpenHandler={onOpenHandler} device={deviceType} />
       </div>
     </div>
   );
 }
 
-function EngduListContent({ onOpenHandler }: EngduListProps) {
+function EngduListContent({ onOpenHandler, device = 'desktop' }: EngduListContentProps) {
   const { page, sort, type, status, setSort, setStatus, setPage } = useEngduParams();
 
   const { data, isPending } = useQuery({
@@ -66,13 +94,13 @@ function EngduListContent({ onOpenHandler }: EngduListProps) {
       {/* 잉듀 목록 */}
       {engdus.length > 0 ? (
         <>
-          <EngduCards engdus={engdus} />
+          <EngduCards engdus={engdus} device={device} />
           <EngduListPagination totalPages={totalPages} page={page} onChangePage={setPage} />
         </>
       ) : (
-        <div className="flex flex-col items-center gap-4">
-          <EngduFullFindIcon />
-          <div className="text-center text-text-secondary">
+        <div className="flex flex-col items-center gap-4 py-8 md:py-0">
+          <EngduFullFindIcon className="h-auto w-32 md:w-auto" />
+          <div className="text-center text-14 text-text-secondary md:text-16">
             조건을 만족하는 잉듀를 찾을 수 없어요.
             <br />
             조건을 변경해 다시 검색해보세요!

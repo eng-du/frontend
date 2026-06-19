@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { RefObject } from 'react';
 import type { EngduChoice, EngduQuestion, QuizStatus } from '@/types/quiz';
 import {
   QuizOptionIdleItem,
@@ -17,6 +18,8 @@ interface QuizContentProps {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onFinish: () => void;
+  isMobile?: boolean;
+  scrollContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
 function QuizContent({
@@ -27,6 +30,8 @@ function QuizContent({
   step,
   setStep,
   onFinish,
+  isMobile = false,
+  scrollContainerRef,
 }: QuizContentProps) {
   const [selectedOption, setSelectedOption] = useState<EngduChoice | null>(
     question.isCorrected ? question.choices[question.answer! - 1] : null,
@@ -37,7 +42,7 @@ function QuizContent({
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <div className="text-16 xl:text-20">{question.content}</div>
+      <div className="text-20 leading-8 font-semibold">{question.content}</div>
       <ul className="flex w-full flex-col gap-2.5">
         {question.choices.map((option) => {
           switch (quizStatus) {
@@ -94,8 +99,19 @@ function QuizContent({
             } else {
               setQuizStatus('incorrect');
             }
+
+            // 제출 후 피드백/버튼이 보이도록 스크롤 맨 아래로
+            if (scrollContainerRef?.current) {
+              setTimeout(() => {
+                scrollContainerRef.current!.scrollTo({
+                  top: scrollContainerRef.current!.scrollHeight,
+                  behavior: 'smooth',
+                });
+              }, 50);
+            }
           }}
           disabled={selectedOption === null}
+          isMobile={isMobile}
         />
       )}
 
@@ -105,6 +121,7 @@ function QuizContent({
             setQuizStatus('idle');
             setSelectedOption(null);
           }}
+          isMobile={isMobile}
         />
       )}
 
@@ -114,9 +131,10 @@ function QuizContent({
             onClickHandler={() => {
               setStep(step + 1);
             }}
+            isMobile={isMobile}
           />
         ) : (
-          <QuizFinishButton onClickHandler={onFinish} />
+          <QuizFinishButton onClickHandler={onFinish} isMobile={isMobile} />
         ))}
     </div>
   );

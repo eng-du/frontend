@@ -8,6 +8,7 @@ interface QuizStepIndicatorProps {
   isLocked: boolean;
   isCorrected: boolean;
   isActive: boolean;
+  isDesktop?: boolean;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -16,6 +17,7 @@ function QuizStepIndicator({
   isLocked,
   isCorrected,
   isActive,
+  isDesktop = true,
   setStep,
 }: QuizStepIndicatorProps) {
   return (
@@ -30,7 +32,8 @@ function QuizStepIndicator({
     >
       <div
         className={clsx(
-          'flex aspect-square w-11 items-center justify-center rounded-full border-3 xl:w-13',
+          'flex aspect-square items-center justify-center rounded-full border-3',
+          isDesktop ? 'w-14' : 'w-11',
           isCorrected
             ? 'border-border-accent bg-surface-accent'
             : 'border-border-default bg-surface-default',
@@ -38,14 +41,14 @@ function QuizStepIndicator({
         )}
       >
         {isLocked ? (
-          <LockIcon className="h-4 w-4 xl:h-5 xl:w-5" />
+          <LockIcon className={isDesktop ? 'h-7 w-7' : 'h-5 w-5'} />
         ) : isCorrected ? (
-          <StarIcon className="h-5 w-5 xl:h-6 xl:w-6" />
+          <StarIcon className={isDesktop ? 'h-7 w-7' : 'h-5 w-5'} />
         ) : (
-          <LockOpenIcon className="h-4 w-4 xl:h-5 xl:w-5" />
+          <LockOpenIcon className={isDesktop ? 'h-7 w-7' : 'h-5 w-5'} />
         )}
       </div>
-      <div className="text-14 xl:text-16">QUIZ {step + 1}</div>
+      <div className={isDesktop ? 'text-14' : 'text-12'}>QUIZ {step + 1}</div>
     </div>
   );
 }

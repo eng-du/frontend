@@ -1,10 +1,11 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
-@import "tailwindcss";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import 'tailwindcss';
 
 @font-face {
   font-family: 'Pinkfong Baby Shark';
   font-weight: 700;
-  src: url('/PinkfongBabySharkFont_Bold.woff2') format('woff2'),
+  src:
+    url('/PinkfongBabySharkFont_Bold.woff2') format('woff2'),
     url('/PinkfongBabySharkFont_Bold.woff') format('woff'),
     url('/PinkfongBabySharkFont_Bold.ttf') format('truetype');
   font-display: swap;
@@ -13,7 +14,8 @@
 @font-face {
   font-family: 'Pinkfong Baby Shark';
   font-weight: 400;
-  src: url('/PinkfongBabySharkFont_Regular.woff2') format('woff2'),
+  src:
+    url('/PinkfongBabySharkFont_Regular.woff2') format('woff2'),
     url('/PinkfongBabySharkFont_Regular.woff') format('woff'),
     url('/PinkfongBabySharkFont_Regular.ttf') format('truetype');
   font-display: swap;
@@ -28,34 +30,34 @@
    ========================= */
 
   /* Brand */
-  --color-blue-50: #EFF6FF;
-  --color-blue-100: #DBEAFE;
-  --color-blue-600: #2663EB;
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-600: #2663eb;
 
   /* Neutral */
-  --color-white: #FFFFFF;
+  --color-white: #ffffff;
   --color-black: #000000;
 
-  --color-gray-50: #FCFDFD;
-  --color-gray-100: #F8F9FA;
-  --color-gray-200: #F4F5F7;
-  --color-gray-300: #E4E9F1;
-  --color-gray-700: #5B6B80;
-  --color-gray-900: #1F2937;
+  --color-gray-50: #fcfdfd;
+  --color-gray-100: #f8f9fa;
+  --color-gray-200: #f4f5f7;
+  --color-gray-300: #e4e9f1;
+  --color-gray-700: #5b6b80;
+  --color-gray-900: #1f2937;
 
   /* Red */
-  --color-red-50: #FEF3F3;
-  --color-red-200: #FFCACA;
-  --color-red-500: #FF3B30;
+  --color-red-50: #fef3f3;
+  --color-red-200: #ffcaca;
+  --color-red-500: #ff3b30;
 
   /* Green */
-  --color-green-50: #F1FDF4;
-  --color-green-200: #B9F8CF;
-  --color-green-600: #14AE5C;
+  --color-green-50: #f1fdf4;
+  --color-green-200: #b9f8cf;
+  --color-green-600: #14ae5c;
 
   /* Yellow */
-  --color-yellow-50: #FEF3C7;
-  --color-yellow-400: #FBBF24;
+  --color-yellow-50: #fef3c7;
+  --color-yellow-400: #fbbf24;
 
   /* =========================
    Semantic Colors
@@ -102,7 +104,10 @@
 
   /* 폰트 */
   --font-pinkfong: 'Pinkfong Baby Shark';
-  --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font-pretendard:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 
   --text-12: 0.75rem;
   --text-12--line-height: 1rem;
@@ -182,7 +187,6 @@
   }
 
   @keyframes chick-bounce {
-
     0%,
     100% {
       transform: translateY(0px);
@@ -192,44 +196,20 @@
       transform: translateY(-15px);
     }
   }
-
 }
 
 @layer utilities {
-  @keyframes title-scroll {
-
-    0%,
-    20% {
-      transform: translateX(0);
-    }
-
-    50%,
-    70% {
-      transform: translateX(min(0px, calc(-100% + 100cqw)));
-    }
-
-    100% {
-      transform: translateX(0);
-    }
-  }
-
-  .animate-title-scroll {
-    display: inline-block;
-    white-space: nowrap;
-    animation: title-scroll 20s ease-in-out infinite;
-  }
-
   .scrollbar-custom {
     &::-webkit-scrollbar {
-      @apply w-2
+      @apply w-2;
     }
 
     &::-webkit-scrollbar-track {
-      @apply bg-transparent
+      @apply bg-transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      @apply bg-surface-brand-default/10 rounded-sm;
+      @apply rounded-sm bg-surface-brand-default/10;
     }
   }
 
