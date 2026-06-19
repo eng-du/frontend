@@ -10,7 +10,7 @@ interface WithdrawModalProps {
 function WithdrawModal({ isOpen, onClose, onWithdraw }: WithdrawModalProps) {
   return (
     <Modal isOpen={isOpen} onCloseHandler={onClose}>
-      <div className="flex w-90 flex-col items-center gap-8 p-8">
+      <div className="flex w-[90vw] max-w-90 flex-col items-center gap-8 p-8">
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-center text-24 font-bold text-text-primary">정말 탈퇴하시겠어요?</h1>
           <p className="text-center whitespace-pre-line text-text-secondary">
