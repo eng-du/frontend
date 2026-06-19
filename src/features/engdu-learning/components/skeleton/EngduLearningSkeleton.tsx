@@ -5,7 +5,7 @@ import ReadingCardSkeleton from './ReadingCardSkeleton';
 import ReadingContentSkeleton from './ReadingContentSkeleton';
 import QuizContentSkeleton from './QuizContentSkeleton';
 import QuizStepIndicatorSkeleton from './QuizStepIndicatorSkeleton';
-import Tab from '../tab/Tab';
+import Tab from '@/components/Tab/Tab';
 import PartButton from '../button/PartButton';
 
 interface EngduLearningSkeletonProps {
