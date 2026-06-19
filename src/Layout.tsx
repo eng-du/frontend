@@ -13,7 +13,7 @@ const DELAY_THRESHOLD = 300;
 const MIN_DURATION = 500;
 
 export default function Layout() {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const deviceType = useDeviceType();
   const isMobile = deviceType === 'mobile';
@@ -72,9 +72,9 @@ export default function Layout() {
     return clearAllTimers;
   }, [isPending]);
 
-  const getActiveTab = (path: string): TabType => {
+  const getActiveTab = (path: string, searchStr: string): TabType => {
     if (path.startsWith('/run-and-learn')) {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(searchStr);
       return params.get('tab') === 'ranking' ? 'ranking' : 'run-and-learn';
     }
     if (path.startsWith('/mypage') || path.startsWith('/policy')) return 'mypage';
@@ -82,7 +82,7 @@ export default function Layout() {
     return 'home';
   };
 
-  const activeTab = getActiveTab(pathname);
+  const activeTab = getActiveTab(pathname, search);
 
   const handleTabChange = (tab: TabType) => {
     switch (tab) {
