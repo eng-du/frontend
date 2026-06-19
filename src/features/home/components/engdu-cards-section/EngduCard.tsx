@@ -54,7 +54,7 @@ function EngduCard({ engdu, device = 'desktop' }: EngduCardProps) {
         ></div>
       </div>
       {/* 버튼 */}
-      <LearnActionButton engduId={engdu.engduId} progress={progress} device={device} />
+      <LearnActionButton engduId={engdu.engduId} progress={progress} device={device === 'desktop' ? 'desktop' : 'mobile'} />
     </Card>
   );
 }

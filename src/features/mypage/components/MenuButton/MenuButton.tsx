@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 /** 우측 화살표 아이콘 (Chevron Right) */

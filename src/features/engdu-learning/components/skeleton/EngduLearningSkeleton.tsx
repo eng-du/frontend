@@ -6,7 +6,9 @@ import ReadingContentSkeleton from './ReadingContentSkeleton';
 import QuizContentSkeleton from './QuizContentSkeleton';
 import QuizStepIndicatorSkeleton from './QuizStepIndicatorSkeleton';
 import Tab from '@/components/Tab/Tab';
+import TabItem from '@/components/Tab/TabItem';
 import PartButton from '../button/PartButton';
+import { cn } from '@/utils/cn';
 
 interface EngduLearningSkeletonProps {
   isMobile?: boolean;
@@ -40,7 +42,27 @@ function EngduLearningSkeleton({ isMobile, initialTab = '지문' }: EngduLearnin
               <QuizContentSkeleton />
             )}
           </div>
-          <Tab activeTab={activeTab} onTabChange={setActiveTab} />
+          <Tab
+            className={cn(
+              'absolute z-20 grid h-14 grid-cols-2 gap-3 rounded-xl border border-border-default bg-surface-weak p-2 shadow-default',
+              isMobile ? 'right-5 bottom-0 left-5' : 'bottom-4 left-1/2 w-[424px] -translate-x-1/2',
+            )}
+          >
+            <TabItem
+              label="지문"
+              selected={activeTab === '지문'}
+              onClick={() => setActiveTab('지문')}
+              variant="dark"
+              className="h-full w-full rounded-md text-14"
+            />
+            <TabItem
+              label="퀴즈"
+              selected={activeTab === '퀴즈'}
+              onClick={() => setActiveTab('퀴즈')}
+              variant="dark"
+              className="h-full w-full rounded-md text-14"
+            />
+          </Tab>
         </div>
       </div>
     );

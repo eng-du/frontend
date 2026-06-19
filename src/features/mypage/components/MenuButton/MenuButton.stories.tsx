@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MenuButton, MenuGroup } from './MenuButton';
-import { ReactNode } from 'react';
 
 const meta: Meta<typeof MenuButton> = {
   title: 'Features/Mypage/MenuButton',
