@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import type { EngduQuestion } from '@/types/quiz';
 import QuizCard from './QuizCard';
 import QuizContent from './QuizContent';
@@ -15,6 +16,7 @@ interface QuizPanelProps {
   onFinish: () => void;
   engduDetail?: EngduDetailResponse;
   isMobile?: boolean;
+  scrollContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
 function QuizPanel({
@@ -27,6 +29,7 @@ function QuizPanel({
   onFinish,
   engduDetail,
   isMobile,
+  scrollContainerRef,
 }: QuizPanelProps) {
   const isInitial = step < 2;
   const currentPart = isInitial ? engduDetail?.parts.INITIAL : engduDetail?.parts.COMPLETE;
@@ -54,7 +57,12 @@ function QuizPanel({
   return (
     <div className="sticky top-0 h-fit">
       {isMobile ? (
-        <QuizContent key={question.questionId} {...commonProps} />
+        <QuizContent
+          key={question.questionId}
+          {...commonProps}
+          isMobile={isMobile}
+          scrollContainerRef={scrollContainerRef}
+        />
       ) : (
         <QuizCard key={question.questionId} {...commonProps} />
       )}

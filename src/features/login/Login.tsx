@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Button from '@/components/Button/Button';
-import Card from '@/components/Card/Card';
 import { Link } from 'react-router';
 import GoogleIcon from '@/assets/icons/google.svg?react';
 import EngduFullBookIcon from '@/assets/icons/engdu-full-book.svg?react';
@@ -22,8 +21,8 @@ function Login() {
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-5">
-      <Card className="w-full max-w-107.5 items-center py-10 md:py-16">
+    <main className="flex min-h-dvh items-center justify-center bg-surface-weak md:bg-surface-default md:px-5">
+      <div className="flex w-full max-w-107.5 flex-col items-center gap-5 bg-surface-weak px-5 py-10 md:rounded-2xl md:p-7 md:py-16 md:shadow-default">
         <EngduFullBookIcon />
         <div className="flex flex-col items-center gap-3">
           <div className="font-pinkfong text-36">잉듀</div>
@@ -49,7 +48,7 @@ function Login() {
           </Link>
           에 동의하게 됩니다.
         </div>
-      </Card>
+      </div>
 
       <InAppBrowserWarningModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>

@@ -5,6 +5,7 @@ import { policyRoute } from './features/policy/route';
 import { homeRoute } from './features/home/route';
 import { engduLearningRoute } from './features/engdu-learning/route';
 import { myPageRoute } from './features/mypage/route';
+import { runAndLearnRoute } from './features/run-and-learn/route';
 import { loginRoute, callbackGoogleRoute } from './features/login/route';
 import { notFoundRoute } from './features/not-found/route';
 
@@ -15,7 +16,7 @@ function App() {
       children: [
         {
           element: <Layout />,
-          children: [homeRoute, engduLearningRoute, myPageRoute, policyRoute],
+          children: [homeRoute, engduLearningRoute, myPageRoute, policyRoute, runAndLearnRoute],
         },
         loginRoute,
         callbackGoogleRoute,

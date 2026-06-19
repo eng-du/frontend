@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
-import { Link } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { logout } from '@/api/auth';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -7,10 +7,16 @@ import { toast } from 'sonner';
 function Header() {
   const { user, isPending, clearAuth } = useAuth();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { mutate: logoutMutate } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       clearAuth();
+      if (location.pathname !== '/') {
+        navigate('/');
+      }
     },
     onError: () => {
       toast.error('로그아웃에 실패했습니다.');
@@ -29,6 +35,9 @@ function Header() {
         <div className="flex gap-5 text-12 text-text-secondary">
           {user ? (
             <>
+              <Link to="/run-and-learn" className="cursor-pointer">
+                런앤런
+              </Link>
               <Link to="/mypage" className="cursor-pointer">
                 {user.name}
               </Link>
