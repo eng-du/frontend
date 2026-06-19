@@ -4,10 +4,25 @@ import FileTextIcon from '@/assets/icons/file-text.svg?react';
 import ShieldCheckIcon from '@/assets/icons/shield-check.svg?react';
 import MailIcon from '@/assets/icons/mail.svg?react';
 import { MenuButton, MenuGroup } from './components/MenuButton/MenuButton';
+import { useAuth } from '@/hooks/useAuth';
+import { logout } from '@/api/auth';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 function MyPage() {
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
 
+  const { mutate: logoutMutate } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      clearAuth();
+      navigate('/');
+    },
+    onError: () => {
+      toast.error('로그아웃에 실패했습니다.');
+    },
+  });
   return (
     <div className="flex h-full w-full flex-col items-center justify-between pt-8 pb-6 md:pt-20 md:pb-10">
       <div className="flex w-full max-w-[480px] flex-col gap-6 px-5">
@@ -31,7 +46,7 @@ function MyPage() {
           />
         </MenuGroup>
 
-        <MenuButton isSingle label="로그아웃" hasArrow={false} onClick={() => {}} />
+        <MenuButton isSingle label="로그아웃" hasArrow={false} onClick={() => logoutMutate()} />
       </div>
 
       {/* 모바일 전용 하단 정보 (데스크톱/태블릿은 Layout의 Footer 사용) */}
