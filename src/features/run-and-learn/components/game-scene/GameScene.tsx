@@ -139,7 +139,7 @@ export default function GameScene() {
 
       const timer = setTimeout(() => {
         setIsGameOverModalOpen(true);
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timer);
     } else {
       setIsGameOverModalOpen(false);
