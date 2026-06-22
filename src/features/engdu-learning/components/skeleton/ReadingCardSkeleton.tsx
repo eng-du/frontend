@@ -1,7 +1,7 @@
 import Card from '@/components/Card/Card';
 import ReadingContentSkeleton from './ReadingContentSkeleton';
 import Label from '../reader-section/Label';
-import EngduStudyCallout from '@/components/EngduCallout/EngduStudyCallout';
+import EngduStudyCallout from '@/components/Callout/EngduStudyCallout';
 
 function ReadingCardSkeleton({ part }: { part: 1 | 2 }) {
   return (

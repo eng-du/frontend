@@ -1,6 +1,6 @@
 import EngduFullNoticeIcon from '@/assets/icons/engdu-full-notice.svg?react';
 import type { ReactNode } from 'react';
-import EngduCallout from './EngduCallout';
+import Callout from './Callout';
 
 interface EngduHelperCalloutProps {
   children: ReactNode;
@@ -9,13 +9,13 @@ interface EngduHelperCalloutProps {
 
 function EngduHelperCallout({ children, onClickHandler }: EngduHelperCalloutProps) {
   return (
-    <EngduCallout
+    <Callout
       Icon={EngduFullNoticeIcon}
       onClickHandler={onClickHandler}
       className="absolute right-0 bottom-0 hidden translate-x-[calc(100%+20px)] lg:flex"
     >
       {children}
-    </EngduCallout>
+    </Callout>
   );
 }
 
