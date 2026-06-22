@@ -1,7 +1,7 @@
 import { Billboard, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
-import imgCloudLarge from '@/assets/game/cloud_large.svg';
-import imgCloudSmall from '@/assets/game/cloud_small.svg';
+import imgCloudLarge from '@/assets/illustrations/cloud_large.svg';
+import imgCloudSmall from '@/assets/illustrations/cloud_small.svg';
 
 export default function Background() {
   const cloudLargeTexture = useTexture(imgCloudLarge);

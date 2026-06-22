@@ -1,6 +1,6 @@
 import imgStartBgHill from '@/assets/game/start/start_bg_hill.svg';
 import imgStartBgRoad from '@/assets/game/start/start_bg_road.svg';
-import imgStartCharacter from '@/assets/game/start/start_character_running.svg';
+import imgStartCharacter from '@/assets/illustrations/start_character_running.svg';
 import imgFlower from '@/assets/game/flower.svg';
 import imgShadowFlower from '@/assets/game/shadow_flower.svg';
 import imgRockLeft from '@/assets/game/rock_left.svg';
