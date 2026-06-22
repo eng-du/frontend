@@ -4,6 +4,7 @@ import EngduCreateModal from './components/engdu-create-modal/EngduCreateModal';
 import { useState } from 'react';
 import LandingFeatureList from './components/landing/LandingFeatureList';
 import Banner from './components/landing/Banner';
+import RunAndLearnBanner from './components/run-and-learn-banner/RunAndLearnBanner';
 
 function Home() {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ function Home() {
 
   return user ? (
     <>
+      <RunAndLearnBanner className="mt-10 mx-8 lg:mx-16 xl:mx-25" />
       <EngduList onOpenHandler={() => setIsEngduCreateModalOpen(true)} />
       <EngduCreateModal
         isEngduCreateModalOpen={isEngduCreateModalOpen}
