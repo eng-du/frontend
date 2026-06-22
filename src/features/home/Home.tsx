@@ -5,6 +5,7 @@ import { useState } from 'react';
 import LandingFeatureList from './components/landing/LandingFeatureList';
 import Banner from './components/landing/Banner';
 import RunAndLearnBanner from './components/run-and-learn-banner/RunAndLearnBanner';
+import FeedbackBanner from './components/feedback-banner/FeedbackBanner';
 
 function Home() {
   const { user } = useAuth();
@@ -13,7 +14,10 @@ function Home() {
 
   return user ? (
     <>
-      <RunAndLearnBanner className="mt-10 mx-8 lg:mx-16 xl:mx-25" />
+      <div className="flex flex-col gap-4 mb-6 md:mb-0 md:mt-10 md:mx-8 lg:mx-16 xl:mx-25">
+        <FeedbackBanner />
+        <RunAndLearnBanner />
+      </div>
       <EngduList onOpenHandler={() => setIsEngduCreateModalOpen(true)} />
       <EngduCreateModal
         isEngduCreateModalOpen={isEngduCreateModalOpen}
