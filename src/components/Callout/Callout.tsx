@@ -8,7 +8,7 @@ interface EngduCalloutProps {
   className?: string;
 }
 
-function EngduCallout({ children, Icon, onClickHandler, className }: EngduCalloutProps) {
+function Callout({ children, Icon, onClickHandler, className }: EngduCalloutProps) {
   return (
     <div
       className={cn('flex flex-col items-center gap-4', className)}
@@ -23,9 +23,9 @@ function EngduCallout({ children, Icon, onClickHandler, className }: EngduCallou
         {children}
       </div>
 
-      <Icon className="h-auto w-32 sm:w-40" />
+      {Icon && <Icon className="h-auto w-32 sm:w-40" />}
     </div>
   );
 }
 
-export default EngduCallout;
+export default Callout;

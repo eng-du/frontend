@@ -1,6 +1,6 @@
 import EngduFullStudyIcon from '@/assets/icons/engdu-full-study.svg?react';
 import type { ReactNode } from 'react';
-import EngduCallout from './EngduCallout';
+import Callout from './Callout';
 
 interface EngduStudyCalloutProps {
   children: ReactNode;
@@ -9,13 +9,13 @@ interface EngduStudyCalloutProps {
 
 function EngduStudyCallout({ children, onClickHandler }: EngduStudyCalloutProps) {
   return (
-    <EngduCallout
+    <Callout
       Icon={EngduFullStudyIcon}
       onClickHandler={onClickHandler}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
     >
       {children}
-    </EngduCallout>
+    </Callout>
   );
 }
 
