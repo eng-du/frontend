@@ -1,6 +1,7 @@
 import DemoVideo from './DemoVideo';
 import LandingSection from './LandingSection';
 import chunkVideo from '@/assets/video/chunk.mp4';
+import gameVideo from '@/assets/video/game.mp4';
 import inputVideo from '@/assets/video/input.mp4';
 import phrasalVideo from '@/assets/video/phrasal.mp4';
 import quizVideo from '@/assets/video/quiz.mp4';
@@ -29,6 +30,11 @@ function LandingFeatureList() {
         description={`잉듀가 생성되는 동안\n구동사와 예문을 통해 자연스럽게 표현을 익혀봐요!`}
         order="reverse"
         media={<DemoVideo src={phrasalVideo} />}
+      />
+      <LandingSection
+        title={`재미있게 달리다 보면,\n영어가 쌓여요`}
+        description={`정답의 문을 통과하며\n단어와 구동사를 게임처럼 익혀보세요.`}
+        media={<DemoVideo src={gameVideo} />}
       />
     </>
   );
