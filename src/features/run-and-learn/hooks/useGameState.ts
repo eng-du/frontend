@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 export type GamePhase = 'IDLE' | 'PLAYING' | 'CORRECT_PASSING' | 'NEXT' | 'GAME_OVER';
 
 const BASE_SPEED = 0.08;
-const MAX_SPEED = 0.2;
+const MAX_SPEED = 0.14;
 
 export function useGameState() {
   const [phase, setPhase] = useState<GamePhase>('IDLE');
