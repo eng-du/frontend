@@ -5,6 +5,7 @@ import QuizContent from './QuizContent';
 import QuizCardSkeleton from '../skeleton/QuizCardSkeleton';
 import QuizContentSkeleton from '../skeleton/QuizContentSkeleton';
 import type { EngduDetailResponse } from '@/api/engdu';
+import { cn } from '@/utils/cn';
 
 interface QuizPanelProps {
   engduId: number;
@@ -36,7 +37,7 @@ function QuizPanel({
 
   if ((isGenerating && !currentPart) || !questions[step]) {
     return (
-      <div className="sticky top-0 h-fit">
+      <div className={cn(isMobile ? 'w-full' : 'sticky top-0 h-fit')}>
         {isMobile ? <QuizContentSkeleton /> : <QuizCardSkeleton />}
       </div>
     );
@@ -55,7 +56,7 @@ function QuizPanel({
   };
 
   return (
-    <div className="sticky top-0 h-fit">
+    <div className={cn(isMobile ? 'w-full' : 'sticky top-0 h-fit')}>
       {isMobile ? (
         <QuizContent
           key={question.questionId}

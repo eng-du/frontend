@@ -113,7 +113,7 @@ export default function Layout() {
       <MobileLayout
         activeTab={activeTab}
         onChangeTab={handleTabChange}
-        contentClassName={cn(isLearningPage && 'px-0 pt-0 pb-21 bg-surface-weak')}
+        contentClassName={cn(isLearningPage && 'overflow-hidden px-0 pt-0 pb-21 bg-surface-weak')}
       >
         <Outlet />
       </MobileLayout>
