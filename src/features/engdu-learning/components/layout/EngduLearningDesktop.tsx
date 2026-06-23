@@ -2,7 +2,7 @@ import type { EngduQuestion } from '@/types/quiz';
 import type { EngduDetailResponse } from '@/api/engdu';
 import ProgressHeader from '../progress-header/ProgressHeader';
 import ReaderSection from '../reader-section/ReaderSection';
-import QuizPanel from '../quiz-panel/QuizPanel';
+import QuizPanelDesktop from '../quiz-panel/QuizPanelDesktop';
 
 export interface EngduLearningLayoutProps {
   engduId: number;
@@ -56,7 +56,7 @@ function EngduLearningDesktop({
             completeQuestions.every((q: EngduQuestion) => q.isCorrected)
           }
         />
-        <QuizPanel
+        <QuizPanelDesktop
           engduId={engduId}
           questions={allQuestions}
           step={step}

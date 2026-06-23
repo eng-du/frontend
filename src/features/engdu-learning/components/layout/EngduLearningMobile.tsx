@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { EngduLearningLayoutProps } from './EngduLearningDesktop';
 import ReaderSection from '../reader-section/ReaderSection';
-import QuizPanel from '../quiz-panel/QuizPanel';
+import QuizPanelMobile from '../quiz-panel/QuizPanelMobile';
 import type { EngduQuestion } from '@/types/quiz';
 import TitleSkeleton from '../skeleton/TitleSkeleton';
 import QuizStepper from '../progress-header/QuizStepper';
@@ -30,9 +30,9 @@ function EngduLearningMobile({
   const [activePart, setActivePart] = useState<1 | 2>(1);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const quizScrollRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const isSnapEnabledRef = useRef(true);
-  const activeTabRef = useRef<Tab>(activeTab);
 
   const deviceType = useDeviceType();
   const isMobile = deviceType === 'mobile';
@@ -51,17 +51,15 @@ function EngduLearningMobile({
     }
   }, [isLocked, isAllSolved]);
 
-  // 퀴즈 번호 이동 시 스크롤 최상단 초기화
+  // 퀴즈 번호 이동 시 퀴즈 스크롤 최상단 초기화
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+    if (quizScrollRef.current) {
+      quizScrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [step]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (!stickyRef.current || !scrollContainerRef.current) return;
-    // 퀴즈 탭에서는 스냅 비활성
-    if (activeTabRef.current !== '지문') return;
     const scrollTop = e.currentTarget.scrollTop;
     const threshold = stickyRef.current.offsetTop;
 
@@ -77,25 +75,7 @@ function EngduLearningMobile({
   };
 
   const handleTabChange = (tab: Tab) => {
-    activeTabRef.current = tab;
     setActiveTab(tab);
-    // 퀴즈 탭으로 전환 시 스냅 즉시 제거
-    if (tab === '퀴즈' && scrollContainerRef.current) {
-      isSnapEnabledRef.current = false;
-      scrollContainerRef.current.classList.remove('snap-y', 'snap-proximity');
-    }
-    // 지문 탭으로 복귀 시 스냅 복원 (스크롤이 제목 위에 있을 때만)
-    if (tab === '지문' && scrollContainerRef.current && stickyRef.current) {
-      const scrollTop = scrollContainerRef.current.scrollTop;
-      const threshold = stickyRef.current.offsetTop;
-      const shouldEnable = scrollTop < threshold;
-      isSnapEnabledRef.current = shouldEnable;
-      if (shouldEnable) {
-        scrollContainerRef.current.classList.add('snap-y', 'snap-proximity');
-      } else {
-        scrollContainerRef.current.classList.remove('snap-y', 'snap-proximity');
-      }
-    }
   };
 
   return (
@@ -105,20 +85,19 @@ function EngduLearningMobile({
         isMobile ? 'h-full' : 'h-[calc(100dvh-60px)]',
       )}
     >
-      {/* 내부 스크롤 가능한 메인 프레임 영역 */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-        className={cn(
-          'scrollbar-none relative flex h-full w-full flex-col gap-4 overflow-y-auto bg-surface-weak pb-18',
-          isSnapEnabledRef.current ? 'snap-y snap-proximity' : '',
-          isMobile ? 'px-5' : 'max-w-120 px-7',
-          activeTab === '퀴즈' && 'pt-4',
-        )}
-      >
-        {/* 제목 - 지문 탭일 때만 표시 */}
-        {activeTab === '지문' &&
-          (!engduDetail?.meta?.title ? (
+      {/* 지문 탭 렌더링 */}
+      {activeTab === '지문' && (
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className={cn(
+            'scrollbar-none relative flex h-full w-full flex-col gap-4 overflow-y-auto bg-surface-weak pb-18',
+            isSnapEnabledRef.current ? 'snap-y snap-proximity' : '',
+            isMobile ? 'px-5' : 'max-w-120 px-7',
+          )}
+        >
+          {/* 제목 */}
+          {!engduDetail?.meta?.title ? (
             <div className="shrink-0 snap-start pt-4">
               <TitleSkeleton />
             </div>
@@ -126,18 +105,16 @@ function EngduLearningMobile({
             <h1 className="shrink-0 snap-start pt-4 font-pinkfong text-28 font-bold [word-break:break-word] text-text-primary">
               {engduDetail?.meta?.title}
             </h1>
-          ))}
-
-        {/* 상단 Sticky 컨트롤 영역 (파트 탭 바 또는 퀴즈 스텝바 고정) */}
-        {/* 음수 마진과 패딩을 이용해 스크롤 시 뒤로 지나가는 텍스트를 완전히 가림 */}
-        <div
-          ref={stickyRef}
-          className={cn(
-            'sticky top-0 z-10 shrink-0 snap-start bg-surface-weak pt-3 pb-2',
-            isMobile ? '-mx-5 px-5' : '-mx-7 px-7',
           )}
-        >
-          {activeTab === '지문' && (
+
+          {/* 상단 Sticky 컨트롤 영역 (파트 탭 바) */}
+          <div
+            ref={stickyRef}
+            className={cn(
+              'sticky top-0 z-10 shrink-0 snap-start bg-surface-weak pt-3 pb-2',
+              isMobile ? '-mx-5 px-5' : '-mx-7 px-7',
+            )}
+          >
             <div className="flex gap-2">
               <PartButton
                 label="PART 1"
@@ -151,23 +128,9 @@ function EngduLearningMobile({
                 onClick={() => !isLocked && setActivePart(2)}
               />
             </div>
-          )}
+          </div>
 
-          {activeTab === '퀴즈' && (
-            <QuizStepper
-              step={step}
-              setStep={setStep}
-              isQuestionsCorrected={allQuestions.map((q: EngduQuestion) => q.isCorrected)}
-              isInitialReady={!!engduDetail?.parts.INITIAL}
-              isCompleteReady={!!engduDetail?.parts.COMPLETE}
-              isDesktop={isDesktop}
-            />
-          )}
-        </div>
-
-        {/* 메인 내용 컨텐츠 영역 (자체 내부 스크롤 없음) */}
-        <div className="w-full">
-          {activeTab === '지문' ? (
+          <div className="w-full">
             <ReaderSection
               initialArticle={engduDetail?.parts.INITIAL?.article}
               completeArticle={engduDetail?.parts.COMPLETE?.article}
@@ -177,8 +140,36 @@ function EngduLearningMobile({
               activePart={activePart}
               onPartChange={setActivePart}
             />
-          ) : (
-            <QuizPanel
+          </div>
+        </div>
+      )}
+
+      {/* 퀴즈 탭 렌더링 */}
+      {activeTab === '퀴즈' && (
+        <div
+          className={cn(
+            'relative flex h-full w-full flex-col bg-surface-weak pb-18 pt-4',
+            isMobile ? 'px-5' : 'max-w-120 px-7',
+          )}
+        >
+          {/* 상단 퀴즈 스텝바 고정 */}
+          <div className="shrink-0 pt-3 pb-2">
+            <QuizStepper
+              step={step}
+              setStep={setStep}
+              isQuestionsCorrected={allQuestions.map((q: EngduQuestion) => q.isCorrected)}
+              isInitialReady={!!engduDetail?.parts.INITIAL}
+              isCompleteReady={!!engduDetail?.parts.COMPLETE}
+              isDesktop={isDesktop}
+            />
+          </div>
+
+          {/* 퀴즈 내용 영역 (자체 내부 스크롤) */}
+          <div
+            ref={quizScrollRef}
+            className="scrollbar-none w-full flex-1 overflow-y-auto"
+          >
+            <QuizPanelMobile
               engduId={engduId}
               questions={allQuestions}
               step={step}
@@ -187,12 +178,11 @@ function EngduLearningMobile({
               isGenerating={isInitialGenerating || (step >= 2 && isCompleteGenerating)}
               onFinish={onFinish}
               engduDetail={engduDetail}
-              isMobile={true}
-              scrollContainerRef={scrollContainerRef}
+              scrollContainerRef={quizScrollRef}
             />
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 하단 고정 지문/퀴즈 전환 스위처 */}
       <Tab

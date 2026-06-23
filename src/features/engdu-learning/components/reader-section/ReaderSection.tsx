@@ -45,14 +45,14 @@ function ReaderSection({
       <>
         {activePart === 1 ? (
           !initialArticle ? (
-            <ReadingContentSkeleton />
+            <ReadingContentSkeleton key="skel-1" />
           ) : (
-            <ReadingContent article={initialArticle} className="overflow-visible pr-0" />
+            <ReadingContent key="part-1" article={initialArticle} className="overflow-visible pr-0" />
           )
         ) : !completeArticle ? (
-          <ReadingContentSkeleton />
+          <ReadingContentSkeleton key="skel-2" />
         ) : (
-          <ReadingContent article={completeArticle} className="overflow-visible pr-0" />
+          <ReadingContent key="part-2" article={completeArticle} className="overflow-visible pr-0" />
         )}
       </>
     );
