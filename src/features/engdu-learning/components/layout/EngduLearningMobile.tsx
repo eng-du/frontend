@@ -91,7 +91,7 @@ function EngduLearningMobile({
           ref={scrollContainerRef}
           onScroll={handleScroll}
           className={cn(
-            'scrollbar-none relative flex h-full w-full flex-col gap-4 overflow-y-auto bg-surface-weak pb-18',
+            'scrollbar-none relative flex h-full w-full flex-col gap-4 overflow-y-auto bg-surface-weak pb-28',
             isSnapEnabledRef.current ? 'snap-y snap-proximity' : '',
             isMobile ? 'px-5' : 'max-w-120 px-7',
           )}
@@ -148,7 +148,7 @@ function EngduLearningMobile({
       {activeTab === '퀴즈' && (
         <div
           className={cn(
-            'relative flex h-full w-full flex-col bg-surface-weak pb-18 pt-4',
+            'relative flex h-full w-full flex-col bg-surface-weak pb-28 pt-4',
             isMobile ? 'px-5' : 'max-w-120 px-7',
           )}
         >
